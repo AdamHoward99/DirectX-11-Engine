@@ -46,13 +46,76 @@ LRESULT WindowContainer::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		mouse.MouseMove(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_LBUTTONDOWN:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.LeftClickPressed(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_RBUTTONDOWN:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.RightClickPressed(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_MBUTTONDOWN:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.MiddlePressed(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_LBUTTONUP:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.LeftClickReleased(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_RBUTTONUP:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.RightClickReleased(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_MBUTTONUP:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.MiddleReleased(x, y);
+		return EXIT_SUCCESS;
+	}
+
+	case WM_MOUSEWHEEL:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+
+		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)		//Mouse wheel is moving up
+			mouse.WheelUp(x, y);
+
+		else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)	//Mouse wheel is moving down
+			mouse.WheelDown(x, y);
 
 		return EXIT_SUCCESS;
 	}
 
+
+
+
 	default:
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
-
 	}
 
 }
