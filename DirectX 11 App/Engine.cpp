@@ -21,4 +21,9 @@ void Engine::Update()
 	{
 		unsigned char keycode = keyboard.ReadKey().GetKeyCode();
 	}
+
+	while (!mouse.IsEventBufferEmpty())
+	{
+		MouseEvent mouseEv = mouse.GetEvent();
+	}
 }

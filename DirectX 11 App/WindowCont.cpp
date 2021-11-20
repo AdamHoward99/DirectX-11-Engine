@@ -4,6 +4,7 @@ LRESULT WindowContainer::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 {
 	switch (uMsg)
 	{
+	//Keyboard Messages
 	case WM_KEYDOWN:
 	{
 		unsigned char c = static_cast<unsigned char>(wParam);
@@ -35,6 +36,16 @@ LRESULT WindowContainer::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 			if (!pressed)
 				keyboard.OnChar(c);
 		}
+
+		return EXIT_SUCCESS;
+	}
+
+	//Mouse Messages
+	case WM_MOUSEMOVE:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		mouse.MouseMove(x, y);
 
 		return EXIT_SUCCESS;
 	}
