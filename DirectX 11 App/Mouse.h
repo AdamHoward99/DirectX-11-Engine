@@ -19,6 +19,7 @@ public:
 	void WheelUp(int, int);
 	void WheelDown(int, int);
 	void MouseMove(int, int);
+	void MouseRawMove(int, int);
 
 	//Mouse Button Down Functions
 	bool IsLeftClickDown();

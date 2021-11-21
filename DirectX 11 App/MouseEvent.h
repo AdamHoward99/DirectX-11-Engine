@@ -7,14 +7,12 @@ struct MousePos
 
 enum EventType
 {
-	LClick, LRelease, RClick, RRelease, MPress, MRelease, MWheelUp, MWheelDown, Move, NullValue
+	LClick, LRelease, RClick, RRelease, MPress, MRelease, MWheelUp, MWheelDown, Move, RawMove, NullValue
 };
 
 class MouseEvent
 {
 public:
-
-
 	MouseEvent();
 	MouseEvent(const EventType, const int, const int);
 	bool IsValid() const;

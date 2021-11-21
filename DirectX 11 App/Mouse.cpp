@@ -53,6 +53,11 @@ void Mouse::MouseMove(int x, int y)
 	eventBuffer.push(MouseEvent(EventType::Move, x, y));
 }
 
+void Mouse::MouseRawMove(int x, int y)
+{
+	eventBuffer.push(MouseEvent(EventType::RawMove, x, y));
+}
+
 bool Mouse::IsLeftClickDown()
 {
 	return leftClickDown;
