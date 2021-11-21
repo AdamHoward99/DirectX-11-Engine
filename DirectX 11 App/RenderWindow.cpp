@@ -56,7 +56,7 @@ LRESULT CALLBACK HandleMessageRedirect(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	{
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
-		break;
+		return NULL;
 
 	default:
 	{
@@ -112,7 +112,7 @@ bool RenderWindow::ProcessMessages()
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 
-	if (PeekMessage(&msg, this->mWindowInfo.handle, NULL, NULL, PM_REMOVE))
+	while (PeekMessage(&msg, this->mWindowInfo.handle, NULL, NULL, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

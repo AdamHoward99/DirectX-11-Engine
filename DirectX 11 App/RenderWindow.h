@@ -22,6 +22,7 @@ public:
 
 	bool InitialiseWindow(WindowContainer* pWindowCont, HINSTANCE, std::string, std::string, int, int);
 	bool ProcessMessages();
+	HWND GetWindowHandle() const { return mWindowInfo.handle; }
 private:
 	void RegisterWindowClass();
 	WindowInfo mWindowInfo;

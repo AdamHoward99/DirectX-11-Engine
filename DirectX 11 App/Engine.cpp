@@ -2,7 +2,13 @@
 
 bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string windowClass, int w, int h)
 {
-	return this->rw.InitialiseWindow(this, hInstance, title, windowClass, w, h);
+	if (!rw.InitialiseWindow(this, hInstance, title, windowClass, w, h))
+		return false;
+
+	if (!graphics.InitialiseClass(rw.GetWindowHandle(), w, h))
+		return false;
+
+	return true;
 }
 
 bool Engine::ProcessMessages()
@@ -26,4 +32,9 @@ void Engine::Update()
 	{
 		MouseEvent mouseEv = mouse.GetEvent();
 	}
+}
+
+void Engine::Render()
+{
+	graphics.RenderFrame();
 }
