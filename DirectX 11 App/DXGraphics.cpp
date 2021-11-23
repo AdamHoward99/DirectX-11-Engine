@@ -9,6 +9,8 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 		return false;
 
 	//Initialise shaders and scenes here
+	if (!InitialiseShaders())
+		return false;
 
 	return true;
 }
@@ -81,6 +83,20 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), NULL);
+
+	return true;
+}
+
+bool DXGraphics::InitialiseShaders()
+{
+	if (!vShader.Initialise(pDevice, L"Debug\\VertexShader.cso"))		//TODO: Change when altering configurations
+		return false;
+
+	D3D11_INPUT_ELEMENT_DESC layouts[] = { {"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0} };
+
+	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
+	if (FAILED(hr))
+		return false;
 
 	return true;
 }
