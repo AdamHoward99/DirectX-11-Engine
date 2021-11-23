@@ -23,5 +23,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 
 	VertexShader vShader;
+	PixelShader pShader;
 	AdapterReader adapterReader;
+	static UINT ViewportCount;
 };

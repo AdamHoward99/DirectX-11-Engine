@@ -18,3 +18,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader = nullptr;
 	Microsoft::WRL::ComPtr<ID3D10Blob> pVertexShaderBuffer;
 };
+
+class PixelShader		//TODO: Could create base class for these classes
+{
+public:
+	bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring);
+
+	ID3D11PixelShader* GetPixelShader() { return pPixelShader.Get(); }
+	ID3D10Blob* GetPixelBuffer() { return pPixelShaderBuffer.Get(); }
+
+private:
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
+	Microsoft::WRL::ComPtr<ID3D10Blob> pPixelShaderBuffer;
+};

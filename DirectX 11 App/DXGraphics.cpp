@@ -1,5 +1,7 @@
 #include "DXGraphics.h"
 
+UINT DXGraphics::ViewportCount = 0;
+
 DXGraphics::~DXGraphics()
 {}
 
@@ -84,14 +86,31 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), NULL);
 
+	//Set Rasterizer
+	D3D11_VIEWPORT deviceViewport;
+
+	deviceViewport.Height = (FLOAT)h;
+	deviceViewport.Width = (FLOAT)w;
+	deviceViewport.TopLeftX = 0;
+	deviceViewport.TopLeftY = 0;
+	ViewportCount++;
+
+	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
+
 	return true;
 }
 
 bool DXGraphics::InitialiseShaders()
 {
+	//Create Vertex Shader
 	if (!vShader.Initialise(pDevice, L"Debug\\VertexShader.cso"))		//TODO: Change when altering configurations
 		return false;
 
+	//Create Pixel Shader
+	if (!pShader.Initialise(pDevice, L"Debug\\PixelShader.cso"))
+		return false;
+
+	//Create Input Layouts
 	D3D11_INPUT_ELEMENT_DESC layouts[] = { {"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0} };
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
