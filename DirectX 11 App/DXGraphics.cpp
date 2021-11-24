@@ -14,6 +14,10 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	if (!InitialiseShaders())
 		return false;
 
+	//Initialise the scene
+	if (!InitialiseScene())
+		return false;
+
 	return true;
 }
 
@@ -114,6 +118,28 @@ bool DXGraphics::InitialiseShaders()
 	D3D11_INPUT_ELEMENT_DESC layouts[] = { {"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0} };
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
+	if (FAILED(hr))
+		return false;
+
+	return true;
+}
+
+bool DXGraphics::InitialiseScene()
+{
+	Vertex v[] = { Vertex(0.f, 0.f, 0.f) };
+
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory(&vertexBufferDesc, sizeof vertexBufferDesc);
+
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.ByteWidth = sizeof Vertex * ARRAYSIZE(v);
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	vertexBufferData.pSysMem = v;
+
+	HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, pVertexBuffer.GetAddressOf());
 	if (FAILED(hr))
 		return false;
 

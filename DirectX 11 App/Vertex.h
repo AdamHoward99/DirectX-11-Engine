@@ -3,6 +3,7 @@
 
 class Vertex
 {
+public:
 	Vertex(){}
 	Vertex(float, float, float);
 

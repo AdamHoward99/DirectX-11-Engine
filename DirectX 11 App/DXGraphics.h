@@ -4,6 +4,7 @@
 #include <wrl/client.h>
 #include "AdapterReader.h"
 #include "Shaders.h"
+#include "Vertex.h"
 
 class DXGraphics
 {
@@ -15,12 +16,14 @@ public:
 private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();
+	bool InitialiseScene();
 
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 
 	VertexShader vShader;
 	PixelShader pShader;
