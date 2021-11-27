@@ -118,7 +118,7 @@ bool RenderWindow::ProcessMessages()
 		DispatchMessage(&msg);
 	}
 
-	if (msg.message == WM_QUIT)
+	if (msg.message == WM_NULL)
 	{
 		if (!IsWindow(this->mWindowInfo.handle))
 		{
