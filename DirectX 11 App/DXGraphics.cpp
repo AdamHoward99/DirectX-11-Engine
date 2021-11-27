@@ -23,8 +23,30 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 
 void DXGraphics::RenderFrame()
 {
-	float colour[] = { 0.4f, 0.2f, 0.4f, 1.f };
+	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
+
+	//Render objects here
+
+	//Set input layout, topology, shaders and vertex buffers
+	pDeviceContext->IASetInputLayout(pInputLayout.Get());
+	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
+	//D3D10_PRIMITIVE_TOPOLOGY_LINELIST - Connects 2 Vertices to form a line
+	//D3D10_PRIMITIVE_TOPOLOGY_LINESTRIP - Connects all Vertices into lines in order
+	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST - Makes triangle from 3 Vertices, needs to be in clockwise order
+	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP - Makes triangle from all Vertices in order, minimizes amount of vertices needed
+
+	pDeviceContext->VSSetShader(vShader.GetVertexShader(), NULL, 0);
+	pDeviceContext->PSSetShader(pShader.GetPixelShader(), NULL, 0);
+
+	UINT stride = sizeof Vertex;
+	UINT offset = 0;
+	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+	pDeviceContext->Draw(3, 7);		//Indices to draw | Starting position of indices
+
 	pSwapChain->Present(1, NULL);
 }
 
@@ -92,6 +114,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
+	ZeroMemory(&deviceViewport, sizeof D3D11_VIEWPORT);
 
 	deviceViewport.Height = (FLOAT)h;
 	deviceViewport.Width = (FLOAT)w;
@@ -115,7 +138,9 @@ bool DXGraphics::InitialiseShaders()
 		return false;
 
 	//Create Input Layouts
-	D3D11_INPUT_ELEMENT_DESC layouts[] = { {"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0} };
+	D3D11_INPUT_ELEMENT_DESC layouts[] = {
+		{"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
 	if (FAILED(hr))
@@ -126,17 +151,39 @@ bool DXGraphics::InitialiseShaders()
 
 bool DXGraphics::InitialiseScene()
 {
-	Vertex v[] = { Vertex(0.f, 0.f, 0.f) };
+	//Vertices should always be clockwise
+	Vertex v[] = 
+	{ 
+		//Triangle List Example Vertices 1-3
+		Vertex(0.5f, 0.0f),
+		Vertex(-0.5f, 0.0f),
+		Vertex(0.0f, 0.5f),
+
+		//Triangle Strip Example Vertices 4-7
+		Vertex(0.0f, -0.2f),
+		Vertex(0.25f, -0.2f),
+		Vertex(0.1f, -0.4f),
+		Vertex(0.35f, -0.4f),
+
+		//Individual Points Example 8-10
+		Vertex(0.0f, 0.0f),
+		Vertex(0.2f, 0.0f),
+		Vertex(0.1f, -0.2f),
+
+		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
+	};
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
-	ZeroMemory(&vertexBufferDesc, sizeof vertexBufferDesc);
+	ZeroMemory(&vertexBufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.ByteWidth = sizeof Vertex * ARRAYSIZE(v);
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
 	vertexBufferData.pSysMem = v;
 
 	HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, pVertexBuffer.GetAddressOf());

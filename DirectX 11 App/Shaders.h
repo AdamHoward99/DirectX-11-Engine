@@ -28,6 +28,6 @@ public:
 	ID3D10Blob* GetPixelBuffer() { return pPixelShaderBuffer.Get(); }
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader = nullptr;
 	Microsoft::WRL::ComPtr<ID3D10Blob> pPixelShaderBuffer;
 };

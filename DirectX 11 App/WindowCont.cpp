@@ -14,9 +14,10 @@ WindowContainer::WindowContainer()
 		if (!RegisterRawInputDevices(&rawDevice, 1, sizeof rawDevice))
 		{
 			OutputDebugStringA("Input Device failed!");
-			isRawInputInitialized = true;
 			exit(-1);
 		}
+
+		isRawInputInitialized = true;
 	}
 }
 
@@ -150,9 +151,6 @@ LRESULT WindowContainer::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		}
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
-
-
-
 
 	default:
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);

@@ -5,7 +5,7 @@ class Vertex
 {
 public:
 	Vertex(){}
-	Vertex(float, float, float);
+	Vertex(float, float);
 
 	DirectX::XMFLOAT2 vertexPosition;
 };
