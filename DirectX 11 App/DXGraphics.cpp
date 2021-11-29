@@ -30,7 +30,8 @@ void DXGraphics::RenderFrame()
 
 	//Set input layout, topology, shaders and vertex buffers
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
-	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pDeviceContext->RSSetState(pRasterizerState.Get());
 
 	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
 	//D3D10_PRIMITIVE_TOPOLOGY_LINELIST - Connects 2 Vertices to form a line
@@ -45,7 +46,7 @@ void DXGraphics::RenderFrame()
 	UINT offset = 0;
 	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-	pDeviceContext->Draw(3, 7);		//Indices to draw | Starting position of indices
+	pDeviceContext->Draw(3, 0);		//Indices to draw | Starting position of indices
 
 	pSwapChain->Present(1, NULL);
 }
@@ -124,6 +125,19 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
 
+	//Create Rasterizer State
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
+	
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
+	if (FAILED(hr))
+	{
+		MessageBox(hwnd, "CreateRasterizerState function failed. Closing Application", "Rasterizer State Error", MB_OK);
+		exit(-1);
+	}
+
 	return true;
 }
 
@@ -140,6 +154,7 @@ bool DXGraphics::InitialiseShaders()
 	//Create Input Layouts
 	D3D11_INPUT_ELEMENT_DESC layouts[] = {
 		{"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOUR", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
@@ -155,20 +170,20 @@ bool DXGraphics::InitialiseScene()
 	Vertex v[] = 
 	{ 
 		//Triangle List Example Vertices 1-3
-		Vertex(0.5f, 0.0f),
-		Vertex(-0.5f, 0.0f),
-		Vertex(0.0f, 0.5f),
+		Vertex(DirectX::XMFLOAT2(-0.25f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.0f, 0.5f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.25f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
 
 		//Triangle Strip Example Vertices 4-7
-		Vertex(0.0f, -0.2f),
-		Vertex(0.25f, -0.2f),
-		Vertex(0.1f, -0.4f),
-		Vertex(0.35f, -0.4f),
+		Vertex(DirectX::XMFLOAT2(0.0f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.25f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.1f, -0.4f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.35f, -0.4f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), 
 
 		//Individual Points Example 8-10
-		Vertex(0.0f, 0.0f),
-		Vertex(0.2f, 0.0f),
-		Vertex(0.1f, -0.2f),
+		Vertex(DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT2(0.1f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
 
 		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
 	};

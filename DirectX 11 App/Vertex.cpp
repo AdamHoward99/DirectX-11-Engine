@@ -1,6 +1,7 @@
 #include "Vertex.h"
 
-Vertex::Vertex(float x, float y)
+Vertex::Vertex(DirectX::XMFLOAT2 vertexPos, DirectX::XMFLOAT3 vertexCol)
 {
-	vertexPosition = { x, y };
+	vertexPosition = vertexPos;
+	vertexColour = vertexCol;
 }
