@@ -1,8 +1,8 @@
 #include "Engine.h"
 
-bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string windowClass, int w, int h)
+bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string windowClass, int w, int h, int xCenter, int yCenter)
 {
-	if (!rw.InitialiseWindow(this, hInstance, title, windowClass, w, h))
+	if (!rw.InitialiseWindow(this, hInstance, title, windowClass, w, h, xCenter, yCenter))
 		return false;
 
 	if (!graphics.InitialiseClass(rw.GetWindowHandle(), w, h))

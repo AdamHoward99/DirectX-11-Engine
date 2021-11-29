@@ -12,6 +12,7 @@ struct WindowInfo
 	std::string applicationClass = "";
 	int height = 0;
 	int width = 0;
+	RECT windowRect;
 };
 
 class RenderWindow
@@ -20,7 +21,7 @@ public:
 	RenderWindow();
 	~RenderWindow();
 
-	bool InitialiseWindow(WindowContainer* pWindowCont, HINSTANCE, std::string, std::string, int, int);
+	bool InitialiseWindow(WindowContainer* pWindowCont, HINSTANCE, std::string, std::string, int, int, int, int);
 	bool ProcessMessages();
 	HWND GetWindowHandle() const { return mWindowInfo.handle; }
 private:

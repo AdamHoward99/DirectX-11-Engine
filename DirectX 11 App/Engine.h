@@ -4,7 +4,7 @@
 class Engine : WindowContainer
 {
 public:
-	bool Initialise(HINSTANCE, std::string, std::string, int, int);
+	bool Initialise(HINSTANCE, std::string, std::string, int, int, int, int);
 	bool ProcessMessages();
 	void Update();
 	void Render();

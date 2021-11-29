@@ -13,23 +13,27 @@ RenderWindow::~RenderWindow()
 	}
 }
 
-bool RenderWindow::InitialiseWindow(WindowContainer* pWindowCont,HINSTANCE hInstance, std::string appTitle, std::string appClass, int width, int height)
+bool RenderWindow::InitialiseWindow(WindowContainer* pWindowCont,HINSTANCE hInstance, std::string appTitle, std::string appClass, 
+	int width, int height, int xCenter, int yCenter)
 {
 	this->mWindowInfo.hInstance = hInstance;
 	this->mWindowInfo.applicationTitle = appTitle;
 	this->mWindowInfo.applicationClass = appClass;
 	this->mWindowInfo.height = height;
 	this->mWindowInfo.width = width;
+	this->mWindowInfo.windowRect.bottom = yCenter + height;
+	this->mWindowInfo.windowRect.right = xCenter + width;
 
 	RegisterWindowClass();
+	AdjustWindowRect(&mWindowInfo.windowRect, WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU, false);
 
 	//Create Window
 	this->mWindowInfo.handle = CreateWindowEx(NULL,
 		this->mWindowInfo.applicationClass.c_str(),
 		this->mWindowInfo.applicationTitle.c_str(),
 		WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU,
-		0, 0,
-		this->mWindowInfo.width, this->mWindowInfo.height,
+		xCenter, yCenter,
+		mWindowInfo.windowRect.right - xCenter, mWindowInfo.windowRect.bottom - yCenter,
 		NULL,
 		NULL,
 		this->mWindowInfo.hInstance,
