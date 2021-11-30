@@ -1,6 +1,6 @@
 struct VertexInputs
 {
-    float2 pos : POSITION;
+    float3 pos : POSITION;
     float3 colour : COLOUR;
 };
 
@@ -12,7 +12,7 @@ struct VertexOutputs
 
 VertexOutputs merge(VertexInputs input, VertexOutputs output)
 {
-    output.retPos = float4(input.pos, 0.0f, 1.0f);
+    output.retPos = float4(input.pos, 1.0f);
     output.retColour = input.colour;
     return output;
 }

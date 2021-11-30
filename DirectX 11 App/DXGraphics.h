@@ -26,6 +26,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
 
 	VertexShader vShader;
 	PixelShader pShader;

@@ -1,2 +1,9 @@
-﻿  DXGraphics.cpp
+﻿  compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\VertexShader.cso
+  App.cpp
+  DXGraphics.cpp
+  Engine.cpp
+  RenderWindow.cpp
+  Vertex.cpp
+  WindowCont.cpp
+  Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\DirectX 11 App.exe

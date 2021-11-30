@@ -31,6 +31,7 @@ void DXGraphics::RenderFrame()
 {
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
+	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	//Render objects here
 
@@ -38,6 +39,7 @@ void DXGraphics::RenderFrame()
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
+	pDeviceContext->OMSetDepthStencilState(pDepthState.Get(), NULL);
 
 	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
 	//D3D10_PRIMITIVE_TOPOLOGY_LINELIST - Connects 2 Vertices to form a line
@@ -121,8 +123,42 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	if (FAILED(hr))
 		return false;
 
+	//Initialize Depth Stencil Buffer
+	D3D11_TEXTURE2D_DESC depthTextureDesc;
+	depthTextureDesc.ArraySize = 1;
+	depthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthTextureDesc.CPUAccessFlags = 0;
+	depthTextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthTextureDesc.Height = h;
+	depthTextureDesc.MipLevels = 1;
+	depthTextureDesc.MiscFlags = 0;
+	depthTextureDesc.SampleDesc.Count = 1;
+	depthTextureDesc.SampleDesc.Quality = 0;
+	depthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthTextureDesc.Width = w;
+
+	hr = pDevice->CreateTexture2D(&depthTextureDesc, NULL, pDepthBuffer.GetAddressOf());
+	if (FAILED(hr))
+		exit(-1);	//TODO ERROR MESSAGE
+
+	hr = pDevice->CreateDepthStencilView(pDepthBuffer.Get(), NULL, pDepthView.GetAddressOf());
+	if (FAILED(hr))
+		exit(-1);	//TODO ERROR MESSAGE
+
 	//Set Render Target
-	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), NULL);
+	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
+
+	//Create depth stencil state
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof D3D11_DEPTH_STENCIL_DESC);
+
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthState.GetAddressOf());
+	if (FAILED(hr))
+		exit(-1);
 
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
@@ -132,6 +168,8 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	deviceViewport.Width = (FLOAT)w;
 	deviceViewport.TopLeftX = 0;
 	deviceViewport.TopLeftY = 0;
+	deviceViewport.MinDepth = 0.f;
+	deviceViewport.MaxDepth = 1.0f;
 	ViewportCount++;
 
 	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
@@ -167,7 +205,7 @@ bool DXGraphics::InitialiseShaders()
 
 	//Create Input Layouts
 	D3D11_INPUT_ELEMENT_DESC layouts[] = {
-		{"POSITION", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"POSITION", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOUR", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
@@ -184,20 +222,20 @@ bool DXGraphics::InitialiseScene()
 	Vertex v[] = 
 	{ 
 		//Triangle List Example Vertices 1-3
-		Vertex(DirectX::XMFLOAT2(-0.25f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.0f, 0.5f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.25f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
 
 		//Triangle Strip Example Vertices 4-7
-		Vertex(DirectX::XMFLOAT2(0.0f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.25f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.1f, -0.4f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.35f, -0.4f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)), 
+		Vertex(DirectX::XMFLOAT3(0.0f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.1f, -0.4f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.35f, -0.4f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
 
 		//Individual Points Example 8-10
-		Vertex(DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT2(0.1f, -0.2f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.2f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.1f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
 
 		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
 	};
