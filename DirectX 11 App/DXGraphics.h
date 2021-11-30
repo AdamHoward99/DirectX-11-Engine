@@ -1,10 +1,11 @@
 #pragma once
-#pragma comment(lib, "d3d11.lib")
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "AdapterReader.h"
 #include "Shaders.h"
 #include "Vertex.h"
+#include <SpriteBatch.h>
+#include <spriteFont.h>
 
 class DXGraphics
 {
@@ -30,4 +31,7 @@ private:
 	PixelShader pShader;
 	AdapterReader adapterReader;
 	static UINT ViewportCount;
+
+	DirectX::SpriteFont* font;
+	DirectX::SpriteBatch* spBatch;
 };

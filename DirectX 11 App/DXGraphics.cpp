@@ -3,7 +3,13 @@
 UINT DXGraphics::ViewportCount = 0;
 
 DXGraphics::~DXGraphics()
-{}
+{
+	delete spBatch;
+	delete font;
+
+	spBatch = nullptr;
+	font = nullptr;
+}
 
 bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 {
@@ -47,6 +53,11 @@ void DXGraphics::RenderFrame()
 	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
 	pDeviceContext->Draw(3, 0);		//Indices to draw | Starting position of indices
+
+	//Example Text Drawing	TODO CREATE FUNCTION FOR THIS IN FUTURE
+	spBatch->Begin();
+	font->DrawString(spBatch, L"DEFAULT TEXT", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
+	spBatch->End();
 
 	pSwapChain->Present(1, NULL);
 }
@@ -137,6 +148,9 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 		MessageBox(hwnd, "CreateRasterizerState function failed. Closing Application", "Rasterizer State Error", MB_OK);
 		exit(-1);
 	}
+
+	font = new DirectX::SpriteFont(pDevice.Get(), L"Fonts\\Arial_16.spritefont");
+	spBatch = new DirectX::SpriteBatch(pDeviceContext.Get());
 
 	return true;
 }
