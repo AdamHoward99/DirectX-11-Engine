@@ -5,26 +5,38 @@
 #include "ErrorMessaging.h"
 #include <string>
 
-class VertexShader
+//Base class for both shaders
+template <typename T>
+class Shader
+{
+protected:
+	virtual bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring) { return false; }
+	virtual T GetShader() { return nullptr; }
+	virtual ID3D10Blob* GetShaderBuffer() { return nullptr; }
+};
+
+//Vertex Shader Class
+class VertexShader : public Shader<ID3D11VertexShader*>
 {
 public:
-	bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring);
+	bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring) override;
 
-	ID3D11VertexShader* GetVertexShader() { return pVertexShader.Get(); }
-	ID3D10Blob* GetVertexBuffer() { return pVertexShaderBuffer.Get(); }
+	ID3D11VertexShader* GetShader() override { return pVertexShader.Get(); }
+	ID3D10Blob* GetShaderBuffer() override { return pVertexShaderBuffer.Get(); }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader = nullptr;
 	Microsoft::WRL::ComPtr<ID3D10Blob> pVertexShaderBuffer;
 };
 
-class PixelShader		//TODO: Could create base class for these classes
+//Pixel Shader Class
+class PixelShader : Shader<ID3D11PixelShader*>
 {
 public:
-	bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring);
+	bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring) override;
 
-	ID3D11PixelShader* GetPixelShader() { return pPixelShader.Get(); }
-	ID3D10Blob* GetPixelBuffer() { return pPixelShaderBuffer.Get(); }
+	ID3D11PixelShader* GetShader() override { return pPixelShader.Get(); }
+	ID3D10Blob* GetShaderBuffer() override { return pPixelShaderBuffer.Get(); }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader = nullptr;

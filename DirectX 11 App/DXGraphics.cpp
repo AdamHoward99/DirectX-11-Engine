@@ -47,8 +47,8 @@ void DXGraphics::RenderFrame()
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST - Makes triangle from 3 Vertices, needs to be in clockwise order
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP - Makes triangle from all Vertices in order, minimizes amount of vertices needed
 
-	pDeviceContext->VSSetShader(vShader.GetVertexShader(), NULL, 0);
-	pDeviceContext->PSSetShader(pShader.GetPixelShader(), NULL, 0);
+	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
+	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
 	UINT stride = sizeof Vertex;
 	UINT offset = 0;
@@ -203,7 +203,7 @@ bool DXGraphics::InitialiseShaders()
 		{"COLOUR", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
+	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetShaderBuffer()->GetBufferPointer(), vShader.GetShaderBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
 
