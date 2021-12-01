@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdapterReader.h" />
+    <ClInclude Include="ConstantBufferData.h" />
     <ClInclude Include="DXGraphics.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ErrorMessaging.h" />

@@ -50,6 +50,20 @@ void DXGraphics::RenderFrame()
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
+	//Updating Constant Buffers
+	VS_CB_DATA data;
+
+	//TODO: Add offset to image here
+
+	D3D11_MAPPED_SUBRESOURCE mapRes;
+	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
+	CopyMemory(mapRes.pData, &data, sizeof VS_CB_DATA);
+	pDeviceContext->Unmap(pConstantBuffer.Get(), NULL);
+	pDeviceContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
+
 	UINT stride = sizeof Vertex;
 	UINT offset = 0;
 	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
@@ -248,6 +262,19 @@ bool DXGraphics::InitialiseScene()
 	vertexBufferData.pSysMem = v;
 
 	HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, pVertexBuffer.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
+	//Initialize Constant Buffer
+	D3D11_BUFFER_DESC constantBufferDesc;
+	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	constantBufferDesc.ByteWidth = sizeof(VS_CB_DATA);			//Needs to 16-bit aligned
+	constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	constantBufferDesc.MiscFlags = 0;
+	constantBufferDesc.StructureByteStride = 0;
+	constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+	hr = pDevice->CreateBuffer(&constantBufferDesc, NULL, pConstantBuffer.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
 
