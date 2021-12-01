@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <vector>
+#include "ErrorMessaging.h"
 
 class Data
 {

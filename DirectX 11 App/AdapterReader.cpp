@@ -5,7 +5,7 @@ Data::Data(IDXGIAdapter* pAdapter)
 	this->pAdapter = pAdapter;
 	HRESULT hr = pAdapter->GetDesc(&pAdapterDescription);
 	if (FAILED(hr))
-		exit(-1);
+		ErrorMes::DisplayErrMessage(hr);
 }
 
 AdapterReader::AdapterReader()
@@ -22,7 +22,7 @@ std::vector<Data> AdapterReader::GetData()
 	//Create DXGIFactory Obj
 	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)pFactory.GetAddressOf());
 	if (FAILED(hr))
-		exit(-1);
+		ErrorMes::DisplayErrMessage(hr);
 
 	IDXGIAdapter* pAdapter;
 

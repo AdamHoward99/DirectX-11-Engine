@@ -107,21 +107,18 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 		this->pDeviceContext.GetAddressOf());
 
 	if (FAILED(hr))
-	{
-		//TODO: ERROR MESSAGE
-		return false;
-	}
+		ErrorMes::DisplayErrMessage(hr);
 
 	//Give pointer to Back Buffer using Swap Chain
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 	hr = pSwapChain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
 	if (FAILED(hr))
-		return false;
+		ErrorMes::DisplayErrMessage(hr);
 
 	//Create Render Target View
 	hr = pDevice->CreateRenderTargetView(backBuffer.Get(), NULL, pRenderView.GetAddressOf());
 	if (FAILED(hr))
-		return false;
+		ErrorMes::DisplayErrMessage(hr);
 
 	//Initialize Depth Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthTextureDesc;
@@ -139,11 +136,11 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	hr = pDevice->CreateTexture2D(&depthTextureDesc, NULL, pDepthBuffer.GetAddressOf());
 	if (FAILED(hr))
-		exit(-1);	//TODO ERROR MESSAGE
+		ErrorMes::DisplayErrMessage(hr);
 
 	hr = pDevice->CreateDepthStencilView(pDepthBuffer.Get(), NULL, pDepthView.GetAddressOf());
 	if (FAILED(hr))
-		exit(-1);	//TODO ERROR MESSAGE
+		ErrorMes::DisplayErrMessage(hr);
 
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
@@ -158,7 +155,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthState.GetAddressOf());
 	if (FAILED(hr))
-		exit(-1);
+		ErrorMes::DisplayErrMessage(hr);
 
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
@@ -182,10 +179,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
 	if (FAILED(hr))
-	{
-		MessageBox(hwnd, "CreateRasterizerState function failed. Closing Application", "Rasterizer State Error", MB_OK);
-		exit(-1);
-	}
+		ErrorMes::DisplayErrMessage(hr);
 
 	font = new DirectX::SpriteFont(pDevice.Get(), L"Fonts\\Arial_16.spritefont");
 	spBatch = new DirectX::SpriteBatch(pDeviceContext.Get());
@@ -211,7 +205,7 @@ bool DXGraphics::InitialiseShaders()
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetVertexBuffer()->GetBufferPointer(), vShader.GetVertexBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
 	if (FAILED(hr))
-		return false;
+		ErrorMes::DisplayErrMessage(hr);
 
 	return true;
 }
@@ -255,7 +249,7 @@ bool DXGraphics::InitialiseScene()
 
 	HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, pVertexBuffer.GetAddressOf());
 	if (FAILED(hr))
-		return false;
+		ErrorMes::DisplayErrMessage(hr);
 
 	return true;
 }

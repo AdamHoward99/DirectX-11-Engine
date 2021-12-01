@@ -41,10 +41,7 @@ bool RenderWindow::InitialiseWindow(WindowContainer* pWindowCont,HINSTANCE hInst
 
 	//Ensure Window was created
 	if (this->mWindowInfo.handle == NULL)
-	{
-		MessageBox(this->mWindowInfo.handle, "CreateWindowEx function failed. Closing Application", "Error", MB_OK);
 		return false;
-	}
 
 	//Focus on window
 	ShowWindow(this->mWindowInfo.handle, SW_SHOW);

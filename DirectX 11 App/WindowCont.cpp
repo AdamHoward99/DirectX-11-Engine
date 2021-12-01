@@ -12,10 +12,7 @@ WindowContainer::WindowContainer()
 		rawDevice.usUsagePage = 0x01;		//Correlates to Mouse
 
 		if (!RegisterRawInputDevices(&rawDevice, 1, sizeof rawDevice))
-		{
-			OutputDebugStringA("Input Device failed!");
 			exit(-1);
-		}
 
 		isRawInputInitialized = true;
 	}
