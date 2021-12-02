@@ -40,6 +40,7 @@ void DXGraphics::RenderFrame()
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
 	pDeviceContext->OMSetDepthStencilState(pDepthState.Get(), NULL);
+	pDeviceContext->PSSetSamplers(NULL, 1, pSamplerState.GetAddressOf());
 
 	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
 	//D3D10_PRIMITIVE_TOPOLOGY_LINELIST - Connects 2 Vertices to form a line
@@ -68,7 +69,11 @@ void DXGraphics::RenderFrame()
 	UINT offset = 0;
 	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-	pDeviceContext->Draw(3, 0);		//Indices to draw | Starting position of indices
+	pDeviceContext->PSSetShaderResources(0, 1, pDefaultTexture.GetAddressOf());		//Sets the TEXTURE value in pixelShader.hlsl
+
+	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
+
+	pDeviceContext->DrawIndexed(3, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 
 	//Example Text Drawing	TODO CREATE FUNCTION FOR THIS IN FUTURE
 	spBatch->Begin();
@@ -83,7 +88,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	std::vector<Data> adapters = adapterReader.GetData();
 
 	if (adapters.size() < 1)
-		exit(-1);		//TODO:CHANGE TO ERROR MESSAGE
+		exit(-1);
 
 	//Create Description for Swap Chain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -198,6 +203,22 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	font = new DirectX::SpriteFont(pDevice.Get(), L"Fonts\\Arial_16.spritefont");
 	spBatch = new DirectX::SpriteBatch(pDeviceContext.Get());
 
+	//Create sampler desc
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof D3D11_SAMPLER_DESC);
+
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDesc.MinLOD = 0;
+
+	hr = pDevice->CreateSamplerState(&samplerDesc, pSamplerState.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
 	return true;
 }
 
@@ -214,7 +235,7 @@ bool DXGraphics::InitialiseShaders()
 	//Create Input Layouts
 	D3D11_INPUT_ELEMENT_DESC layouts[] = {
 		{"POSITION", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOUR", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", NULL, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetShaderBuffer()->GetBufferPointer(), vShader.GetShaderBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
@@ -230,24 +251,32 @@ bool DXGraphics::InitialiseScene()
 	Vertex v[] = 
 	{ 
 		//Triangle List Example Vertices 1-3
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT2(0.5f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 
 		//Triangle Strip Example Vertices 4-7
-		Vertex(DirectX::XMFLOAT3(0.0f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.4f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.35f, -0.4f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.1f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.35f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
 
 		//Individual Points Example 8-10
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.2f, 0.0f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.2f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.2f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.1f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
 
 		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
 	};
 
+	DWORD indices[] =
+	{
+		0, 1, 2,
+	};
+
+	//TODO: Make template function for creating vertex, index, constant buffers
+
+	//Create Vertex Buffer
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof D3D11_BUFFER_DESC);
 
@@ -265,6 +294,21 @@ bool DXGraphics::InitialiseScene()
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
 
+	//Create Index Buffer
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory(&indexBufferDesc, sizeof D3D11_BUFFER_DESC);
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.ByteWidth = sizeof DWORD * ARRAYSIZE(indices);
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA indexBufferResData;
+	indexBufferResData.pSysMem = indices;
+	hr = pDevice->CreateBuffer(&indexBufferDesc, &indexBufferResData, pIndexBuffer.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
 	//Initialize Constant Buffer
 	D3D11_BUFFER_DESC constantBufferDesc;
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -275,6 +319,12 @@ bool DXGraphics::InitialiseScene()
 	constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 	hr = pDevice->CreateBuffer(&constantBufferDesc, NULL, pConstantBuffer.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
+	//Load in texture
+	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
+	hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
 

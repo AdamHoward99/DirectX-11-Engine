@@ -1,10 +1,14 @@
+SamplerState samplerState : SAMPLER : register(s0);
+Texture2D tex : TEXTURE : register(t0);
+
 struct PixelInput
 {
     float4 pos : SV_POSITION;
-    float3 colour : COLOUR;
+    float2 coords : TEXCOORD;
 };
 
 float4 main(PixelInput data) : SV_TARGET
 {
-    return float4(data.colour, 1.0f);
+    float3 pixelColour = tex.Sample(samplerState, data.coords);
+    return float4(pixelColour, 1.0f);
 }

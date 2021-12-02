@@ -5,8 +5,8 @@ class Vertex
 {
 public:
 	Vertex(){}
-	Vertex(DirectX::XMFLOAT3 vertPos, DirectX::XMFLOAT3 vertColour);
+	Vertex(DirectX::XMFLOAT3 vertPos, DirectX::XMFLOAT2 texCoord);
 
 	DirectX::XMFLOAT3 vertexPosition;
-	DirectX::XMFLOAT3 vertexColour;
+	DirectX::XMFLOAT2 textureCoordinates;
 };

@@ -1,7 +1,7 @@
 #include "Vertex.h"
 
-Vertex::Vertex(DirectX::XMFLOAT3 vertexPos, DirectX::XMFLOAT3 vertexCol)
+Vertex::Vertex(DirectX::XMFLOAT3 vertexPos, DirectX::XMFLOAT2 texCoord)
 {
 	vertexPosition = vertexPos;
-	vertexColour = vertexCol;
+	textureCoordinates = texCoord;
 }

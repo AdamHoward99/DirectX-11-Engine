@@ -8,6 +8,7 @@
 #include "ConstantBufferData.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
+#include <WICTextureLoader.h>
 
 class DXGraphics
 {
@@ -27,11 +28,14 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pDefaultTexture;
 
 	VertexShader vShader;
 	PixelShader pShader;
