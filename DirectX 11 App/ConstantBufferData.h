@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 
-struct VS_CB_DATA
+struct VS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
 {
 	float xOff = 0;
 	float yOff = 0;

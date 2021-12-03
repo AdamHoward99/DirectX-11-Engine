@@ -75,10 +75,7 @@ void DXGraphics::RenderFrame()
 
 	pDeviceContext->DrawIndexed(3, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 
-	//Example Text Drawing	TODO CREATE FUNCTION FOR THIS IN FUTURE
-	spBatch->Begin();
-	font->DrawString(spBatch, L"DEFAULT TEXT", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
-	spBatch->End();
+	DrawString();
 
 	pSwapChain->Present(1, NULL);
 }
@@ -274,60 +271,54 @@ bool DXGraphics::InitialiseScene()
 		0, 1, 2,
 	};
 
-	//TODO: Make template function for creating vertex, index, constant buffers
-
 	//Create Vertex Buffer
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	ZeroMemory(&vertexBufferDesc, sizeof D3D11_BUFFER_DESC);
-
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.ByteWidth = sizeof Vertex * ARRAYSIZE(v);
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_SUBRESOURCE_DATA vertexBufferData;
-	ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
-	vertexBufferData.pSysMem = v;
-
-	HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, pVertexBuffer.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-
-	//Create Index Buffer
-	D3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof D3D11_BUFFER_DESC);
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.ByteWidth = sizeof DWORD * ARRAYSIZE(indices);
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_SUBRESOURCE_DATA indexBufferResData;
-	indexBufferResData.pSysMem = indices;
-	hr = pDevice->CreateBuffer(&indexBufferDesc, &indexBufferResData, pIndexBuffer.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-
-	//Initialize Constant Buffer
-	D3D11_BUFFER_DESC constantBufferDesc;
-	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	constantBufferDesc.ByteWidth = sizeof(VS_CB_DATA);			//Needs to 16-bit aligned
-	constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	constantBufferDesc.MiscFlags = 0;
-	constantBufferDesc.StructureByteStride = 0;
-	constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-
-	hr = pDevice->CreateBuffer(&constantBufferDesc, NULL, pConstantBuffer.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * ARRAYSIZE(v), pVertexBuffer.GetAddressOf(), v);		//Vertex Buffer
+	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * ARRAYSIZE(indices), pIndexBuffer.GetAddressOf(), indices);		//Index Buffer
+	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
 
 	//Load in texture
 	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
+	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
 
 	return true;
+}
+
+void DXGraphics::DrawString()
+{
+	spBatch->Begin();
+	///Notice: Draw all strings to be outputted here
+	font->DrawString(spBatch, L"DEFAULT TEXT", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
+	spBatch->End();
+}
+
+template<typename T>
+void DXGraphics::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
+{
+	//Create Buffer Desc
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
+
+	bufferDesc.BindFlags = bindFlag;
+	bufferDesc.ByteWidth = byteWidth;
+	bufferDesc.CPUAccessFlags = (bufferUsage == D3D11_USAGE_DEFAULT) ? 0 : D3D11_CPU_ACCESS_WRITE;		//Sets to 0 for Index, Vertex Buffers, Gives Write Access for Constant Buffer
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.Usage = bufferUsage;
+
+	HRESULT hr;
+
+	if (resourceData != nullptr)
+	{
+		D3D11_SUBRESOURCE_DATA bufferData;
+		ZeroMemory(&bufferData, sizeof D3D11_SUBRESOURCE_DATA);
+		bufferData.pSysMem = resourceData;
+		hr = pDevice->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
+	}
+	else
+		hr = pDevice->CreateBuffer(&bufferDesc, NULL, bufferPtr);
+
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
 }
 
