@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClCompile Include="AdapterReader.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXGraphics.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdapterReader.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBufferData.h" />
     <ClInclude Include="DXGraphics.h" />
     <ClInclude Include="Engine.h" />

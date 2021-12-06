@@ -21,7 +21,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 		return false;
 
 	//Initialise the scene
-	if (!InitialiseScene())
+	if (!InitialiseScene(w, h))
 		return false;
 
 	return true;
@@ -54,7 +54,12 @@ void DXGraphics::RenderFrame()
 	//Updating Constant Buffers
 	VS_CB_DATA data;
 
-	//TODO: Add offset to image here
+	//TODO: Add Transformations to image here
+	DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
+	camera.ZoomOut();
+
+	data.pos = camera.GetCameraView() * camera.GetProjection();
+	data.pos = DirectX::XMMatrixTranspose(data.pos);	///Notice: DirectX uses XZ Plane instead of XY Plane
 
 	D3D11_MAPPED_SUBRESOURCE mapRes;
 	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
@@ -242,7 +247,7 @@ bool DXGraphics::InitialiseShaders()
 	return true;
 }
 
-bool DXGraphics::InitialiseScene()
+bool DXGraphics::InitialiseScene(int w, int h)
 {
 	//Vertices should always be clockwise
 	Vertex v[] = 
@@ -281,6 +286,10 @@ bool DXGraphics::InitialiseScene()
 	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
+
+	//Set Camera Properties
+	camera.SetPosition(DirectX::XMFLOAT3(0.f, 0.f, -1.f));
+	camera.SetProjection(90.f, (float)w / (float)h, 0.1f, 100.f);
 
 	return true;
 }

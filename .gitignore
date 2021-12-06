@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+/DirectX 11 App/.vs/DirectX 11 App/v15

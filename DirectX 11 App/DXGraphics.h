@@ -6,6 +6,7 @@
 #include "Shaders.h"
 #include "Vertex.h"
 #include "ConstantBufferData.h"
+#include "Camera.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
 #include <WICTextureLoader.h>
@@ -20,7 +21,7 @@ public:
 private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();
-	bool InitialiseScene();
+	bool InitialiseScene(int w, int h);
 
 	void DrawString();
 	
@@ -50,4 +51,6 @@ private:
 
 	DirectX::SpriteFont* font;
 	DirectX::SpriteBatch* spBatch;
+
+	Camera camera;
 };

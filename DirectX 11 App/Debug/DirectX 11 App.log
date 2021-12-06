@@ -1,4 +1,5 @@
 ﻿  App.cpp
+  Camera.cpp
   DXGraphics.cpp
   Engine.cpp
   RenderWindow.cpp

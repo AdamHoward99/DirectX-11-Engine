@@ -1,7 +1,6 @@
 cbuffer constantBuff : register(b0)
 {
-    float xOff;
-    float yOff;
+    float4x4 posMatrix;
 };
 
 struct VertexInputs
@@ -18,7 +17,7 @@ struct VertexOutputs
 
 VertexOutputs merge(VertexInputs input, VertexOutputs output)
 {
-    output.retPos = float4(input.pos, 1.0f);
+    output.retPos = mul(float4(input.pos, 1.0f), posMatrix);
     output.retTexCoord = input.texCoord;
     return output;
 }
@@ -26,8 +25,6 @@ VertexOutputs merge(VertexInputs input, VertexOutputs output)
 VertexOutputs main(VertexInputs verData)
 {
     VertexOutputs returnData;
-    verData.pos.x += xOff;
-    verData.pos.y += yOff;
     returnData = merge(verData, returnData);
     return returnData;
 }
