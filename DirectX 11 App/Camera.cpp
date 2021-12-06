@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+int Camera::CamerasInUse = 0;		//Counts total cameras used across all scenes
+
 Camera::Camera()
 {
 	//Set Default Values
