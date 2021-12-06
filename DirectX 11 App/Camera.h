@@ -17,6 +17,8 @@ public:
 	const DirectX::XMMATRIX& GetCameraView() const { return cameraView; }
 	const DirectX::XMMATRIX& GetProjection() const { return projection; }
 
+	const int GetCameraNumber() const { return CameraNo; }
+
 	void SetProjection(float deg, float rat, float nearZ, float farZ);
 	void LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX& targetPos);	//TODO: work in progress
 
@@ -52,10 +54,10 @@ private:
 	DirectX::XMVECTOR cameraPositionVec;
 	DirectX::XMVECTOR cameraRotationVec;
 
+	static int CamerasInUse;
+	int CameraNo;
+
 	//TODO: Add keyboard controls for DEBUG camera?
-	//TODO: get function for matrix view matrix variable?
-	//variable for getting this camera?
-	//variable for total cameras static?
-
-
 };
+
+int Camera::CamerasInUse = 0;		//Counts total cameras used across all scenes

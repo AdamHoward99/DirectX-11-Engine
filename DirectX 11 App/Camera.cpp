@@ -9,6 +9,9 @@ Camera::Camera()
 	cameraPositionVec = DirectX::XMVectorReplicate(0.f);
 	cameraRotationVec = DirectX::XMVectorReplicate(0.f);
 
+	CameraNo = CamerasInUse;
+	CamerasInUse++;
+
 	UpdateView();
 }
 
