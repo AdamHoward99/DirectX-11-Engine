@@ -56,10 +56,10 @@ void DXGraphics::RenderFrame()
 
 	//TODO: Add Transformations to image here
 	DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
+	
 	camera.ZoomOut();
-
 	data.pos = camera.GetCameraView() * camera.GetProjection();
-	data.pos = DirectX::XMMatrixTranspose(data.pos);	///Notice: DirectX uses XZ Plane instead of XY Plane
+	//data.pos = DirectX::XMMatrixTranspose(data.pos);	///Notice: DirectX uses XZ Plane instead of XY Plane
 
 	D3D11_MAPPED_SUBRESOURCE mapRes;
 	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
