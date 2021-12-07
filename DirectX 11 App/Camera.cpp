@@ -106,6 +106,8 @@ void Camera::LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX&
 {
 	//TODO: work on this, not sure if working properly yet
 
+
+
 	//Convert XMMATRIX to XMVECTOR3
 	DirectX::XMVECTOR targetPosVector = DirectX::XMVector3Transform(DirectX::XMVectorSet(1.f, 1.f, 1.f, 1.f), targetPos);
 
@@ -121,22 +123,22 @@ void Camera::LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX&
 
 const void Camera::MoveCameraUpwards()
 {
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, -0.01f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.01f, 0.f));
 }
 
 const void Camera::MoveCameraDownwards()
 {
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.01f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, -0.01f, 0.f));
 }
 
 const void Camera::MoveCameraLeft()
 {
-	this->MovePosition(DirectX::XMFLOAT3A(0.01f, 0.f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(-0.01f, 0.f, 0.f));
 }
 
 const void Camera::MoveCameraRight()
 {
-	this->MovePosition(DirectX::XMFLOAT3A(-0.01f, 0.f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.01f, 0.f, 0.f));
 }
 
 const void Camera::ZoomIn()
