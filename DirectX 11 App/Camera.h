@@ -20,7 +20,9 @@ public:
 	const int GetCameraNumber() const { return CameraNo; }
 
 	void SetProjection(float deg, float rat, float nearZ, float farZ);
-	void LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX& targetPos);	//TODO: work in progress
+	void LookAt(const DirectX::XMMATRIX& targetPos);
+	void LookAt(DirectX::XMFLOAT3A targetPos);
+	void LookAt(float x, float y, float z);
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }

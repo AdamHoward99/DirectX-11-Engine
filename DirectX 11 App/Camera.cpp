@@ -102,23 +102,72 @@ void Camera::UpdateView()
 	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3A(&cameraPosition), cameraTarget, upDirection);
 }
 
-void Camera::LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX& targetPos)
+void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
 {
-	//TODO: work on this, not sure if working properly yet
+	//Convert XMMATRIX parameter to XMFLOAT4X4A
+	DirectX::XMFLOAT4X4A targetPosFloat; 
+	DirectX::XMStoreFloat4x4A(&targetPosFloat, targetPos);
+	
+	//Get Coordinates
+	float x = targetPosFloat._14;
+	float y = targetPosFloat._24;
+	float z = targetPosFloat._34;
+
+	///Calculate the Pitch Angle
+
+	//Get Difference of position between camera and target
+	x = cameraPosition.x - x;
+	y = cameraPosition.y - y;
+	z = cameraPosition.z - z;
+
+	//Calculate distance using pythagoras' theorem
+	const float distance = sqrtf(powf(x, 2.f) + powf(z, 2.f));
+
+	//Calculate angle of pitch (in Radians)
+	float pitch = atanf(y * (1.f / distance));
+
+	//Apply pitch to camera rotation
+	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));
+}
+
+void Camera::LookAt(DirectX::XMFLOAT3A target)
+{
+	///Calculate the Pitch Angle
+
+	//Get Difference of position between camera and target
+	target.x = cameraPosition.x - target.x;
+	target.y = cameraPosition.y - target.y;
+	target.z = cameraPosition.z - target.z;
 
 
+	//Calculate distance using pythagoras' theorem
+	const float distance = sqrtf(powf(target.x, 2.f) + powf(target.z, 2.f));
 
-	//Convert XMMATRIX to XMVECTOR3
-	DirectX::XMVECTOR targetPosVector = DirectX::XMVector3Transform(DirectX::XMVectorSet(1.f, 1.f, 1.f, 1.f), targetPos);
+	//Calculate angle of pitch (in Radians)
+	float pitch = atanf(target.y * (1.f / distance));
 
-	//Normalized vector of distance between camera and target
-	DirectX::XMVECTOR L = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(targetPosVector, cameraPos));
+	//Apply pitch to camera rotation
+	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));
+}
 
-	//Normalized vector of cross product of up direction and L
-	DirectX::XMVECTOR R = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(DirectX::XMVectorSet(0.f, 0.1f, 0.f, 0.f), L));
+void Camera::LookAt(float targetX, float targetY, float targetZ)
+{
+	///Calculate the Pitch Angle
 
-	//Position Look at
-	DirectX::XMStoreFloat3A(&cameraPosition, cameraPos);
+	//Get Difference of position between camera and target
+	targetX = cameraPosition.x - targetX;
+	targetY = cameraPosition.y - targetY;
+	targetZ = cameraPosition.z - targetZ;
+
+
+	//Calculate distance using pythagoras' theorem
+	const float distance = sqrtf(powf(targetX, 2.f) + powf(targetZ, 2.f));
+
+	//Calculate angle of pitch (in Radians)
+	float pitch = atanf(targetY * (1.f / distance));
+
+	//Apply pitch to camera rotation
+	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));		//TODO: Create function specifically to assign pitch
 }
 
 const void Camera::MoveCameraUpwards()
