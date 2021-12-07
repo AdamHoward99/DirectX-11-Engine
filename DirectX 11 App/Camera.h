@@ -23,13 +23,13 @@ public:
 	void LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX& targetPos);	//TODO: work in progress
 
 	//XMFLOAT3 Functions
-	const DirectX::XMFLOAT3& GetPosition() const { return cameraPosition; }
-	void SetPosition(const DirectX::XMFLOAT3& pos);
-	void MovePosition(const DirectX::XMFLOAT3& pos);
+	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
+	void SetPosition(const DirectX::XMFLOAT3A& pos);
+	void MovePosition(const DirectX::XMFLOAT3A& pos);
 
-	const DirectX::XMFLOAT3& GetRotation() const { return cameraRotation; }
-	void SetRotation(const DirectX::XMFLOAT3& rot);
-	void MoveRotation(const DirectX::XMFLOAT3& rot);
+	const DirectX::XMFLOAT3A& GetRotation() const { return cameraRotation; }
+	void SetRotation(const DirectX::XMFLOAT3A& rot);
+	void MoveRotation(const DirectX::XMFLOAT3A& rot);
 
 	//XMVECTOR Functions
 	const DirectX::XMVECTOR& GetPositionVec() const { return cameraPositionVec; }
@@ -47,8 +47,8 @@ private:
 	DirectX::XMMATRIX projection;
 
 	//XMFLOAT Variables
-	DirectX::XMFLOAT3 cameraPosition;
-	DirectX::XMFLOAT3 cameraRotation;
+	DirectX::XMFLOAT3A cameraPosition;
+	DirectX::XMFLOAT3A cameraRotation;
 
 	//XMVECTOR Variables
 	DirectX::XMVECTOR cameraPositionVec;
@@ -57,5 +57,7 @@ private:
 	static int CamerasInUse;
 	int CameraNo;
 
+	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
+	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
 	//TODO: Add keyboard controls for DEBUG camera?
 };

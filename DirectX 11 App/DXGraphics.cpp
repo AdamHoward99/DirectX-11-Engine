@@ -288,7 +288,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 		ErrorMes::DisplayErrMessage(hr);
 
 	//Set Camera Properties
-	camera.SetPosition(DirectX::XMFLOAT3(0.f, 0.f, -1.f));
+	camera.SetPosition(DirectX::XMFLOAT3A(0.f, 0.f, -1.f));
 	camera.SetProjection(90.f, (float)w / (float)h, 0.1f, 100.f);
 
 	return true;

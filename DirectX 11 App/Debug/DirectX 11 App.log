@@ -1,2 +1,8 @@
-﻿  Camera.cpp
+﻿  App.cpp
+  Camera.cpp
+  DXGraphics.cpp
+  Engine.cpp
+  RenderWindow.cpp
+  WindowCont.cpp
+  Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\DirectX 11 App.exe

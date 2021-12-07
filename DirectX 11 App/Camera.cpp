@@ -5,8 +5,8 @@ int Camera::CamerasInUse = 0;		//Counts total cameras used across all scenes
 Camera::Camera()
 {
 	//Set Default Values
-	cameraPosition = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-	cameraRotation = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	cameraPosition = DirectX::XMFLOAT3A(0.0f, 0.0f, 0.0f);
+	cameraRotation = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 
 	cameraPositionVec = DirectX::XMVectorReplicate(0.f);
 	cameraRotationVec = DirectX::XMVectorReplicate(0.f);
@@ -17,8 +17,8 @@ Camera::Camera()
 	UpdateView();
 }
 
-//+= Overload for XMFLOAT3
-const DirectX::XMFLOAT3& operator+=(DirectX::XMFLOAT3& A, const DirectX::XMFLOAT3& B)
+//+= Overload for XMFLOAT3A
+const DirectX::XMFLOAT3A& operator+=(DirectX::XMFLOAT3A& A, const DirectX::XMFLOAT3A& B)
 {
 	A.x = A.x + B.x;
 	A.y = A.y + B.y;
@@ -33,25 +33,25 @@ void Camera::SetProjection(float degrees, float aspRatio, float nearZ, float far
 }
 
 //XMFLOAT Functions----------------------------------------------------------------------//
-void Camera::SetPosition(const DirectX::XMFLOAT3& newPos)
+void Camera::SetPosition(const DirectX::XMFLOAT3A& newPos)
 {
 	cameraPosition = newPos;
 	UpdateView();
 }
 
-void Camera::MovePosition(const DirectX::XMFLOAT3& newPos)
+void Camera::MovePosition(const DirectX::XMFLOAT3A& newPos)
 {
 	cameraPosition += newPos;
 	UpdateView();
 }
 
-void Camera::SetRotation(const DirectX::XMFLOAT3& newRot)
+void Camera::SetRotation(const DirectX::XMFLOAT3A& newRot)
 {
 	cameraRotation = newRot;
 	UpdateView();
 }
 
-void Camera::MoveRotation(const DirectX::XMFLOAT3& newRot)
+void Camera::MoveRotation(const DirectX::XMFLOAT3A& newRot)
 {
 	cameraRotation += newRot;
 	UpdateView();
@@ -93,13 +93,13 @@ void Camera::UpdateView()
 	DirectX::XMVECTOR cameraTarget = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f), cameraRotMatrix);
 
 	//Adjust camera target
-	DirectX::XMVectorAdd(cameraTarget, DirectX::XMLoadFloat3(&cameraPosition));
+	DirectX::XMVectorAdd(cameraTarget, DirectX::XMLoadFloat3A(&cameraPosition));
 
 	//Calculate Up direction based on current rotation
 	DirectX::XMVECTOR upDirection = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f), cameraRotMatrix);
 
 	//Rebuild view matrix
-	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3(&cameraPosition), cameraTarget, upDirection);
+	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3A(&cameraPosition), cameraTarget, upDirection);
 }
 
 void Camera::LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX& targetPos)
@@ -116,35 +116,35 @@ void Camera::LookAt(const DirectX::XMVECTOR& cameraPos, const DirectX::XMMATRIX&
 	DirectX::XMVECTOR R = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(DirectX::XMVectorSet(0.f, 0.1f, 0.f, 0.f), L));
 
 	//Position Look at
-	DirectX::XMStoreFloat3(&cameraPosition, cameraPos);
+	DirectX::XMStoreFloat3A(&cameraPosition, cameraPos);
 }
 
 const void Camera::MoveCameraUpwards()
 {
-	this->MovePosition(DirectX::XMFLOAT3(0.f, -0.01f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, -0.01f, 0.f));
 }
 
 const void Camera::MoveCameraDownwards()
 {
-	this->MovePosition(DirectX::XMFLOAT3(0.f, 0.01f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.01f, 0.f));
 }
 
 const void Camera::MoveCameraLeft()
 {
-	this->MovePosition(DirectX::XMFLOAT3(0.01f, 0.f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.01f, 0.f, 0.f));
 }
 
 const void Camera::MoveCameraRight()
 {
-	this->MovePosition(DirectX::XMFLOAT3(-0.01f, 0.f, 0.f));
+	this->MovePosition(DirectX::XMFLOAT3A(-0.01f, 0.f, 0.f));
 }
 
 const void Camera::ZoomIn()
 {
-	this->MovePosition(DirectX::XMFLOAT3(0.f, 0.f, 0.01f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, 0.01f));
 }
 
 const void Camera::ZoomOut()
 {
-	this->MovePosition(DirectX::XMFLOAT3(0.f, 0.f, -0.01f));
+	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, -0.01f));
 }
