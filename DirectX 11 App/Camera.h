@@ -24,6 +24,8 @@ public:
 	void LookAt(DirectX::XMFLOAT3A targetPos);
 	void LookAt(float x, float y, float z);
 
+	void SetPitch(const float y, const float distance);
+
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
 	void SetPosition(const DirectX::XMFLOAT3A& pos);

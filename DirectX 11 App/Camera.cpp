@@ -143,31 +143,29 @@ void Camera::LookAt(DirectX::XMFLOAT3A target)
 	//Calculate distance using pythagoras' theorem
 	const float distance = sqrtf(powf(target.x, 2.f) + powf(target.z, 2.f));
 
-	//Calculate angle of pitch (in Radians)
-	float pitch = atanf(target.y * (1.f / distance));
-
 	//Apply pitch to camera rotation
-	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));
+	SetPitch(target.y, distance);
 }
 
 void Camera::LookAt(float targetX, float targetY, float targetZ)
 {
-	///Calculate the Pitch Angle
-
 	//Get Difference of position between camera and target
 	targetX = cameraPosition.x - targetX;
 	targetY = cameraPosition.y - targetY;
 	targetZ = cameraPosition.z - targetZ;
 
-
 	//Calculate distance using pythagoras' theorem
 	const float distance = sqrtf(powf(targetX, 2.f) + powf(targetZ, 2.f));
 
-	//Calculate angle of pitch (in Radians)
-	float pitch = atanf(targetY * (1.f / distance));
-
 	//Apply pitch to camera rotation
-	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));		//TODO: Create function specifically to assign pitch
+	SetPitch(targetY, distance);
+}
+
+void Camera::SetPitch(const float y, const float distance)
+{
+	//Calculate Pitch
+	float pitch = atanf(y * (1.f / distance));
+	cameraRotation.x = pitch;
 }
 
 const void Camera::MoveCameraUpwards()
