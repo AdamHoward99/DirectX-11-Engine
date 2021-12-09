@@ -1,6 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 
+#define PI DirectX::XM_PI
+
 class Camera
 {
 public:
@@ -25,6 +27,7 @@ public:
 	void LookAt(float x, float y, float z);
 
 	void SetPitch(const float y, const float distance);
+	void SetYaw(const float x, const float z);
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }

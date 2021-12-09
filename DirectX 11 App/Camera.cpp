@@ -113,8 +113,6 @@ void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
 	float y = targetPosFloat._24;
 	float z = targetPosFloat._34;
 
-	///Calculate the Pitch Angle
-
 	//Get Difference of position between camera and target
 	x = cameraPosition.x - x;
 	y = cameraPosition.y - y;
@@ -123,11 +121,11 @@ void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
 	//Calculate distance using pythagoras' theorem
 	const float distance = sqrtf(powf(x, 2.f) + powf(z, 2.f));
 
-	//Calculate angle of pitch (in Radians)
-	float pitch = atanf(y * (1.f / distance));
-
 	//Apply pitch to camera rotation
-	SetRotation(DirectX::XMFLOAT3A(pitch, 0.f, 0.f));
+	SetPitch(y, distance);
+
+	//Apply yaw to camera rotation
+	SetYaw(x, z);
 }
 
 void Camera::LookAt(DirectX::XMFLOAT3A target)
@@ -139,12 +137,14 @@ void Camera::LookAt(DirectX::XMFLOAT3A target)
 	target.y = cameraPosition.y - target.y;
 	target.z = cameraPosition.z - target.z;
 
-
 	//Calculate distance using pythagoras' theorem
 	const float distance = sqrtf(powf(target.x, 2.f) + powf(target.z, 2.f));
 
 	//Apply pitch to camera rotation
 	SetPitch(target.y, distance);
+
+	//Apply yaw to camera rotation
+	SetYaw(target.x, target.z);
 }
 
 void Camera::LookAt(float targetX, float targetY, float targetZ)
@@ -159,13 +159,27 @@ void Camera::LookAt(float targetX, float targetY, float targetZ)
 
 	//Apply pitch to camera rotation
 	SetPitch(targetY, distance);
+
+	//Apply yaw to camera rotation
+	SetYaw(targetX, targetZ);
 }
 
 void Camera::SetPitch(const float y, const float distance)
 {
-	//Calculate Pitch
+	///Calculate Pitch (Y / sqrt(X ^ 2 + Z ^ 2))
 	float pitch = atanf(y * (1.f / distance));
 	cameraRotation.x = pitch;
+}
+
+void Camera::SetYaw(const float x, const float z)
+{
+	///Calculate Yaw (X / Y) + PI
+	float yaw = atanf(x * (1.f / z));
+
+	if(z > 0.0f)	//Angle needs to be larger than radian range atanf allows
+		yaw += PI;
+
+	cameraRotation.y = yaw;
 }
 
 const void Camera::MoveCameraUpwards()
