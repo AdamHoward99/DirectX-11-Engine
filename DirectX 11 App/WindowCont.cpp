@@ -34,6 +34,7 @@ LRESULT WindowContainer::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 			if (!pressed)
 				keyboard.OnKeyPressed(c);
 		}
+		return EXIT_SUCCESS;
 	}
 
 	case WM_KEYUP:
