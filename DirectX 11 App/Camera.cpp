@@ -17,6 +17,17 @@ Camera::Camera()
 	UpdateView();
 }
 
+void Camera::SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRatio, const float nearZ, const float farZ)
+{
+	SetPosition(startPos);
+
+	aspectRatio = aspRatio;
+	this->nearZ = nearZ;
+	this->farZ = farZ;
+
+	SetProjection(90.f, aspectRatio, this->nearZ, this->farZ);
+}
+
 //+= Overload for XMFLOAT3A
 const DirectX::XMFLOAT3A& operator+=(DirectX::XMFLOAT3A& A, const DirectX::XMFLOAT3A& B)
 {

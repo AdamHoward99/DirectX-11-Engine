@@ -8,6 +8,8 @@ class Camera
 public:
 	Camera();
 
+	void SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRatio, const float nearZ, const float farZ);
+
 	///Engine Example Functions - Uses XMFLOAT by default
 	const void MoveCameraUpwards();
 	const void MoveCameraDownwards();
@@ -80,7 +82,12 @@ private:
 	static int CamerasInUse;
 	int CameraNo;
 
+	//Projection Variables
+	float aspectRatio;
+	float nearZ;
+	float farZ;
+
 	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
 	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
-	//TODO: CREATE INITIALIZE FUNCTION FOR CAMERA
+	//TODO: add camera movement for XMVECTOR variables
 };
