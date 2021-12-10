@@ -75,8 +75,8 @@ private:
 	DirectX::XMVECTOR cameraPositionVec;
 	DirectX::XMVECTOR cameraRotationVec;
 
-	DirectX::XMVECTOR forwardVec;
-	DirectX::XMVECTOR rightVec;
+	DirectX::XMVECTOR forwardVec = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
+	DirectX::XMVECTOR rightVec = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
 	
 	const float cameraSpeed = 0.02f;
 	static int CamerasInUse;
@@ -89,5 +89,4 @@ private:
 
 	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
 	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
-	//TODO: add camera movement for XMVECTOR variables
 };

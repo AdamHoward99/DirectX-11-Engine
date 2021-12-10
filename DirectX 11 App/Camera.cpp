@@ -78,7 +78,7 @@ void Camera::SetPositionVec(const DirectX::XMVECTOR& newPos)
 
 void Camera::MovePositionVec(const DirectX::XMVECTOR& newPos)
 {
-	DirectX::XMVectorAdd(cameraPositionVec, newPos);
+	cameraPositionVec = DirectX::XMVectorAdd(cameraPositionVec, newPos);
 	UpdateView();
 }
 
@@ -90,7 +90,7 @@ void Camera::SetRotationVec(const DirectX::XMVECTOR& newRot)
 
 void Camera::MoveRotationVec(const DirectX::XMVECTOR& newRot)
 {
-	DirectX::XMVectorAdd(cameraRotationVec, newRot);
+	cameraRotationVec = DirectX::XMVectorAdd(cameraRotationVec, newRot);
 	UpdateView();
 }
 //End of XMVECTOR Functions--------------------------------------------------------------//
@@ -113,8 +113,14 @@ void Camera::UpdateView()
 	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3A(&cameraPosition), cameraTarget, upDirection);
 
 	//Get Rotation for forward & right directions
+
+	///Note: XMFLOAT3A Method
 	forwardDir = DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f);
 	rightDir = DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f);
+
+	///Note: XMVECTOR Method
+	forwardVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f));
+	rightVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f));
 }
 
 void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
@@ -218,6 +224,12 @@ void Camera::MoveCameraForwardD()
 	forwardDir.z *= cameraSpeed;
 
 	MovePosition(forwardDir);
+
+	///Note: XMVECTOR Method
+	/*
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	MovePositionVec(forwardVec);
+	*/
 }
 
 void Camera::MoveCameraBackwardsD()
@@ -228,6 +240,12 @@ void Camera::MoveCameraBackwardsD()
 	forwardDir.z *= -1.f * cameraSpeed;
 
 	MovePosition(forwardDir);
+
+	///Note: XMVECTOR Method
+	/*
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	MovePositionVec(forwardVec);
+	*/
 }
 
 void Camera::MoveCameraLeftD()
@@ -238,6 +256,12 @@ void Camera::MoveCameraLeftD()
 	rightDir.z *= -1.f * cameraSpeed;
 
 	MovePosition(rightDir);
+
+	///Note: XMVECTOR Method
+	/*
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	MovePositionVec(rightVec);
+	*/
 }
 
 void Camera::MoveCameraRightD()
@@ -247,6 +271,12 @@ void Camera::MoveCameraRightD()
 	rightDir.z *= cameraSpeed;
 
 	MovePosition(rightDir);
+
+	///Note: XMVECTOR Method
+	/*
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	MovePositionVec(rightVec);
+	*/
 }
 
 const void Camera::MoveCameraUpwards()
