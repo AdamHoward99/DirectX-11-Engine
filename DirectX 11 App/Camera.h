@@ -27,9 +27,16 @@ public:
 	void LookAt(DirectX::XMFLOAT3A targetPos);
 	void LookAt(float x, float y, float z);
 
+	//Roll, Pitch, Yaw Angle Calculations
 	void SetPitch(const float y, const float distance);
 	void SetYaw(const float x, const float z);
 	void SetRoll();
+
+	//Debug Camera Movement Functions
+	void MoveCameraForwardD();
+	void MoveCameraBackwardsD();
+	void MoveCameraLeftD();
+	void MoveCameraRightD();
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
@@ -59,14 +66,21 @@ private:
 	DirectX::XMFLOAT3A cameraPosition;
 	DirectX::XMFLOAT3A cameraRotation;
 
+	DirectX::XMFLOAT3A forwardDir = DirectX::XMFLOAT3A(0.f, 0.f, 1.f);
+	DirectX::XMFLOAT3A rightDir = DirectX::XMFLOAT3A(1.f, 0.f, 0.f);
+
 	//XMVECTOR Variables
 	DirectX::XMVECTOR cameraPositionVec;
 	DirectX::XMVECTOR cameraRotationVec;
 
+	DirectX::XMVECTOR forwardVec;
+	DirectX::XMVECTOR rightVec;
+	
+	const float cameraSpeed = 0.02f;
 	static int CamerasInUse;
 	int CameraNo;
 
 	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
 	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
-	//TODO: Add keyboard controls for DEBUG camera?
+	//TODO: CREATE INITIALIZE FUNCTION FOR CAMERA
 };

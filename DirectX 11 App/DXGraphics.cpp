@@ -27,7 +27,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	return true;
 }
 
-void DXGraphics::RenderFrame()
+void DXGraphics::RenderFrame(Camera* const camera)
 {
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
@@ -57,10 +57,10 @@ void DXGraphics::RenderFrame()
 	//TODO: Add Transformations to image here
 	DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
 	
-	camera.MoveCameraUpwards();
-	data.pos = camera.GetCameraView() * camera.GetProjection();
+	//camera->MoveCameraUpwards();
+	data.pos = camera->GetCameraView() * camera->GetProjection();
 	data.pos = DirectX::XMMatrixTranspose(data.pos);	///Notice: DirectX uses XZ Plane instead of XY Plane
-	camera.LookAt(data.pos);		///If matrix is not transposed before being passed, transpose in function
+	//camera->LookAt(data.pos);		///If matrix is not transposed before being passed, transpose in function
 
 	D3D11_MAPPED_SUBRESOURCE mapRes;
 	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
@@ -287,10 +287,6 @@ bool DXGraphics::InitialiseScene(int w, int h)
 	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);
-
-	//Set Camera Properties
-	camera.SetPosition(DirectX::XMFLOAT3A(0.f, 0.f, -1.f));
-	camera.SetProjection(90.f, (float)w / (float)h, 0.1f, 100.f);
 
 	return true;
 }

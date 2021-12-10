@@ -17,7 +17,7 @@ public:
 	bool InitialiseClass(HWND, int, int);
 	~DXGraphics();
 
-	void RenderFrame();
+	void RenderFrame(Camera* const cam);
 private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();
@@ -52,5 +52,5 @@ private:
 	DirectX::SpriteFont* font;
 	DirectX::SpriteBatch* spBatch;
 
-	Camera camera;
+	//Camera camera;
 };

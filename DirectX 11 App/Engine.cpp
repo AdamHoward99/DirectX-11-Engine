@@ -8,6 +8,10 @@ bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string wind
 	if (!graphics.InitialiseClass(rw.GetWindowHandle(), w, h))
 		return false;
 
+	//Initialize Camera / Set Camera Properties
+	camera.SetPosition(DirectX::XMFLOAT3A(0.f, 0.f, -1.f));
+	camera.SetProjection(90.f, (float)w / (float)h, 0.1f, 100.f);
+
 	return true;
 }
 
@@ -32,9 +36,22 @@ void Engine::Update()
 	{
 		MouseEvent mouseEv = mouse.GetEvent();
 	}
+
+	//Mouse Camera Controls
+	if (keyboard.IsKeyPressed(CAMERA_FORWARD))
+		camera.MoveCameraForwardD();
+
+	if (keyboard.IsKeyPressed(CAMERA_BACK))
+		camera.MoveCameraBackwardsD();
+
+	if (keyboard.IsKeyPressed(CAMERA_LEFT))
+		camera.MoveCameraLeftD();
+
+	if (keyboard.IsKeyPressed(CAMERA_RIGHT))
+		camera.MoveCameraRightD();
 }
 
 void Engine::Render()
 {
-	graphics.RenderFrame();
+	graphics.RenderFrame(&camera);
 }

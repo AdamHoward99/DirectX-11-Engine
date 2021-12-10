@@ -100,6 +100,10 @@ void Camera::UpdateView()
 
 	//Rebuild view matrix
 	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3A(&cameraPosition), cameraTarget, upDirection);
+
+	//Get Rotation for forward & right directions
+	forwardDir = DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f);
+	rightDir = DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f);
 }
 
 void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
@@ -194,6 +198,44 @@ void Camera::SetYaw(const float x, const float z)
 void Camera::SetRoll()
 {
 	///Calculate Roll ()		TODO
+}
+
+void Camera::MoveCameraForwardD()
+{
+	forwardDir.x *= cameraSpeed;
+	forwardDir.y *= cameraSpeed;
+	forwardDir.z *= cameraSpeed;
+
+	MovePosition(forwardDir);
+}
+
+void Camera::MoveCameraBackwardsD()
+{
+	//Reverse / Negative of the forward direction
+	forwardDir.x *= -1.f * cameraSpeed;
+	forwardDir.y *= -1.f * cameraSpeed;
+	forwardDir.z *= -1.f * cameraSpeed;
+
+	MovePosition(forwardDir);
+}
+
+void Camera::MoveCameraLeftD()
+{
+	//Reverse / Negative of the right direction
+	rightDir.x *= -1.f * cameraSpeed;
+	rightDir.y *= -1.f * cameraSpeed;
+	rightDir.z *= -1.f * cameraSpeed;
+
+	MovePosition(rightDir);
+}
+
+void Camera::MoveCameraRightD()
+{
+	rightDir.x *= cameraSpeed;
+	rightDir.y *= cameraSpeed;
+	rightDir.z *= cameraSpeed;
+
+	MovePosition(rightDir);
 }
 
 const void Camera::MoveCameraUpwards()
