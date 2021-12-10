@@ -13,6 +13,7 @@ public:
 	const void MoveCameraDownwards();
 	const void MoveCameraLeft();
 	const void MoveCameraRight();
+	const void SpinCameraAround();
 	const void ZoomIn();
 	const void ZoomOut();
 
@@ -28,6 +29,7 @@ public:
 
 	void SetPitch(const float y, const float distance);
 	void SetYaw(const float x, const float z);
+	void SetRoll();
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
