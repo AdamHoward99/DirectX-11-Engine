@@ -7,6 +7,7 @@
 #define CAMERA_BACK		83 //S
 #define CAMERA_LEFT		65 //A
 #define CAMERA_RIGHT	68 //D
+#define CAMERA_ELEVATE	81 //Q
 #endif
 
 class Engine : WindowContainer

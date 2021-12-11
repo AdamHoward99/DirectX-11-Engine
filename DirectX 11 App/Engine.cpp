@@ -47,6 +47,9 @@ void Engine::Update()
 
 	if (keyboard.IsKeyPressed(CAMERA_RIGHT))
 		camera.MoveCameraRightD();
+
+	if (keyboard.IsKeyPressed(CAMERA_ELEVATE))
+		camera.ElevateCameraD();
 }
 
 void Engine::Render()

@@ -39,6 +39,7 @@ public:
 	void MoveCameraBackwardsD();
 	void MoveCameraLeftD();
 	void MoveCameraRightD();
+	void ElevateCameraD();
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
@@ -70,6 +71,7 @@ private:
 
 	DirectX::XMFLOAT3A forwardDir = DirectX::XMFLOAT3A(0.f, 0.f, 1.f);
 	DirectX::XMFLOAT3A rightDir = DirectX::XMFLOAT3A(1.f, 0.f, 0.f);
+	DirectX::XMFLOAT3A upDir = DirectX::XMFLOAT3A(0.f, 1.f, 0.f);
 
 	//XMVECTOR Variables
 	DirectX::XMVECTOR cameraPositionVec;
@@ -89,4 +91,5 @@ private:
 
 	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
 	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
+	//TODO: Create Elevate and Lower Functions
 };
