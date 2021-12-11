@@ -122,6 +122,7 @@ void Camera::UpdateView()
 	///Note: XMVECTOR Method
 	forwardVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f));
 	rightVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f));
+	upVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(upDir));
 }
 
 void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
@@ -288,6 +289,12 @@ void Camera::ElevateCameraD()
 	//TODO: Check performance of doing this way instead of storing in local variable to pass to function, saves constant updating every frame
 
 	MovePosition(upDir);
+
+	///Note: XMVECTOR Method
+	/*
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	MovePositionVec(upVec);
+	*/
 }
 
 void Camera::LowerCameraD()
@@ -298,6 +305,12 @@ void Camera::LowerCameraD()
 	upDir.z *= -1.f * cameraSpeed;
 
 	MovePosition(upDir);
+
+	///Note: XMVECTOR Method
+	/*
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	MovePositionVec(upVec);
+	*/
 }
 
 const void Camera::MoveCameraUpwards()
