@@ -290,6 +290,16 @@ void Camera::ElevateCameraD()
 	MovePosition(upDir);
 }
 
+void Camera::LowerCameraD()
+{
+	//Reverse / Negative of the Up direction
+	upDir.x *= -1.f * cameraSpeed;
+	upDir.y *= -1.f * cameraSpeed;
+	upDir.z *= -1.f * cameraSpeed;
+
+	MovePosition(upDir);
+}
+
 const void Camera::MoveCameraUpwards()
 {
 	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.01f, 0.f));

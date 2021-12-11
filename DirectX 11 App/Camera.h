@@ -40,6 +40,7 @@ public:
 	void MoveCameraLeftD();
 	void MoveCameraRightD();
 	void ElevateCameraD();
+	void LowerCameraD();
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
