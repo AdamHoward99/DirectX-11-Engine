@@ -214,11 +214,6 @@ void Camera::SetYaw(const float x, const float z)
 	cameraRotation.y = yaw;
 }
 
-void Camera::SetRoll()
-{
-	///Calculate Roll ()		TODO
-}
-
 void Camera::MoveCameraForwardD()
 {
 	forwardDir.x *= cameraSpeed;

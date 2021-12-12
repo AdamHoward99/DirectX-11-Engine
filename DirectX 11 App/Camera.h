@@ -29,10 +29,9 @@ public:
 	void LookAt(DirectX::XMFLOAT3A targetPos);
 	void LookAt(float x, float y, float z);
 
-	//Roll, Pitch, Yaw Angle Calculations
+	//Euler Angle Calculations
 	void SetPitch(const float y, const float distance);
 	void SetYaw(const float x, const float z);
-	void SetRoll();
 
 	//Debug Camera Movement Functions
 	void MoveCameraForwardD();

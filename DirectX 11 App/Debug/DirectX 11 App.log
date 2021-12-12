@@ -1,4 +1,9 @@
 ﻿  App.cpp
+  Camera.cpp
+  DXGraphics.cpp
   Engine.cpp
+  RenderWindow.cpp
+  WindowCont.cpp
   Generating Code...
+  LINK : C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\DirectX 11 App.exe not found or not built by the last incremental link; performing full link
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\DirectX 11 App.exe
