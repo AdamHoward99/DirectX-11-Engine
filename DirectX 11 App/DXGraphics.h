@@ -51,6 +51,5 @@ private:
 
 	DirectX::SpriteFont* font;
 	DirectX::SpriteBatch* spBatch;
-
-	//Camera camera;
+	//TODO: Create Text class to use fonts
 };

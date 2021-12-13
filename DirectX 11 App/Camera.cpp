@@ -149,9 +149,6 @@ void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
 
 	//Apply yaw to camera rotation
 	SetYaw(x, z);
-
-	//Apply roll to camera rotation
-	SetRoll();
 }
 
 void Camera::LookAt(DirectX::XMFLOAT3A target)
@@ -171,9 +168,6 @@ void Camera::LookAt(DirectX::XMFLOAT3A target)
 
 	//Apply yaw to camera rotation
 	SetYaw(target.x, target.z);
-
-	//Apply roll to camera rotation
-	SetRoll();
 }
 
 void Camera::LookAt(float targetX, float targetY, float targetZ)
@@ -191,9 +185,6 @@ void Camera::LookAt(float targetX, float targetY, float targetZ)
 
 	//Apply yaw to camera rotation
 	SetYaw(targetX, targetZ);
-
-	//Apply roll to camera rotation
-	SetRoll();
 }
 
 void Camera::SetPitch(const float y, const float distance)
