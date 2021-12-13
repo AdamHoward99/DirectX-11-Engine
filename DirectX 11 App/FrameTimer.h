@@ -21,11 +21,17 @@ public:
 	static std::string& GetFPSString();
 
 private:
-	std::chrono::time_point<std::chrono::steady_clock> startPoint;
-	std::chrono::time_point<std::chrono::steady_clock> EndPoint;
-	//TODO: include system_clock versions for LINUX OS
-
 	bool active = false;
 	static int FPSCounter;
 	static std::string FPSString;
+
+#ifdef _WIN32
+	std::chrono::time_point<std::chrono::steady_clock> startPoint;
+	std::chrono::time_point<std::chrono::steady_clock> EndPoint;
+#endif
+
+#ifdef __unix__
+	std::chrono::time_point<std::chrono::system_clock> startPoint;
+	std::chrono::time_point<std::chrono::system_clock> EndPoint;
+#endif
 };
