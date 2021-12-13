@@ -81,7 +81,7 @@ private:
 	DirectX::XMVECTOR rightVec = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
 	DirectX::XMVECTOR upVec = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	
-	const float cameraSpeed = 0.02f;
+	const float cameraSpeed = 0.02f;		//TODO: include dt with this to get same movement speed with or without VSYNC
 	static int CamerasInUse;
 	int CameraNo;
 

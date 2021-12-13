@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "ConstantBufferData.h"
 #include "Camera.h"
+#include "FrameTimer.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
 #include <WICTextureLoader.h>
@@ -52,4 +53,6 @@ private:
 	DirectX::SpriteFont* font;
 	DirectX::SpriteBatch* spBatch;
 	//TODO: Create Text class to use fonts
+
+	FrameTimer timer;
 };

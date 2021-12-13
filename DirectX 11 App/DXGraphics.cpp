@@ -24,6 +24,8 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	if (!InitialiseScene(w, h))
 		return false;
 
+	//Initialize Timer TODO: in future use Utility class
+	timer.Start();
 	return true;
 }
 
@@ -80,8 +82,16 @@ void DXGraphics::RenderFrame(Camera* const camera)
 
 	pDeviceContext->DrawIndexed(3, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 
-	DrawString();
+	//Display FPS Timer
+	timer.IncrementFPSCounter();
+	if (timer.GetMilliseconds() > 1000.0)		//After a second has passed
+	{
+		timer.SetFPSString();
+		timer.Reset();
+		timer.ResetFPSCounter();
+	}
 
+	DrawString();
 	pSwapChain->Present(1, NULL);
 }
 
@@ -294,7 +304,7 @@ void DXGraphics::DrawString()
 {
 	spBatch->Begin();
 	///Notice: Draw all strings to be outputted here
-	font->DrawString(spBatch, L"DEFAULT TEXT", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
+	font->DrawString(spBatch, timer.GetFPSString().c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
 }
 
