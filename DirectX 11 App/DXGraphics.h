@@ -11,6 +11,7 @@
 #include <SpriteBatch.h>
 #include <spriteFont.h>
 #include <WICTextureLoader.h>
+#include <unordered_map>
 
 class DXGraphics
 {
@@ -30,6 +31,9 @@ private:
 	void CreateBuffer(const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);		//Reusable function for creating index, vertex and constant buffers
 
+	void LoadTextures();
+	void LoadTexture(const std::string& textureName, const std::wstring& texturePath);
+
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
@@ -43,7 +47,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pDefaultTexture;
+
+	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
 
 	VertexShader vShader;
 	PixelShader pShader;

@@ -76,7 +76,7 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	UINT offset = 0;
 	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-	pDeviceContext->PSSetShaderResources(0, 1, pDefaultTexture.GetAddressOf());		//Sets the TEXTURE value in pixelShader.hlsl
+	pDeviceContext->PSSetShaderResources(0, 1, textures["Default"].GetAddressOf());		//Sets the TEXTURE value in pixelShader.hlsl
 
 	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
 
@@ -292,10 +292,12 @@ bool DXGraphics::InitialiseScene(int w, int h)
 	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
 
 	//Load in texture
+	LoadTextures();
+
 	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+	//HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayErrMessage(hr);
 
 	return true;
 }
@@ -306,6 +308,23 @@ void DXGraphics::DrawString()
 	///Notice: Draw all strings to be outputted here
 	font->DrawString(spBatch, timer.GetFPSString().c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
+}
+
+void DXGraphics::LoadTextures()
+{
+	textures.reserve(1);
+	LoadTexture("Default", L"Textures\\defaultTexture.png");
+}
+
+void DXGraphics::LoadTexture(const std::string& textureName, const std::wstring& texturePath)
+{
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tex;
+	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), texturePath.c_str(), nullptr, tex.GetAddressOf());
+
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
+
+	textures[textureName] = tex;
 }
 
 template<typename T>
