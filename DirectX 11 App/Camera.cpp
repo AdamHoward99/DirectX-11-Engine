@@ -215,7 +215,7 @@ void Camera::MoveCameraForwardD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
 	MovePositionVec(forwardVec);
 	*/
 }
@@ -231,7 +231,7 @@ void Camera::MoveCameraBackwardsD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
 	MovePositionVec(forwardVec);
 	*/
 }
@@ -247,7 +247,7 @@ void Camera::MoveCameraLeftD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
 	MovePositionVec(rightVec);
 	*/
 }
@@ -262,7 +262,7 @@ void Camera::MoveCameraRightD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
 	MovePositionVec(rightVec);
 	*/
 }
@@ -277,7 +277,7 @@ void Camera::ElevateCameraD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(cameraSpeed, cameraSpeed, cameraSpeed, 0.f));
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
 	MovePositionVec(upVec);
 	*/
 }
@@ -293,7 +293,7 @@ void Camera::LowerCameraD(const float dt)
 
 	///Note: XMVECTOR Method
 	/*
-	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(-cameraSpeed, -cameraSpeed, -cameraSpeed, 0.f));
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
 	MovePositionVec(upVec);
 	*/
 }
