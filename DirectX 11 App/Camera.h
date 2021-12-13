@@ -34,12 +34,12 @@ public:
 	void SetYaw(const float x, const float z);
 
 	//Debug Camera Movement Functions
-	void MoveCameraForwardD();
-	void MoveCameraBackwardsD();
-	void MoveCameraLeftD();
-	void MoveCameraRightD();
-	void ElevateCameraD();
-	void LowerCameraD();
+	void MoveCameraForwardD(const float dt);
+	void MoveCameraBackwardsD(const float dt);
+	void MoveCameraLeftD(const float dt);
+	void MoveCameraRightD(const float dt);
+	void ElevateCameraD(const float dt);
+	void LowerCameraD(const float dt);
 
 	//XMFLOAT3 Functions
 	const DirectX::XMFLOAT3A& GetPosition() const { return cameraPosition; }
@@ -81,7 +81,7 @@ private:
 	DirectX::XMVECTOR rightVec = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
 	DirectX::XMVECTOR upVec = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	
-	const float cameraSpeed = 0.02f;		//TODO: include dt with this to get same movement speed with or without VSYNC
+	const float cameraSpeed = 0.002f;
 	static int CamerasInUse;
 	int CameraNo;
 

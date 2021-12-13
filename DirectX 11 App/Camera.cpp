@@ -205,11 +205,11 @@ void Camera::SetYaw(const float x, const float z)
 	cameraRotation.y = yaw;
 }
 
-void Camera::MoveCameraForwardD()
+void Camera::MoveCameraForwardD(const float dt)
 {
-	forwardDir.x *= cameraSpeed;
-	forwardDir.y *= cameraSpeed;
-	forwardDir.z *= cameraSpeed;
+	forwardDir.x *= dt * cameraSpeed;
+	forwardDir.y *= dt * cameraSpeed;
+	forwardDir.z *= dt * cameraSpeed;
 
 	MovePosition(forwardDir);
 
@@ -220,12 +220,12 @@ void Camera::MoveCameraForwardD()
 	*/
 }
 
-void Camera::MoveCameraBackwardsD()
+void Camera::MoveCameraBackwardsD(const float dt)
 {
 	//Reverse / Negative of the forward direction
-	forwardDir.x *= -1.f * cameraSpeed;
-	forwardDir.y *= -1.f * cameraSpeed;
-	forwardDir.z *= -1.f * cameraSpeed;
+	forwardDir.x *= dt * -1.f * cameraSpeed;
+	forwardDir.y *= dt * -1.f * cameraSpeed;
+	forwardDir.z *= dt * -1.f * cameraSpeed;
 
 	MovePosition(forwardDir);
 
@@ -236,12 +236,12 @@ void Camera::MoveCameraBackwardsD()
 	*/
 }
 
-void Camera::MoveCameraLeftD()
+void Camera::MoveCameraLeftD(const float dt)
 {
 	//Reverse / Negative of the right direction
-	rightDir.x *= -1.f * cameraSpeed;
-	rightDir.y *= -1.f * cameraSpeed;
-	rightDir.z *= -1.f * cameraSpeed;
+	rightDir.x *= dt * -1.f * cameraSpeed;
+	rightDir.y *= dt * -1.f * cameraSpeed;
+	rightDir.z *= dt * -1.f * cameraSpeed;
 
 	MovePosition(rightDir);
 
@@ -252,11 +252,11 @@ void Camera::MoveCameraLeftD()
 	*/
 }
 
-void Camera::MoveCameraRightD()
+void Camera::MoveCameraRightD(const float dt)
 {
-	rightDir.x *= cameraSpeed;
-	rightDir.y *= cameraSpeed;
-	rightDir.z *= cameraSpeed;
+	rightDir.x *= dt * cameraSpeed;
+	rightDir.y *= dt * cameraSpeed;
+	rightDir.z *= dt * cameraSpeed;
 
 	MovePosition(rightDir);
 
@@ -267,12 +267,11 @@ void Camera::MoveCameraRightD()
 	*/
 }
 
-void Camera::ElevateCameraD()
+void Camera::ElevateCameraD(const float dt)
 {
-	upDir.x *= cameraSpeed;
-	upDir.y *= cameraSpeed;
-	upDir.z *= cameraSpeed;
-	//TODO: Check performance of doing this way instead of storing in local variable to pass to function, saves constant updating every frame
+	upDir.x *= dt * cameraSpeed;
+	upDir.y *= dt * cameraSpeed;
+	upDir.z *= dt * cameraSpeed;
 
 	MovePosition(upDir);
 
@@ -283,12 +282,12 @@ void Camera::ElevateCameraD()
 	*/
 }
 
-void Camera::LowerCameraD()
+void Camera::LowerCameraD(const float dt)
 {
 	//Reverse / Negative of the Up direction
-	upDir.x *= -1.f * cameraSpeed;
-	upDir.y *= -1.f * cameraSpeed;
-	upDir.z *= -1.f * cameraSpeed;
+	upDir.x *= dt * -1.f * cameraSpeed;
+	upDir.y *= dt * -1.f * cameraSpeed;
+	upDir.z *= dt * -1.f * cameraSpeed;
 
 	MovePosition(upDir);
 

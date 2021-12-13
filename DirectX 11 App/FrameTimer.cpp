@@ -32,12 +32,10 @@ void FrameTimer::Reset()
 	Start();
 }
 
-double FrameTimer::GetMilliseconds()
+float FrameTimer::GetMilliseconds()
 {
-	auto elapsedTime = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - startPoint);
-
-	//auto elapsedTime = std::chrono::duration<float>(EndPoint - startPoint);
-	return elapsedTime.count();
+	auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - startPoint);
+	return elapsedTime.count();		//TODO: test with stopPoint
 }
 
 void FrameTimer::IncrementFPSCounter()

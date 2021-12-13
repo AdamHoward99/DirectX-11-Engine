@@ -21,4 +21,5 @@ public:
 
 private:
 	Camera camera;
+	FrameTimer tr;		//Application Lifetime
 };

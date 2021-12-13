@@ -12,7 +12,7 @@ public:
 	void Reset();
 	bool IsActive() const { return active; }
 
-	double GetMilliseconds();
+	float GetMilliseconds();
 
 	static void IncrementFPSCounter();
 	static void ResetFPSCounter();
