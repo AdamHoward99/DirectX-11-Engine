@@ -26,16 +26,16 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 
 	//Initialize Timer TODO: in future use Utility class
 	timer.Start();
+
 	return true;
 }
 
 void DXGraphics::RenderFrame(Camera* const camera)
 {
+	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
 	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	//Render objects here
 
 	//Set input layout, topology, shaders and vertex buffers
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
@@ -53,34 +53,11 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
-	//Updating Constant Buffers
-	VS_CB_DATA data;
+	///Notice: Update OBJ's here
+	renderObjects["Triangle"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
+	camera->LookAt(renderObjects["Triangle"]->GetWorldPosition());		///If matrix is not transposed before being passed, transpose in function
 
-	//TODO: Add Transformations to image here
-	DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
-	
-	data.pos = camera->GetCameraView() * camera->GetProjection();
-	data.pos = DirectX::XMMatrixTranspose(data.pos);	///Notice: DirectX uses XZ Plane instead of XY Plane
-	camera->LookAt(data.pos);		///If matrix is not transposed before being passed, transpose in function
-
-	D3D11_MAPPED_SUBRESOURCE mapRes;
-	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-
-	CopyMemory(mapRes.pData, &data, sizeof VS_CB_DATA);
-	pDeviceContext->Unmap(pConstantBuffer.Get(), NULL);
-	pDeviceContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
-
-	UINT stride = sizeof Vertex;
-	UINT offset = 0;
-	pDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
-
-	pDeviceContext->PSSetShaderResources(0, 1, textures["Default"].GetAddressOf());		//Sets the TEXTURE value in pixelShader.hlsl
-
-	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
-
-	pDeviceContext->DrawIndexed(3, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
+	renderObjects["Triangle"]->Update();
 
 	//Display FPS Timer
 	timer.IncrementFPSCounter();
@@ -259,47 +236,16 @@ bool DXGraphics::InitialiseShaders()
 
 bool DXGraphics::InitialiseScene(int w, int h)
 {
-	//Vertices should always be clockwise
-	Vertex v[] = 
-	{ 
-		//Triangle List Example Vertices 1-3
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT2(0.5f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		//Triangle Strip Example Vertices 4-7
-		Vertex(DirectX::XMFLOAT3(0.0f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.35f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-
-		//Individual Points Example 8-10
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.2f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-
-		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
-	};
-
-	DWORD indices[] =
-	{
-		0, 1, 2,
-	};
-
-	//Create Vertex Buffer
-	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * ARRAYSIZE(v), pVertexBuffer.GetAddressOf(), v);		//Vertex Buffer
-	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * ARRAYSIZE(indices), pIndexBuffer.GetAddressOf(), indices);		//Index Buffer
-	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
-
-	//Load in texture
+	///NOTICE: Instantiate OBJ's here
+	InitialiseOBJs();
 	LoadTextures();
-
-	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	//HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), L"Textures\\defaultTexture.png", nullptr, pDefaultTexture.GetAddressOf());
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayErrMessage(hr);
-
 	return true;
+}
+
+void DXGraphics::InitialiseOBJs()
+{
+	//Create OBJ's to be rendered in Scene here
+	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext));
 }
 
 void DXGraphics::DrawString()
@@ -312,47 +258,6 @@ void DXGraphics::DrawString()
 
 void DXGraphics::LoadTextures()
 {
-	textures.reserve(1);
-	LoadTexture("Default", L"Textures\\defaultTexture.png");
+	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
+	renderObjects["Triangle"]->LoadTexture(L"Textures\\defaultTexture.png");
 }
-
-void DXGraphics::LoadTexture(const std::string& textureName, const std::wstring& texturePath)
-{
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tex;
-	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), texturePath.c_str(), nullptr, tex.GetAddressOf());
-
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-
-	textures[textureName] = tex;
-}
-
-template<typename T>
-void DXGraphics::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
-{
-	//Create Buffer Desc
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
-
-	bufferDesc.BindFlags = bindFlag;
-	bufferDesc.ByteWidth = byteWidth;
-	bufferDesc.CPUAccessFlags = (bufferUsage == D3D11_USAGE_DEFAULT) ? 0 : D3D11_CPU_ACCESS_WRITE;		//Sets to 0 for Index, Vertex Buffers, Gives Write Access for Constant Buffer
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.Usage = bufferUsage;
-
-	HRESULT hr;
-
-	if (resourceData != nullptr)
-	{
-		D3D11_SUBRESOURCE_DATA bufferData;
-		ZeroMemory(&bufferData, sizeof D3D11_SUBRESOURCE_DATA);
-		bufferData.pSysMem = resourceData;
-		hr = pDevice->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
-	}
-	else
-		hr = pDevice->CreateBuffer(&bufferDesc, NULL, bufferPtr);
-
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-}
-

@@ -1,6 +1,7 @@
 ﻿  App.cpp
   DXGraphics.cpp
   Engine.cpp
+  Object.cpp
   RenderWindow.cpp
   WindowCont.cpp
   Generating Code...

@@ -8,6 +8,7 @@
 #include "ConstantBufferData.h"
 #include "Camera.h"
 #include "FrameTimer.h"
+#include "Object.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
 #include <WICTextureLoader.h>
@@ -24,31 +25,24 @@ private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();
 	bool InitialiseScene(int w, int h);
+	void InitialiseOBJs();
 
 	void DrawString();
-	
-	template<typename T>
-	void CreateBuffer(const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
-		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);		//Reusable function for creating index, vertex and constant buffers
-
 	void LoadTextures();
-	void LoadTexture(const std::string& textureName, const std::wstring& texturePath);
 
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
 
-	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textures;
+	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
+	std::unordered_map<std::string, std::unique_ptr<Object>> renderObjects;
 
 	VertexShader vShader;
 	PixelShader pShader;
