@@ -72,6 +72,23 @@ void Object::LoadTexture(const std::wstring& texturePath)
 
 void Object::CreateObjBuffers()
 {
+	CreateExampleTriangle();
+	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
+}
+
+void Object::SetWorldPosition(const DirectX::XMMATRIX & pos)
+{
+	objWorldMatrix = pos;
+	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
+}
+
+const DirectX::XMMATRIX& Object::GetWorldPosition() const
+{
+	return objWorldMatrix;
+}
+
+void Object::CreateExampleTriangle()
+{
 	//Create Vertices and Indices for Obj	TODO: In future get this from file
 	Vertex v[] =
 	{
@@ -100,7 +117,7 @@ void Object::CreateObjBuffers()
 		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
 		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-		
+
 		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
@@ -121,18 +138,6 @@ void Object::CreateObjBuffers()
 
 	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * ARRAYSIZE(v), pVertexBuffer.GetAddressOf(), v);		//Vertex Buffer
 	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * ARRAYSIZE(indices), pIndexBuffer.GetAddressOf(), indices);		//Index Buffer
-	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
-}
-
-void Object::SetWorldPosition(const DirectX::XMMATRIX & pos)
-{
-	objWorldMatrix = pos;
-	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
-}
-
-const DirectX::XMMATRIX& Object::GetWorldPosition() const
-{
-	return objWorldMatrix;
 }
 
 template<typename T>

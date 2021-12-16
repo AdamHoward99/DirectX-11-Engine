@@ -1,7 +1,8 @@
 ﻿  App.cpp
-  Camera.cpp
   DXGraphics.cpp
   Engine.cpp
+  Mesh.cpp
+  Object.cpp
   RenderWindow.cpp
   WindowCont.cpp
   Generating Code...

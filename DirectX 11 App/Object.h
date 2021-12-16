@@ -3,9 +3,9 @@
 #include <string>
 #include <wrl/client.h>
 #include <WICTextureLoader.h>
-#include "Vertex.h"
 #include "ConstantBufferData.h"
 #include "ErrorMessaging.h"
+#include "Mesh.h"
 
 class Object			//Model
 {
@@ -41,8 +41,9 @@ private:
 	DirectX::XMMATRIX objWorldMatrix;
 	VS_CB_DATA objData;
 
-	float rotation;
+	void CreateExampleTriangle();
 
+	std::vector<Mesh> objMeshes;
 	/*TODO: in future, GameObject class will inherit Object class adding:
 	position variables
 	rotation variables
