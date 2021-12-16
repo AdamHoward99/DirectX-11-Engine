@@ -55,7 +55,7 @@ void DXGraphics::RenderFrame(Camera* const camera)
 
 	///Notice: Update OBJ's here
 	renderObjects["Triangle"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
-	camera->LookAt(renderObjects["Triangle"]->GetWorldPosition());		///If matrix is not transposed before being passed, transpose in function
+	//camera->LookAt(renderObjects["Triangle"]->GetWorldPosition());		///If matrix is not transposed before being passed, transpose in function
 
 	renderObjects["Triangle"]->Update();
 

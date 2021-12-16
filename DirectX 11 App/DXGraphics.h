@@ -5,13 +5,11 @@
 #include "AdapterReader.h"
 #include "Shaders.h"
 #include "Vertex.h"
-#include "ConstantBufferData.h"
 #include "Camera.h"
 #include "FrameTimer.h"
 #include "Object.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
-#include <WICTextureLoader.h>
 #include <unordered_map>
 
 class DXGraphics

@@ -59,7 +59,7 @@ void Object::Render()
 	pObjDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
 
 	//Draw indices of OBJ
-	pObjDeviceContext->DrawIndexed(3, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
+	pObjDeviceContext->DrawIndexed(18, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 }
 
 void Object::LoadTexture(const std::wstring& texturePath)
@@ -76,20 +76,34 @@ void Object::CreateObjBuffers()
 	Vertex v[] =
 	{
 		//Triangle List Example Vertices 1-3
+		//Front Face
 		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT2(0.5f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
 		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 
-		//Triangle Strip Example Vertices 4-7
-		Vertex(DirectX::XMFLOAT3(0.0f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.35f, -0.4f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		//Right Side
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 
-		//Individual Points Example 8-10
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.2f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.1f, -0.2f, 0.0f), DirectX::XMFLOAT2(0.0f, 0.0f)),
+		//Back Side
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+
+		//Left Side
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+
+		//Under Side
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+		
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
+		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
 
 		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
 		///NOTICE: Vertices should always be clockwise
@@ -97,7 +111,12 @@ void Object::CreateObjBuffers()
 
 	DWORD indices[] =
 	{
-		0, 1, 2,
+		0,1,2,
+		3,4,5,
+		6,7,8,
+		9,10,11,
+		12, 13, 14,
+		15, 16, 17
 	};
 
 	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * ARRAYSIZE(v), pVertexBuffer.GetAddressOf(), v);		//Vertex Buffer
@@ -111,7 +130,7 @@ void Object::SetWorldPosition(const DirectX::XMMATRIX & pos)
 	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
 }
 
-const DirectX::XMMATRIX & Object::GetWorldPosition() const
+const DirectX::XMMATRIX& Object::GetWorldPosition() const
 {
 	return objWorldMatrix;
 }

@@ -41,6 +41,8 @@ private:
 	DirectX::XMMATRIX objWorldMatrix;
 	VS_CB_DATA objData;
 
+	float rotation;
+
 	/*TODO: in future, GameObject class will inherit Object class adding:
 	position variables
 	rotation variables
