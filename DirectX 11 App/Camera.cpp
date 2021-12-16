@@ -95,6 +95,16 @@ void Camera::MoveRotationVec(const DirectX::XMVECTOR& newRot)
 }
 //End of XMVECTOR Functions--------------------------------------------------------------//
 
+void Camera::SetMouseMovement(bool foo)
+{
+	mouseMovementEnabled = foo;
+}
+
+bool Camera::GetMouseMovement() const
+{
+	return mouseMovementEnabled;
+}
+
 void Camera::UpdateView()
 {
 	//Calculate camera rotation matrix

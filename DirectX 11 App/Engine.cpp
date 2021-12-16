@@ -38,9 +38,17 @@ void Engine::Update()
 	while (!mouse.IsEventBufferEmpty())
 	{
 		MouseEvent mouseEv = mouse.GetEvent();
+		if (mouseEv.GetEventType() == EventType::RawMove && camera.GetMouseMovement())
+			camera.MoveRotation(DirectX::XMFLOAT3A(mouseEv.GetYPos() * 0.001f, mouseEv.GetXPos() * 0.001f, 0.f));
 	}
 
 	//Mouse Camera Controls
+	if (keyboard.IsKeyPressed(CAMERA_MOUSE_ENABLE))
+		camera.SetMouseMovement(true);
+
+	if (keyboard.IsKeyPressed(CAMERA_MOUSE_DISABLE))
+		camera.SetMouseMovement(false);
+
 	if (keyboard.IsKeyPressed(CAMERA_FORWARD))
 		camera.MoveCameraForwardD(dt);
 

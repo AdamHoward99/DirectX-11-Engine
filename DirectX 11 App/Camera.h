@@ -59,6 +59,9 @@ public:
 	void SetRotationVec(const DirectX::XMVECTOR& rot);
 	void MoveRotationVec(const DirectX::XMVECTOR& rot);
 
+	void SetMouseMovement(bool foo);
+	bool GetMouseMovement() const;
+
 private:
 	void UpdateView();		///Function uses XMFLOAT by default
 
@@ -89,6 +92,8 @@ private:
 	float aspectRatio;
 	float nearZ;
 	float farZ;
+
+	bool mouseMovementEnabled = false;
 
 	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
 	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
