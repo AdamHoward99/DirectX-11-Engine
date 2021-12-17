@@ -1,10 +1,10 @@
 #include "Object.h"
 
-Object::Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext)
+Object::Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath = "")
 {
 	pObjDevice = pDevice;
 	pObjDeviceContext = pDeviceContext;
-	Initialize();
+	Initialize(filepath);
 }
 
 Object::~Object()
@@ -22,58 +22,88 @@ void Object::operator delete(void * p)
 	_mm_free(p);
 }
 
-void Object::Initialize()
+void Object::Initialize(const std::string& filepath)
 {
-	CreateObjBuffers();
-
+	if (filepath != "")		//Draw default triangle for now
+		CreateObjGeometry(filepath);
+	else
+		objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));		//Creates triangle when no OBJ has been chosen
 }
 
 void Object::Update()
 {
 	//Update Position of OBJ Here
-	objData.pos = objWorldMatrix;
+	objMeshes[0].UpdatePosition(objWorldMatrix);
 	Render();
 }
 
 void Object::Render()
 {
-	//Set Vertex of Obj
-	UINT stride = sizeof Vertex;
-	UINT offset = 0;
-	pObjDeviceContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
-
-	//Set Constant Buffer
-	D3D11_MAPPED_SUBRESOURCE mapRes;
-	HRESULT hr = pObjDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
-
-	CopyMemory(mapRes.pData, &objData, sizeof VS_CB_DATA);
-	pObjDeviceContext->Unmap(pConstantBuffer.Get(), NULL);
-	pObjDeviceContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
-
-	//Set Texture value in pixelShader.hlsl
-	pObjDeviceContext->PSSetShaderResources(0, 1, pObjTexture.GetAddressOf());
-
-	//Set Index Buffer of OBJ
-	pObjDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
-
-	//Draw indices of OBJ
-	pObjDeviceContext->DrawIndexed(18, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
+	//Draw Meshes for this Obj
+	for (Mesh& m : objMeshes)
+		m.Draw();
 }
 
-void Object::LoadTexture(const std::wstring& texturePath)
+void Object::CreateObjGeometry(const std::string& filepath)
 {
-	HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), texturePath.c_str(), nullptr, pObjTexture.GetAddressOf());
+	//Create OBJ Importer
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+	//TODO: MAKE INTO UNIQUE_PTR OR SMART POINTER
+	if (pScene == nullptr)
+		exit(-1);		//TODO: CHANGE TO BOOL FUNCTION RETURNS FALSE TO CREATE OBJ BUFFERS OR INITIALIZE
 
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+	//Process Nodes
+	ProcessNodes(pScene, pScene->mRootNode);
 }
 
-void Object::CreateObjBuffers()
+void Object::ProcessNodes(const aiScene* pScene, const aiNode* node)
 {
-	CreateExampleTriangle();
-	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
+	for (UINT i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = pScene->mMeshes[node->mMeshes[i]];
+		objMeshes.push_back(ProcessMeshes(pScene, mesh));
+	}
+
+	for (UINT i = 0; i < node->mNumChildren; i++)
+	{
+		ProcessNodes(pScene, node->mChildren[i]);
+	}
+}
+
+Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
+{
+	std::vector<Vertex> verts;
+	std::vector<DWORD> inds;
+
+	//Get vertices
+	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	{
+		Vertex v;
+		v.vertexPosition.x = mesh->mVertices[i].x;
+		v.vertexPosition.y = mesh->mVertices[i].y;
+		v.vertexPosition.z = mesh->mVertices[i].z;
+		//TODO: COULD DO OVERLOAD OPERATOR FOR +
+
+		if (mesh->mTextureCoords[0])		//Check if this mesh has a texture, main texture is always 1st texture
+		{
+			v.textureCoordinates.x = (float)mesh->mTextureCoords[0][i].x;
+			v.textureCoordinates.y = (float)mesh->mTextureCoords[0][i].y;
+		}
+
+		verts.push_back(v);
+	}
+
+	//Get the index Data
+	for (UINT i = 0; i < mesh->mNumFaces; i++)		//Faces should be triangle based on triangulate value
+	{
+		aiFace face = mesh->mFaces[i];
+
+		for (UINT j = 0; j < face.mNumIndices; j++)
+			inds.push_back(face.mIndices[i]);
+	}
+
+	return Mesh(pObjDevice, pObjDeviceContext, verts, inds);
 }
 
 void Object::SetWorldPosition(const DirectX::XMMATRIX & pos)
@@ -87,84 +117,8 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 	return objWorldMatrix;
 }
 
-void Object::CreateExampleTriangle()
+void Object::LoadMeshTexture(const std::wstring filename)
 {
-	//Create Vertices and Indices for Obj	TODO: In future get this from file
-	Vertex v[] =
-	{
-		//Triangle List Example Vertices 1-3
-		//Front Face
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		//Right Side
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		//Back Side
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		//Left Side
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.0f, 0.5f, 0.25f), DirectX::XMFLOAT2(0.5f, 0.0f)),
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		//Under Side
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(0.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-		Vertex(DirectX::XMFLOAT3(-0.25f, 0.0f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f)),
-
-		///NOTICE: Vertices with 0.1 Y-value don't show using current graphics card (NVIDIA GeForce GTX 1050)
-		///NOTICE: Vertices should always be clockwise
-	};
-
-	DWORD indices[] =
-	{
-		0,1,2,
-		3,4,5,
-		6,7,8,
-		9,10,11,
-		12, 13, 14,
-		15, 16, 17
-	};
-
-	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * ARRAYSIZE(v), pVertexBuffer.GetAddressOf(), v);		//Vertex Buffer
-	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * ARRAYSIZE(indices), pIndexBuffer.GetAddressOf(), indices);		//Index Buffer
-}
-
-template<typename T>
-void Object::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
-{
-	//Create Buffer Desc
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
-
-	bufferDesc.BindFlags = bindFlag;
-	bufferDesc.ByteWidth = byteWidth;
-	bufferDesc.CPUAccessFlags = (bufferUsage == D3D11_USAGE_DEFAULT) ? 0 : D3D11_CPU_ACCESS_WRITE;		//Sets to 0 for Index, Vertex Buffers, Gives Write Access for Constant Buffer
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.Usage = bufferUsage;
-
-	HRESULT hr;
-
-	if (resourceData != nullptr)
-	{
-		D3D11_SUBRESOURCE_DATA bufferData;
-		ZeroMemory(&bufferData, sizeof D3D11_SUBRESOURCE_DATA);
-		bufferData.pSysMem = resourceData;
-		hr = pObjDevice->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
-	}
-	else
-		hr = pObjDevice->CreateBuffer(&bufferDesc, NULL, bufferPtr);
-	
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+	for (auto& m : objMeshes)
+		m.LoadTexture(filename);
 }

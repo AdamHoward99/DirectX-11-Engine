@@ -37,7 +37,7 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
 	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	//Set input layout, topology, shaders and vertex buffers
+	//Set input layout, topology and shaders
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
@@ -245,7 +245,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	//Create OBJ's to be rendered in Scene here
-	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext));
+	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, ""));
 }
 
 void DXGraphics::DrawString()
@@ -259,5 +259,5 @@ void DXGraphics::DrawString()
 void DXGraphics::LoadTextures()
 {
 	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	renderObjects["Triangle"]->LoadTexture(L"Textures\\defaultTexture.png");
+	renderObjects["Triangle"]->LoadMeshTexture(L"Textures\\defaultTexture.png");
 }
