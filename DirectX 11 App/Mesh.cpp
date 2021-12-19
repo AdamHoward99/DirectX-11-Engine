@@ -54,14 +54,14 @@ void Mesh::Draw()
 
 void Mesh::CreateBuffers()
 {
-	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * vertices.size(), pVertexBuffer.GetAddressOf(), vertices);		//Vertex Buffer
-	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * indices.size(), pIndexBuffer.GetAddressOf(), indices);				//Index Buffer
-	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), std::vector<int>(), D3D11_USAGE_DYNAMIC);	//Constant Buffer
+	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * vertices.size(), pVertexBuffer.GetAddressOf(), vertices.data());		//Vertex Buffer
+	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * indices.size(), pIndexBuffer.GetAddressOf(), indices.data());				//Index Buffer
+	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
 }
 
 void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix)
 {
-	meshData.pos = DirectX::XMMatrixIdentity();
+	meshData.pos = worldMatrix;
 }
 
 void Mesh::CreateTriangleGeometry()
@@ -126,7 +126,7 @@ void Mesh::LoadTexture(const std::wstring & texturePath)
 }
 
 template<typename T>
-void Mesh::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const std::vector<T>& resourceData, const D3D11_USAGE bufferUsage)
+void Mesh::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
 {
 	//Create Buffer Desc
 	D3D11_BUFFER_DESC bufferDesc;
@@ -140,11 +140,11 @@ void Mesh::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer**
 
 	HRESULT hr;
 
-	if (resourceData.size() <= 0)
+	if (resourceData != nullptr)
 	{
 		D3D11_SUBRESOURCE_DATA bufferData;
 		ZeroMemory(&bufferData, sizeof D3D11_SUBRESOURCE_DATA);
-		bufferData.pSysMem = &resourceData;
+		bufferData.pSysMem = resourceData;
 		hr = pDevice->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
 	}
 	else

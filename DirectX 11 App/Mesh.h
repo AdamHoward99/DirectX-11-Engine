@@ -25,7 +25,7 @@ public:
 	void CreateBuffers();		//Reusable function for creating index, vertex and constant buffers
 
 	template<typename T>
-	void CreateBuffer(const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const std::vector<T>& resourceData,
+	void CreateBuffer(const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);		//Reusable function for creating index, vertex and constant buffers
 
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix);
