@@ -236,7 +236,6 @@ bool DXGraphics::InitialiseShaders()
 
 bool DXGraphics::InitialiseScene(int w, int h)
 {
-	///NOTICE: Instantiate OBJ's here
 	InitialiseOBJs();
 	LoadTextures();
 	return true;
@@ -244,14 +243,14 @@ bool DXGraphics::InitialiseScene(int w, int h)
 
 void DXGraphics::InitialiseOBJs()
 {
-	//Create OBJ's to be rendered in Scene here
+	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
 	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "square.obj"));
 }
 
 void DXGraphics::DrawString()
 {
-	spBatch->Begin();
 	///Notice: Draw all strings to be outputted here
+	spBatch->Begin();
 	font->DrawString(spBatch, timer.GetFPSString().c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
 }
