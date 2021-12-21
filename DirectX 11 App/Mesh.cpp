@@ -1,18 +1,16 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon,
+Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon,
 	const std::vector<Vertex>& v, const std::vector<DWORD>& i)
 {
-	pDevice = device;
-	pDeviceContext = pDeviceCon;
-	CreateBuffers(v, i);		//Creates Vertex Buffer, Index Buffer, and Constant Buffer
+	pDeviceContext = deviceCon;
+	CreateBuffers(device, v, i);		//Creates Vertex Buffer, Index Buffer, and Constant Buffer
 }
 
-Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon)
+Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
-	pDevice = device;
-	pDeviceContext = pDeviceCon;
-	CreateTriangleGeometry();
+	pDeviceContext = deviceContext;
+	CreateTriangleGeometry(device);
 }
 
 void Mesh::Draw()
@@ -39,11 +37,11 @@ void Mesh::Draw()
 	pDeviceContext->DrawIndexed(indicesCount, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 }
 
-void Mesh::CreateBuffers(const std::vector<Vertex>& v, const std::vector<DWORD>& i)
+void Mesh::CreateBuffers(Microsoft::WRL::ComPtr<ID3D11Device>& device, const std::vector<Vertex>& v, const std::vector<DWORD>& i)
 {
-	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * v.size(), pVertexBuffer.GetAddressOf(), v.data());		//Vertex Buffer
-	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * i.size(), pIndexBuffer.GetAddressOf(), i.data());				//Index Buffer
-	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
+	CreateBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * v.size(), pVertexBuffer.GetAddressOf(), v.data());		//Vertex Buffer
+	CreateBuffer(device, D3D11_BIND_INDEX_BUFFER, sizeof DWORD * i.size(), pIndexBuffer.GetAddressOf(), i.data());				//Index Buffer
+	CreateBuffer(device, D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
 	indicesCount = i.size();
 }
 
@@ -52,7 +50,7 @@ void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix)
 	meshData.pos = worldMatrix;
 }
 
-void Mesh::CreateTriangleGeometry()
+void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)
 {
 	//Create Vertices and Indices for Created Triangle Example
 	std::vector<Vertex> v =
@@ -101,11 +99,11 @@ void Mesh::CreateTriangleGeometry()
 		15, 16, 17
 	};
 
-	CreateBuffers(v, ind);
+	CreateBuffers(device, v, ind);
 }
 
 template<typename T>
-void Mesh::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
+void Mesh::CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Device>& device, const int bindFlag, const UINT byteWidth, ID3D11Buffer** bufferPtr, const T& resourceData, const D3D11_USAGE bufferUsage)
 {
 	//Create Buffer Desc
 	D3D11_BUFFER_DESC bufferDesc;
@@ -124,10 +122,10 @@ void Mesh::CreateBuffer(const int bindFlag, const UINT byteWidth, ID3D11Buffer**
 		D3D11_SUBRESOURCE_DATA bufferData;
 		ZeroMemory(&bufferData, sizeof D3D11_SUBRESOURCE_DATA);
 		bufferData.pSysMem = resourceData;
-		hr = pDevice->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
+		hr = device->CreateBuffer(&bufferDesc, &bufferData, bufferPtr);
 	}
 	else
-		hr = pDevice->CreateBuffer(&bufferDesc, NULL, bufferPtr);
+		hr = device->CreateBuffer(&bufferDesc, NULL, bufferPtr);
 
 	if (FAILED(hr))
 		ErrorMes::DisplayErrMessage(hr);

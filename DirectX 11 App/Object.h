@@ -1,7 +1,10 @@
 #pragma once
 #include <d3d11.h>
 #include <string>
-#include <wrl/client.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <WICTextureLoader.h>
 #include "Mesh.h"
 
 class Object			//Model
