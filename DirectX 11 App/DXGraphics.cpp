@@ -245,7 +245,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	//Create OBJ's to be rendered in Scene here
-	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, ""));
+	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "square.obj"));
 }
 
 void DXGraphics::DrawString()

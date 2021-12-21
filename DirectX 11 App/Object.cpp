@@ -100,7 +100,7 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
-			inds.push_back(face.mIndices[i]);
+			inds.push_back(face.mIndices[j]);
 	}
 
 	return Mesh(pObjDevice, pObjDeviceContext, verts, inds);
