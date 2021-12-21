@@ -1,11 +1,9 @@
-﻿  DXGraphics.cpp
-Vertex.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Shaders.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-MouseEvent.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Mouse.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-KeyboardEvent.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Keyboard.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-FrameTimer.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Camera.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-AdapterReader.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
+﻿  App.cpp
+  DXGraphics.cpp
+  Engine.cpp
+  Mesh.cpp
+  Object.cpp
+  RenderWindow.cpp
+  WindowCont.cpp
+  Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\Debug\DirectX 11 App.exe

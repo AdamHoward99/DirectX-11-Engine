@@ -1,13 +1,11 @@
 #include "Mesh.h"
 
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon,
-	std::vector<Vertex>& v, std::vector<DWORD> i)
+	const std::vector<Vertex>& v, const std::vector<DWORD>& i)
 {
 	pDevice = device;
 	pDeviceContext = pDeviceCon;
-	vertices = v;
-	indices = i;
-	CreateBuffers();		//Creates Vertex Buffer, Index Buffer, and Constant Buffer
+	CreateBuffers(v, i);		//Creates Vertex Buffer, Index Buffer, and Constant Buffer
 }
 
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon)
@@ -15,15 +13,7 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<I
 	pDevice = device;
 	pDeviceContext = pDeviceCon;
 	CreateTriangleGeometry();
-	CreateBuffers();		//Creates Vertex Buffer, Index Buffer, and Constant Buffer
 }
-
-//Mesh::Mesh(const Mesh& m)
-//{
-//	pDeviceContext = m.pDeviceContext;
-//	pIndexBuffer = m.pIndexBuffer;
-//	pVertexBuffer = m.pVertexBuffer;
-//}
 
 void Mesh::Draw()
 {
@@ -49,14 +39,15 @@ void Mesh::Draw()
 	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
 
 	//Draw indices of OBJ
-	pDeviceContext->DrawIndexed(indices.size(), 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
+	pDeviceContext->DrawIndexed(indicesCount, 0, 0);		//Indices to draw | Starting position of indices | Starting position of vertex
 }
 
-void Mesh::CreateBuffers()
+void Mesh::CreateBuffers(const std::vector<Vertex>& v, const std::vector<DWORD>& i)
 {
-	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * vertices.size(), pVertexBuffer.GetAddressOf(), vertices.data());		//Vertex Buffer
-	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * indices.size(), pIndexBuffer.GetAddressOf(), indices.data());				//Index Buffer
+	CreateBuffer(D3D11_BIND_VERTEX_BUFFER, sizeof Vertex * v.size(), pVertexBuffer.GetAddressOf(), v.data());		//Vertex Buffer
+	CreateBuffer(D3D11_BIND_INDEX_BUFFER, sizeof DWORD * i.size(), pIndexBuffer.GetAddressOf(), i.data());				//Index Buffer
 	CreateBuffer(D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	//Constant Buffer
+	indicesCount = i.size();
 }
 
 void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix)
@@ -113,8 +104,7 @@ void Mesh::CreateTriangleGeometry()
 		15, 16, 17
 	};
 
-	vertices = v;
-	indices = ind;
+	CreateBuffers(v, ind);
 }
 
 void Mesh::LoadTexture(const std::wstring & texturePath)

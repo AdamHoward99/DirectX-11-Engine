@@ -14,7 +14,7 @@ class Mesh
 {
 public:
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon, 
-		std::vector<Vertex>& vertices, std::vector<DWORD> indices);
+		const std::vector<Vertex>& vertices, const std::vector<DWORD>& indices);
 
 	//Constructor to create Default geometry
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceCon);
@@ -22,7 +22,7 @@ public:
 	//Mesh(const Mesh& m);
 	void Draw();
 
-	void CreateBuffers();		//Reusable function for creating index, vertex and constant buffers
+	void CreateBuffers(const std::vector<Vertex>& vertices, const std::vector<DWORD>& indices);		//Reusable function for creating index, vertex and constant buffers
 
 	template<typename T>
 	void CreateBuffer(const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
@@ -41,7 +41,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
 
-	std::vector<Vertex> vertices;
-	std::vector<DWORD> indices;
+	UINT indicesCount = 0;
 	VS_CB_DATA meshData;
 };
