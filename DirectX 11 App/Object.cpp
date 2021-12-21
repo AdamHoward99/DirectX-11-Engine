@@ -39,6 +39,9 @@ void Object::Update()
 
 void Object::Render()
 {
+	//Set Texture in PixelShader.hlsl
+	pObjDeviceContext->PSSetShaderResources(0, 1, pTexture.GetAddressOf());
+
 	//Draw Meshes for this Obj
 	for (Mesh& m : objMeshes)
 		m.Draw();
@@ -119,6 +122,8 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 
 void Object::LoadMeshTexture(const std::wstring filename)
 {
-	for (auto& m : objMeshes)
-		m.LoadTexture(filename);
+	HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());
+
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);
 }

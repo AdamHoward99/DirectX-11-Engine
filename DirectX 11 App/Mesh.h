@@ -29,7 +29,6 @@ public:
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);		//Reusable function for creating index, vertex and constant buffers
 
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix);
-	void LoadTexture(const std::wstring& texturePath);
 
 private:
 	void CreateTriangleGeometry();
@@ -39,7 +38,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
 
 	UINT indicesCount = 0;
 	VS_CB_DATA meshData;

@@ -29,6 +29,8 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
+
 
 	DirectX::XMMATRIX objWorldMatrix;
 	std::vector<Mesh> objMeshes;		//COULD ONLY HAVE A SINGLE MESH VARIABLE INSTEAD OF VECTOR, CURRENT MODELS ONLY SEEM TO HAVE SINGLE MESH

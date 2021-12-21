@@ -32,9 +32,6 @@ void Mesh::Draw()
 	pDeviceContext->Unmap(pConstantBuffer.Get(), NULL);
 	pDeviceContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
 
-	//Set Texture in PixelShader.hlsl
-	pDeviceContext->PSSetShaderResources(0, 1, pTexture.GetAddressOf());
-	
 	//Set Index Buffer of OBJ
 	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
 
@@ -105,14 +102,6 @@ void Mesh::CreateTriangleGeometry()
 	};
 
 	CreateBuffers(v, ind);
-}
-
-void Mesh::LoadTexture(const std::wstring & texturePath)
-{
-	HRESULT hr = DirectX::CreateWICTextureFromFile(pDevice.Get(), texturePath.c_str(), nullptr, pTexture.GetAddressOf());
-
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
 }
 
 template<typename T>
