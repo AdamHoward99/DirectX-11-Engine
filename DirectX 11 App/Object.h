@@ -34,7 +34,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
 
 	DirectX::XMMATRIX objWorldMatrix;	///Matrix is passed to Meshes to set world position
 	std::vector<Mesh> objMeshes;

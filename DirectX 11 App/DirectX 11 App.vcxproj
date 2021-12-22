@@ -158,6 +158,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WindowCont.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WindowCont.h" />
   </ItemGroup>

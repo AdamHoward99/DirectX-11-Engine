@@ -5,13 +5,16 @@
 #include "Vertex.h"
 #include "ErrorMessaging.h"
 #include "ConstantBufferData.h"
+#include "Texture.h"
 
 class Mesh
 {
 public:
 	///Constructor used for imported OBJ data from a 3D model file
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon, 
-		const std::vector<Vertex>& vertices, const std::vector<DWORD>& indices);
+		const std::vector<Vertex>& vertices, const std::vector<DWORD>& indices, const std::vector<Texture>& textures);
+
+	//TODO: Need a copy constructor?
 
 	///Constructor used for default triangle rendered ONLY when no filename was given
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon);
@@ -38,4 +41,6 @@ private:
 	///Stores amount of indices used by Mesh for DrawIndexed function, requires less than storing vector of indices
 	UINT indicesCount = 0;
 	VS_CB_DATA meshData;
+
+	std::vector<Texture> meshTextures;
 };

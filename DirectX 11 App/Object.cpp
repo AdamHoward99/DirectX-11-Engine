@@ -47,7 +47,7 @@ void Object::Update()
 void Object::Render()
 {
 	///Sets Texture of Object in PixelShader.hlsl
-	pObjDeviceContext->PSSetShaderResources(0, 1, pTexture.GetAddressOf());
+	//pObjDeviceContext->PSSetShaderResources(0, 1, pTexture.GetAddressOf());
 	///PSSetShaderResources(IN, IN, OPTIONAL)
 	///UINT StartSlot			 - Index of array to begin setting resources
 	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
@@ -129,8 +129,12 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 			inds.push_back(face.mIndices[j]);
 	}
 
+	//Way of testing textures outputting TODO: Remove after testing
+	std::vector<Texture> textures;
+	textures.push_back(Texture(pObjDevice, aiColor4D(100.f, 100.f, 100.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
+
 	///Calls the OBJ Constructor of Mesh which creates Index and Vertex buffers based on the imported Vertices and Indices values.
-	return Mesh(pObjDevice, pObjDeviceContext, verts, inds);
+	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, textures);
 }
 
 void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
@@ -149,7 +153,7 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 
 void Object::LoadMeshTexture(const std::wstring& filename)
 {
-	HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());
+	//HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());
 	///CreateWICTextureFromFile(IN, IN, IN, IN, OPTIONAL)
 	///ID3D11Device* d3dDevice				  - Pointer to the device using this resource
 	///const wchar_t* fileName				  - C string pointer to texture file path
@@ -157,6 +161,6 @@ void Object::LoadMeshTexture(const std::wstring& filename)
 	///ID3D11ShaderResourceView** textureView - Pointer to the pointer of the texture SRV
 	///size_t maxsize						  - Maximum size of the texture file
 
-	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayErrMessage(hr);
 }

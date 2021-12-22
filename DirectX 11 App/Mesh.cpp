@@ -1,9 +1,10 @@
 #include "Mesh.h"
 
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon,
-	const std::vector<Vertex>& v, const std::vector<DWORD>& i)
+	const std::vector<Vertex>& v, const std::vector<DWORD>& i, const std::vector<Texture>& textures)
 {
 	pDeviceContext = deviceCon;
+	meshTextures = textures;
 	CreateBuffers(device, v, i);
 }
 
@@ -26,6 +27,10 @@ void Mesh::Draw()
 	///const UINT* pStrides			  - Pointer to an array of stride values which are the byte size of elements used by the buffer
 	///const UINT* pOffsets			  - Pointer to an array of offset values which are the offset between elements in buffer
 	
+	///Draw Texture
+	for (Texture& t : meshTextures)
+		pDeviceContext->PSSetShaderResources(0, 1, t.GetTextureRV().GetAddressOf());
+
 	///Set Constant Buffer
 	D3D11_MAPPED_SUBRESOURCE mapRes;
 	HRESULT hr = pDeviceContext->Map(pConstantBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapRes);
