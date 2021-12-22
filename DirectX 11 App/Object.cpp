@@ -129,12 +129,15 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 			inds.push_back(face.mIndices[j]);
 	}
 
-	//Way of testing textures outputting TODO: Remove after testing
-	std::vector<Texture> textures;
-	textures.push_back(Texture(pObjDevice, aiColor4D(100.f, 100.f, 100.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
+	///Find the material that this mesh is using
+	const aiMaterial* mat = pScene->mMaterials[mesh->mMaterialIndex];
+
+	///Get Diffuse Textures
+	std::vector<Texture> diffuseTexs;
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DIFFUSE, diffuseTexs);
 
 	///Calls the OBJ Constructor of Mesh which creates Index and Vertex buffers based on the imported Vertices and Indices values.
-	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, textures);
+	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, diffuseTexs);
 }
 
 void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
@@ -151,8 +154,35 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 	return objWorldMatrix;
 }
 
-void Object::LoadMeshTexture(const std::wstring& filename)
+const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)
 {
+	///Vector to store all Material textures
+	std::vector<Texture> matTextures;
+	///Obtain total amount of textures on Material
+	unsigned int textureCount = pMat->GetTextureCount(texType);
+
+	///GetTextureCount() returns 0 when no textures are attached to Material
+	if (textureCount == 0)
+	{
+		aiColor4D aiColour(0.f, 0.f, 0.f, 0.f);
+		///Determine the texture type
+		switch (texType)
+		{
+		case aiTextureType_DIFFUSE:
+			pMat->Get(AI_MATKEY_COLOR_DIFFUSE, aiColour);		//Attempt to get the existing colour of the diffuse texture
+			if (aiColour.IsBlack())		//Empty?
+			{
+				textures.push_back(Texture(pObjDevice, aiColor4D(0.f, 0.f, 100.f, 255.f), texType));
+				return;
+			}
+			textures.push_back(Texture(pObjDevice, aiColor4D(aiColour.r * 255, aiColour.g * 255, aiColour.b * 255, aiColour.a * 255), texType));
+			return;
+			break;
+		}
+	}
+	else		//Texture type is not empty or unhandled?
+		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
+
 	//HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());
 	///CreateWICTextureFromFile(IN, IN, IN, IN, OPTIONAL)
 	///ID3D11Device* d3dDevice				  - Pointer to the device using this resource

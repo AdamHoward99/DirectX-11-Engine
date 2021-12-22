@@ -29,7 +29,7 @@ public:
 	void SetWorldPosition(const DirectX::XMMATRIX& pos);
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 
-	void LoadMeshTexture(const std::wstring& filename);		//TODO: Combine this with Mesh class for better UV'ing
+	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;

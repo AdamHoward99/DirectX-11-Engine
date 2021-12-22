@@ -258,5 +258,5 @@ void DXGraphics::DrawString()
 void DXGraphics::LoadTextures()
 {
 	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	renderObjects["Triangle"]->LoadMeshTexture(L"Textures\\defaultTexture.png");
+	//renderObjects["Triangle"]->LoadMaterialTexture(L"Textures\\defaultTexture.png");
 }
