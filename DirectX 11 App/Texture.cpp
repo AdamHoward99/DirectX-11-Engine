@@ -13,41 +13,30 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D* c
 
 Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string& filepath, aiTextureType texType)
 {
-	//Is texture dds or other? generate dds uses different function
-
-	//TODO: put both of these into utility class?
-	//Get Image file extension
-	std::string extension = filepath.substr(filepath.find_last_of('.') + 1);
-	std::string directory;
-
-	//Get directory of the Image file
-	size_t directoryOffset = filepath.find_last_of('/');
-
-	///If no slash is present	textures are in the same folder?
-	if (directoryOffset == std::wstring::npos)
-		directory = "";
-
-	else
-		directory = filepath.substr(0, directoryOffset - 1);
-
-	//Setup the Image file
 	textureType = texType;
+	
+	///Get Image File Extension		TODO: Put into a utility class with wstring converter
+	std::string extension = filepath.substr(filepath.find_last_of('.') + 1);
 
+	//TODO: Create check for Image files not contained in the same directory as OBJ file
+
+	HRESULT hr;
+
+	///Create Texture file using different functions dependant on if file is .dds or other
 	if (extension == ".dds")
 	{
-		HRESULT hr = DirectX::CreateDDSTextureFromFile(device.Get(), std::to_wstring(filepath.length()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+		hr = DirectX::CreateDDSTextureFromFile(device.Get(), std::to_wstring(filepath.length()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
 		if (FAILED(hr))
-			ErrorMes::DisplayErrMessage(hr);		//Create texture with a default colour instead
+			InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);
 
 		return;
 	}
 
-	std::wstring str(filepath.begin(), filepath.end());
+	///Texture file is not .dds
+	hr = DirectX::CreateWICTextureFromFile(device.Get(), std::wstring(filepath.begin(), filepath.end()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
 
-	HRESULT hr = DirectX::CreateWICTextureFromFile(device.Get(), str.c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);			//Create texture with a default colour instead TODO
-
+		InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);		//TODO: create a default aiColor4D variable to signify error
 }
 
 const aiTextureType Texture::GetTextureType() const

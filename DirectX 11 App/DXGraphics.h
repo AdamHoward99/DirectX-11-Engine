@@ -26,7 +26,6 @@ private:
 	void InitialiseOBJs();
 
 	void DrawString();
-	void LoadTextures();
 
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;

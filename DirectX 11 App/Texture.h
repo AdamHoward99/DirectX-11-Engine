@@ -15,7 +15,6 @@ public:
 	///Constructor to use Image files for textures
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string& filepath, aiTextureType texType);
 
-
 	const aiTextureType GetTextureType() const;
 	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureRV() const;
 

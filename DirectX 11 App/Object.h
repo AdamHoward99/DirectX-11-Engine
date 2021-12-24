@@ -4,7 +4,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <WICTextureLoader.h>
 #include "Mesh.h"
 
 class Object			//Model
@@ -34,12 +33,11 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTexture;
 
 	DirectX::XMMATRIX objWorldMatrix;	///Matrix is passed to Meshes to set world position
 	std::vector<Mesh> objMeshes;
 
-	std::string directory;
+	std::string objectFileDirectory;
 
 	/*TODO: in future, GameObject class will inherit Object class adding:
 	position variables

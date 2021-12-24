@@ -60,7 +60,9 @@ void Object::Render()
 
 void Object::CreateObjGeometry(const std::string& filepath)
 {
-	directory = filepath.substr(0, filepath.find_last_of('/') + 1);
+	///Store file directory to obtain linked textures of OBJ
+	objectFileDirectory = filepath.substr(0, filepath.find_last_of('/') + 1);
+
 	///Create OBJ Importer to obtain Model file
 	Assimp::Importer importer;
 	const aiScene* pScene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
@@ -157,8 +159,6 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 
 const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)
 {
-	///Vector to store all Material textures
-	std::vector<Texture> matTextures;
 	///Obtain total amount of textures on Material
 	unsigned int textureCount = pMat->GetTextureCount(texType);
 
@@ -171,7 +171,7 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 		{
 		case aiTextureType_DIFFUSE:
 			pMat->Get(AI_MATKEY_COLOR_DIFFUSE, aiColour);		//Attempt to get the existing colour of the diffuse texture
-			if (aiColour.IsBlack())		//Empty?
+			if (aiColour.IsBlack())			///Texture is empty
 			{
 				textures.push_back(Texture(pObjDevice, aiColor4D(0.f, 0.f, 100.f, 255.f), texType));
 				return;
@@ -180,26 +180,25 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 			return;
 			break;
 		}
-	}
-	else
-	{
-		for (UINT i = 0; i < textureCount; i++)		///For every texture linked to the model
+	} 
+	else		///Object contains pre-existing attached Textures
+	{	
+		///For every texture linked to the model
+		for (UINT i = 0; i < textureCount; i++)		
 		{
 			aiString path;
 			pMat->GetTexture(texType, i, &path);
 
-			//Determine what storage type the Image file is
-			std::string str = directory + path.C_Str();
+			///Create directory for the Image file
+			std::string str = objectFileDirectory + path.C_Str();
 
 			Texture tex(this->pObjDevice, str, texType);
 			textures.push_back(tex);
-
 		}
 	}
 
-
-
-	if(textures.size() == 0)			//Texture type is not empty or unhandled?
+	///Give default texture in event of unhandled events
+	if(textures.size() == 0)
 		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
 
 	//HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());

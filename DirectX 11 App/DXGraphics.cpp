@@ -237,7 +237,6 @@ bool DXGraphics::InitialiseShaders()
 bool DXGraphics::InitialiseScene(int w, int h)
 {
 	InitialiseOBJs();
-	LoadTextures();
 	return true;
 }
 
@@ -253,10 +252,4 @@ void DXGraphics::DrawString()
 	spBatch->Begin();
 	font->DrawString(spBatch, timer.GetFPSString().c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
-}
-
-void DXGraphics::LoadTextures()
-{
-	///Notice - If texture is empty, call CoInitialize(NULL) before this, typically in app main entry point
-	//renderObjects["Triangle"]->LoadMaterialTexture(L"Textures\\defaultTexture.png");
 }
