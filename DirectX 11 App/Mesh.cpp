@@ -30,6 +30,10 @@ void Mesh::Draw()
 	///Draw Texture
 	for (Texture& t : meshTextures)
 		pDeviceContext->PSSetShaderResources(0, 1, t.GetTextureRV().GetAddressOf());
+	///PSSetShaderResources(IN, IN, OPTIONAL)
+	///UINT StartSlot			 - Index of array to begin setting resources
+	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
+	///ID3D11ShaderResourceView* - Array of SRV interfaces to set to device
 
 	///Set Constant Buffer
 	D3D11_MAPPED_SUBRESOURCE mapRes;

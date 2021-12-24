@@ -46,13 +46,6 @@ void Object::Update()
 
 void Object::Render()
 {
-	///Sets Texture of Object in PixelShader.hlsl
-	//pObjDeviceContext->PSSetShaderResources(0, 1, pTexture.GetAddressOf());
-	///PSSetShaderResources(IN, IN, OPTIONAL)
-	///UINT StartSlot			 - Index of array to begin setting resources
-	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
-	///ID3D11ShaderResourceView* - Array of SRV interfaces to set to device
-
 	//Draw Meshes for this Obj
 	for (Mesh& m : objMeshes)
 		m.Draw();
@@ -200,15 +193,4 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 	///Give default texture in event of unhandled events
 	if(textures.size() == 0)
 		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
-
-	//HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());
-	///CreateWICTextureFromFile(IN, IN, IN, IN, OPTIONAL)
-	///ID3D11Device* d3dDevice				  - Pointer to the device using this resource
-	///const wchar_t* fileName				  - C string pointer to texture file path
-	///ID3D11Resource** texture				  - Pointer to the pointer of the texture resource 
-	///ID3D11ShaderResourceView** textureView - Pointer to the pointer of the texture SRV
-	///size_t maxsize						  - Maximum size of the texture file
-
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayErrMessage(hr);
 }

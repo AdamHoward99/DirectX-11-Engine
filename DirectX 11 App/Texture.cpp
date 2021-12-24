@@ -26,6 +26,14 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	if (extension == ".dds")
 	{
 		hr = DirectX::CreateDDSTextureFromFile(device.Get(), std::to_wstring(filepath.length()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+		///CreateDDSTextureFromFile(IN, IN, IN, IN, OPTIONAL, OPTIONAL)
+		///ID3D11Device* d3dDevice - Pointer to device
+		///const wchar_t* szFileName - C String of Image filename
+		///ID3D11Resource** texture - Pointer to address of the texture resource which will store this image file
+		///ID3D11ShaderResourceView** textureView - Pointer to address of the texture SRV
+		///size_t maxsize - The maximum size of the texture resource, defaults to 0U
+		///DDS_ALPHA_MODE* alphaMode - Pointer to ALPHA_MODE used for DDS file, defaults to nullptr
+
 		if (FAILED(hr))
 			InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);
 
@@ -34,6 +42,12 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 
 	///Texture file is not .dds
 	hr = DirectX::CreateWICTextureFromFile(device.Get(), std::wstring(filepath.begin(), filepath.end()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+	///CreateWICTextureFromFile(IN, IN, IN, IN, OPTIONAL)
+	///ID3D11Device* d3dDevice				  - Pointer to the device using this resource
+	///const wchar_t* fileName				  - C string pointer to texture file path
+	///ID3D11Resource** texture				  - Pointer to the pointer of the texture resource 
+	///ID3D11ShaderResourceView** textureView - Pointer to the pointer of the texture SRV
+	///size_t maxsize						  - Maximum size of the texture file
 
 	if (FAILED(hr))
 		InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);		//TODO: create a default aiColor4D variable to signify error
