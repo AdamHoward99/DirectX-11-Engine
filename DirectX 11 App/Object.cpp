@@ -60,6 +60,7 @@ void Object::Render()
 
 void Object::CreateObjGeometry(const std::string& filepath)
 {
+	directory = filepath.substr(0, filepath.find_last_of('/') + 1);
 	///Create OBJ Importer to obtain Model file
 	Assimp::Importer importer;
 	const aiScene* pScene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
@@ -180,7 +181,25 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 			break;
 		}
 	}
-	else		//Texture type is not empty or unhandled?
+	else
+	{
+		for (UINT i = 0; i < textureCount; i++)		///For every texture linked to the model
+		{
+			aiString path;
+			pMat->GetTexture(texType, i, &path);
+
+			//Determine what storage type the Image file is
+			std::string str = directory + path.C_Str();
+
+			Texture tex(this->pObjDevice, str, texType);
+			textures.push_back(tex);
+
+		}
+	}
+
+
+
+	if(textures.size() == 0)			//Texture type is not empty or unhandled?
 		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
 
 	//HRESULT hr = DirectX::CreateWICTextureFromFile(pObjDevice.Get(), filename.c_str(), nullptr, pTexture.GetAddressOf());

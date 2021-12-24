@@ -2,6 +2,8 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <assimp/material.h>
+#include <WICTextureLoader.h>
+#include <DDSTextureLoader.h>
 
 class Texture
 {
@@ -10,6 +12,9 @@ public:
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D& colour, aiTextureType texType);
 	///Constructor to use multiple colours
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D* colour, UINT w, UINT h, aiTextureType texType);
+	///Constructor to use Image files for textures
+	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string& filepath, aiTextureType texType);
+
 
 	const aiTextureType GetTextureType() const;
 	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureRV() const;

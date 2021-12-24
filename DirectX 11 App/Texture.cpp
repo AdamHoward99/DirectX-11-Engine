@@ -11,6 +11,45 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D* c
 	InitializeColourTexture(device, colour, texType, w, h);
 }
 
+Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string& filepath, aiTextureType texType)
+{
+	//Is texture dds or other? generate dds uses different function
+
+	//TODO: put both of these into utility class?
+	//Get Image file extension
+	std::string extension = filepath.substr(filepath.find_last_of('.') + 1);
+	std::string directory;
+
+	//Get directory of the Image file
+	size_t directoryOffset = filepath.find_last_of('/');
+
+	///If no slash is present	textures are in the same folder?
+	if (directoryOffset == std::wstring::npos)
+		directory = "";
+
+	else
+		directory = filepath.substr(0, directoryOffset - 1);
+
+	//Setup the Image file
+	textureType = texType;
+
+	if (extension == ".dds")
+	{
+		HRESULT hr = DirectX::CreateDDSTextureFromFile(device.Get(), std::to_wstring(filepath.length()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+		if (FAILED(hr))
+			ErrorMes::DisplayErrMessage(hr);		//Create texture with a default colour instead
+
+		return;
+	}
+
+	std::wstring str(filepath.begin(), filepath.end());
+
+	HRESULT hr = DirectX::CreateWICTextureFromFile(device.Get(), str.c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayErrMessage(hr);			//Create texture with a default colour instead TODO
+
+}
+
 const aiTextureType Texture::GetTextureType() const
 {
 	return textureType;

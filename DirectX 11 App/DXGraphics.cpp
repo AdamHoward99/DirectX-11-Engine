@@ -244,7 +244,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "square.obj"));
+	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "nanosuit/nanosuit.obj"));
 }
 
 void DXGraphics::DrawString()

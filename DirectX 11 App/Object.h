@@ -39,6 +39,8 @@ private:
 	DirectX::XMMATRIX objWorldMatrix;	///Matrix is passed to Meshes to set world position
 	std::vector<Mesh> objMeshes;
 
+	std::string directory;
+
 	/*TODO: in future, GameObject class will inherit Object class adding:
 	position variables
 	rotation variables
