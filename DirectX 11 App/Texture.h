@@ -4,6 +4,7 @@
 #include <assimp/material.h>
 #include <WICTextureLoader.h>
 #include <DDSTextureLoader.h>
+#include "StringConverter.h"
 
 class Texture
 {

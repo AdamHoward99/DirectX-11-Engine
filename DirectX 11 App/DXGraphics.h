@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "FrameTimer.h"
 #include "Object.h"
+#include "StringConverter.h"
 #include <SpriteBatch.h>
 #include <spriteFont.h>
 #include <unordered_map>

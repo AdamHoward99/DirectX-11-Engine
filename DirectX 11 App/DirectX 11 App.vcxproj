@@ -179,6 +179,7 @@
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="StringConverter.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WindowCont.h" />

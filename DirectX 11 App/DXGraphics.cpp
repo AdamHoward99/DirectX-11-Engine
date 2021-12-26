@@ -250,6 +250,6 @@ void DXGraphics::DrawString()
 {
 	///Notice: Draw all strings to be outputted here
 	spBatch->Begin();
-	font->DrawString(spBatch, timer.GetFPSString().c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
+	font->DrawString(spBatch, StringCon::StringToCString(timer.GetFPSString()), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
 }

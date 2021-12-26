@@ -15,7 +15,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 {
 	textureType = texType;
 	
-	///Get Image File Extension		TODO: Put into a utility class with wstring converter
+	///Get Image File Extension
 	std::string extension = filepath.substr(filepath.find_last_of('.'));
 
 	//TODO: Create check for Image files not contained in the same directory as OBJ file
@@ -25,7 +25,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	///Create Texture file using different functions dependant on if file is .dds or other
 	if (extension == ".dds")
 	{
-		hr = DirectX::CreateDDSTextureFromFile(device.Get(), std::to_wstring(filepath.length()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+		hr = DirectX::CreateDDSTextureFromFile(device.Get(), StringCon::WStringToCWString(StringCon::StringToWString(filepath)), texture.GetAddressOf(), textureSRV.GetAddressOf());
 		///CreateDDSTextureFromFile(IN, IN, IN, IN, OPTIONAL, OPTIONAL)
 		///ID3D11Device* d3dDevice - Pointer to device
 		///const wchar_t* szFileName - C String of Image filename
@@ -41,7 +41,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	}
 
 	///Texture file is not .dds
-	hr = DirectX::CreateWICTextureFromFile(device.Get(), std::wstring(filepath.begin(), filepath.end()).c_str(), texture.GetAddressOf(), textureSRV.GetAddressOf());
+	hr = DirectX::CreateWICTextureFromFile(device.Get(), StringCon::WStringToCWString(StringCon::StringToWString(filepath)), texture.GetAddressOf(), textureSRV.GetAddressOf());
 	///CreateWICTextureFromFile(IN, IN, IN, IN, OPTIONAL)
 	///ID3D11Device* d3dDevice				  - Pointer to the device using this resource
 	///const wchar_t* fileName				  - C string pointer to texture file path
