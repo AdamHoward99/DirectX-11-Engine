@@ -16,7 +16,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	textureType = texType;
 	
 	///Get Image File Extension		TODO: Put into a utility class with wstring converter
-	std::string extension = filepath.substr(filepath.find_last_of('.') + 1);
+	std::string extension = filepath.substr(filepath.find_last_of('.'));
 
 	//TODO: Create check for Image files not contained in the same directory as OBJ file
 
@@ -35,7 +35,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 		///DDS_ALPHA_MODE* alphaMode - Pointer to ALPHA_MODE used for DDS file, defaults to nullptr
 
 		if (FAILED(hr))
-			InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);
+			InitializeColourTexture(device, &defaultColour, texType);
 
 		return;
 	}
@@ -50,7 +50,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	///size_t maxsize						  - Maximum size of the texture file
 
 	if (FAILED(hr))
-		InitializeColourTexture(device, new aiColor4D(0.f, 0.f, 0.f, 255.f), texType);		//TODO: create a default aiColor4D variable to signify error
+		InitializeColourTexture(device, &defaultColour, texType);
 }
 
 const aiTextureType Texture::GetTextureType() const

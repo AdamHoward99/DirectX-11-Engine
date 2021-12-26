@@ -25,4 +25,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Resource> texture = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV = nullptr;
 	aiTextureType textureType = aiTextureType::aiTextureType_UNKNOWN;
+	aiColor4D defaultColour = aiColor4D(100.f, 100.f, 100.f, 255.f);
 };
