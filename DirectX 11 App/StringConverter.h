@@ -31,4 +31,15 @@ public:
 		return wstring.c_str();
 	}
 
+	///C String -> String
+	static const std::string CStringToString(const CString& cstring)
+	{
+		return std::string((LPCTSTR)cstring);
+	}
+
+	///C WString -> WString
+	static const std::wstring CWStringToWString(const CWString& cwstring)
+	{
+		return std::wstring((LPCWSTR)cwstring);
+	}
 };
