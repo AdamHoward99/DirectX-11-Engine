@@ -24,6 +24,8 @@ void Object::operator delete(void * p)
 
 void Object::Initialize(const std::string& filepath)
 {
+	SetWorldPosition(DirectX::XMMatrixIdentity());
+
 	///Model filename given in DXGraphics::InitialiseOBJs()
 	if (filepath != "")
 	{
@@ -35,8 +37,11 @@ void Object::Initialize(const std::string& filepath)
 	objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));
 }
 
-void Object::Update()
+void Object::Update(const float dt)
 {
+	///Rotate in place	TODO: transformations like this will be in GameObject class in future
+	objWorldMatrix *= DirectX::XMMatrixRotationY(0.1f * dt);
+
 	//Update Position of OBJ Here
 	for (Mesh& m : objMeshes)
 		m.UpdatePosition(objWorldMatrix);

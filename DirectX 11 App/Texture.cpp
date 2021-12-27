@@ -18,7 +18,9 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	///Get Image File Extension
 	std::string extension = filepath.substr(filepath.find_last_of('.'));
 
-	//TODO: Create check for Image files not contained in the same directory as OBJ file
+	///Current version of Assimp doesn't work with .fbx files or embedded textures
+	///So for creating pre-textured models in Blender, make sure to select path-copy, and have the textures in the same folder as the .obj file
+	///TODO: In future look at adding in newer version of Assimp which will hopefully support .fbx and different methods of stored textures
 
 	HRESULT hr;
 

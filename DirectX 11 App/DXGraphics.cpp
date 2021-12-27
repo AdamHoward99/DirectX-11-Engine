@@ -54,10 +54,8 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
 	///Notice: Update OBJ's here
-	renderObjects["Triangle"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
-	//camera->LookAt(renderObjects["Triangle"]->GetWorldPosition());		///If matrix is not transposed before being passed, transpose in function
-
-	renderObjects["Triangle"]->Update();
+	renderObjects["Square"]->Update();
+	renderObjects["Square"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
 
 	//Display FPS Timer
 	timer.IncrementFPSCounter();
@@ -243,7 +241,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Triangle"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "nanosuit/nanosuit.obj"));
+	renderObjects["Square"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "OBJ/TexturedOBJExample/TexturedSquare.obj"));
 }
 
 void DXGraphics::DrawString()
