@@ -37,11 +37,8 @@ void Object::Initialize(const std::string& filepath)
 	objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));
 }
 
-void Object::Update(const float dt)
+void Object::Update()
 {
-	///Rotate in place	TODO: transformations like this will be in GameObject class in future
-	objWorldMatrix *= DirectX::XMMatrixRotationY(0.1f * dt);
-
 	//Update Position of OBJ Here
 	for (Mesh& m : objMeshes)
 		m.UpdatePosition(objWorldMatrix);
