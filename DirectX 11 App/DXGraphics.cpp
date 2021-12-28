@@ -211,13 +211,23 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 bool DXGraphics::InitialiseShaders()
 {
+#ifdef _DEBUG
 	//Create Vertex Shader
-	if (!vShader.Initialise(pDevice, L"Debug\\VertexShader.cso"))		//TODO: Change when altering configurations
+	if (!vShader.Initialise(pDevice, L"x86\\Debug\\VertexShader.cso"))		//TODO: Change when altering configurations
 		return false;
 
 	//Create Pixel Shader
-	if (!pShader.Initialise(pDevice, L"Debug\\PixelShader.cso"))
+	if (!pShader.Initialise(pDevice, L"x86\\Debug\\PixelShader.cso"))
 		return false;
+#else
+	//Create Vertex Shader
+	if (!vShader.Initialise(pDevice, L"x86\\Release\\VertexShader.cso"))		//TODO: Change when altering configurations
+		return false;
+
+	//Create Pixel Shader
+	if (!pShader.Initialise(pDevice, L"x86\\Release\\PixelShader.cso"))
+		return false;
+#endif
 
 	//Create Input Layouts
 	D3D11_INPUT_ELEMENT_DESC layouts[] = {

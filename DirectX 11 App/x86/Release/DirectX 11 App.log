@@ -1,0 +1,9 @@
+﻿  App.cpp
+  DXGraphics.cpp
+  Engine.cpp
+  Generating code
+  2 of 1513 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\\x86\Release\DirectX 11 App.exe
