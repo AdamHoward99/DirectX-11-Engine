@@ -15,6 +15,8 @@ public:
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D* colour, UINT w, UINT h, aiTextureType texType);
 	///Constructor to use Image files for textures
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string& filepath, aiTextureType texType);
+	///Constructor to use Image files for textures which are embedded & compressed
+	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const uint8_t* pData, size_t size, aiTextureType texType);
 
 	const aiTextureType GetTextureType() const;
 	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTextureRV() const;

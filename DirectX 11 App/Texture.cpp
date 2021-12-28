@@ -17,11 +17,6 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 	
 	///Get Image File Extension
 	std::string extension = filepath.substr(filepath.find_last_of('.'));
-
-	///Current version of Assimp doesn't work with .fbx files or embedded textures
-	///So for creating pre-textured models in Blender, make sure to select path-copy, and have the textures in the same folder as the .obj file
-	///TODO: In future look at adding in newer version of Assimp which will hopefully support .fbx and different methods of stored textures
-
 	HRESULT hr;
 
 	///Create Texture file using different functions dependant on if file is .dds or other
@@ -53,6 +48,14 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 
 	if (FAILED(hr))
 		InitializeColourTexture(device, &defaultColour, texType);
+}
+
+Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const uint8_t * pData, size_t size, aiTextureType texType)
+{
+	textureType = texType;
+	HRESULT hr = DirectX::CreateWICTextureFromMemory(device.Get(), pData, size, texture.GetAddressOf(), textureSRV.GetAddressOf());
+	if (FAILED(hr))
+		exit(-1);
 }
 
 const aiTextureType Texture::GetTextureType() const

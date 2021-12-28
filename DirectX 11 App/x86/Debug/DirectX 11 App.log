@@ -1,6 +1,2 @@
-﻿  App.cpp
-  DXGraphics.cpp
-  Engine.cpp
-  Keyboard.cpp
-  Generating Code...
+﻿  DXGraphics.cpp
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

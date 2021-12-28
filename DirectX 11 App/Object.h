@@ -29,6 +29,7 @@ public:
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 
 	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
+	Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr, const UINT index);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;

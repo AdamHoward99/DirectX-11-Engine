@@ -183,16 +183,42 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 		{
 			aiString path;
 			pMat->GetTexture(texType, i, &path);
+			std::string texPath = path.C_Str();
 
-			///Create directory for the Image file
-			std::string str = objectFileDirectory + path.C_Str();
-
-			Texture tex(this->pObjDevice, str, texType);
-			textures.push_back(tex);
+			///Check how the texture is stored to determine how it should be loaded in
+			textures.push_back(GetTextureByStorageType(pScene, texType, &path, i));
 		}
 	}
 
 	///Give default texture in event of unhandled events
 	if(textures.size() == 0)
 		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
+}
+
+Texture Object::GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr, const UINT index)
+{
+	///Function to create texture correctly depending on how it is stored (On Disk, Compressed Indexed, Non Compressed Index)
+	const std::string textureStr = texStr->C_Str();
+
+	///Compressed Indexed Check (Indexed textures always have * as the starting char)
+	if (textureStr[0] == '*')
+	{
+		if (pScene->mTextures[index]->mHeight == 0)
+			return Texture(pObjDevice, reinterpret_cast<uint8_t*>(pScene->mTextures[index]->pcData), pScene->mTextures[index]->mWidth, texType);	///Creates an Embedded Compressed Texture
+		
+		///Non Compressed Index Check (Requires obtaining numeric index from string)
+		else
+		{
+			//TODO: error to check that the length is at least 2
+			int i = std::atoi(&textureStr[1]);
+			return Texture(pObjDevice, reinterpret_cast<uint8_t*>(pScene->mTextures[i]->pcData), pScene->mTextures[i]->mWidth, texType);
+		}
+	}
+
+	///On Disk Check (Texture file is located in same folder as the model file)
+	if (textureStr.find('.') != std::string::npos)
+		return Texture(pObjDevice, objectFileDirectory + textureStr, texType);
+
+	///If it has gotten to this point, throw an error
+	__assume(false);
 }
