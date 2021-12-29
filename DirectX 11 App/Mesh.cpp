@@ -46,7 +46,7 @@ void Mesh::Draw()
 	///D3D11_MAPPED_SUBRESOURCE* - Pointer to mapped struct for constant buffer resource
 	
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 40, "Mesh.cpp", "ID3D11DeviceContext::Map()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
 	CopyMemory(mapRes.pData, &meshData, sizeof VS_CB_DATA);
 	pDeviceContext->Unmap(pConstantBuffer.Get(), NULL);
@@ -177,5 +177,5 @@ void Mesh::CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Device>& device, const int 
 	///ID3D11Buffer** ppBuffer - Address of a pointer to the buffer object
 
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 172, "Mesh.cpp", "ID3D11Device::CreateBuffer()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 }

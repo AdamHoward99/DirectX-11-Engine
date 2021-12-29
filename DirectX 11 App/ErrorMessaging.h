@@ -8,14 +8,14 @@ class ErrorMes
 public:
 	static void DisplayHRErrorMessage(HRESULT& hr, const int codeLine, const std::string& fileLocation, const std::string& functionName)
 	{
-		//TODO: Automatically find code line and function name
 		_com_error err = hr;
 		///Obtain Hexidecimal value of the HRESULT
 		std::stringstream ss;
 		ss << std::showbase << std::hex << err.Error();
-		std::string outputMessage = GetHRESULTValueByHexNumber(ss.str()) + ". " + err.ErrorMessage() + "\nContained at line " + std::to_string(codeLine) + " in function: " + functionName;
-
-		MessageBox(NULL, outputMessage.c_str(), fileLocation.c_str(), MB_OK | MB_ICONERROR);
+		///Create message used for the MessageBox
+		std::string outputMessage = GetHRESULTValueByHexNumber(ss.str()) + ". " + err.ErrorMessage() + "\nThrown at line " + std::to_string(codeLine) + " by function: " + functionName;
+		///Gets Relative filepath for MessageBox header
+		MessageBox(NULL, outputMessage.c_str(), fileLocation.substr(61, fileLocation.size()).c_str(), MB_OK | MB_ICONERROR);
 		exit(-1);
 	}
 

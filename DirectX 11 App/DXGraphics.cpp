@@ -104,7 +104,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 		NULL,
 		NULL,
 		NULL,
-		10,
+		0,
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
 		this->pSwapChain.GetAddressOf(),
@@ -113,18 +113,18 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 		this->pDeviceContext.GetAddressOf());
 
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 102, "DXGraphics.cpp", "D3D11CreateDeviceAndSwapChain()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "D3D11CreateDeviceAndSwapChain()");
 
 	//Give pointer to Back Buffer using Swap Chain
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 	hr = pSwapChain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 120, "DXGraphics.cpp", "IDXGISwapChain::GetBuffer()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "IDXGISwapChain::GetBuffer()");
 
 	//Create Render Target View
 	hr = pDevice->CreateRenderTargetView(backBuffer.Get(), NULL, pRenderView.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 125, "DXGraphics.cpp", "ID3D11Device::CreateRenderTargetView()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRenderTargetView()");
 
 	//Initialize Depth Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthTextureDesc;
@@ -142,11 +142,11 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	hr = pDevice->CreateTexture2D(&depthTextureDesc, NULL, pDepthBuffer.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 143, "DXGraphics.cpp", "ID3D11Device::CreateTexture2D()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateTexture2D()");
 
 	hr = pDevice->CreateDepthStencilView(pDepthBuffer.Get(), NULL, pDepthView.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 147, "DXGraphics.cpp", "ID3D11Device::CreateDepthStencilView()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilView()");
 
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
@@ -161,7 +161,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthState.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 162, "DXGraphics.cpp", "ID3D11Device::CreateDepthStencilState()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
@@ -185,7 +185,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 186, "DXGraphics.cpp", "ID3D11Device::CreateRasterizerState()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
 
 	font = new DirectX::SpriteFont(pDevice.Get(), L"Fonts\\Arial_16.spritefont");
 	spBatch = new DirectX::SpriteBatch(pDeviceContext.Get());
@@ -204,7 +204,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	hr = pDevice->CreateSamplerState(&samplerDesc, pSamplerState.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 205, "DXGraphics.cpp", "ID3D11Device::CreateSamplerState()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateSamplerState()");
 
 	return true;
 }
@@ -238,7 +238,7 @@ bool DXGraphics::InitialiseShaders()
 
 	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetShaderBuffer()->GetBufferPointer(), vShader.GetShaderBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
 	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, 239, "DXGraphics.cpp", "ID3D11Device::CreateInputLayout()");
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateInputLayout()");
 
 	return true;
 }
