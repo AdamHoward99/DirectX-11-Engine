@@ -8,16 +8,39 @@ Object::Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::Com
 }
 
 Object::~Object()
-{
+{}
 
+Object::Object(const Object& oldObject)
+{
+	pObjDevice = oldObject.pObjDevice;
+	pObjDeviceContext = oldObject.pObjDeviceContext;
+	objMeshes = oldObject.objMeshes;
+	objectFileDirectory = oldObject.objectFileDirectory;
+	objWorldMatrix = oldObject.objWorldMatrix;
+}
+
+Object& Object::operator=(const Object& oldObject)
+{
+	///Ensure this is not a self-assignment
+	if (this != &oldObject)
+	{
+		this->pObjDevice = oldObject.pObjDevice;
+		this->pObjDeviceContext = oldObject.pObjDeviceContext;
+		this->objMeshes = oldObject.objMeshes;
+		this->objectFileDirectory = oldObject.objectFileDirectory;
+		this->objWorldMatrix = oldObject.objWorldMatrix;
+	}
+
+	return *this;
 }
 
 void* Object::operator new(size_t i)
 {
-	return _mm_malloc(i, 16);		//Aligns to 16 for unique_ptr creation
+	///Aligns to 16-bits for unique_ptr creation
+	return _mm_malloc(i, 16);
 }
 
-void Object::operator delete(void * p)
+void Object::operator delete(void* p)
 {
 	_mm_free(p);
 }
@@ -39,7 +62,7 @@ void Object::Initialize(const std::string& filepath)
 
 void Object::Update()
 {
-	//Update Position of OBJ Here
+	///Update Position of OBJ here
 	for (Mesh& m : objMeshes)
 		m.UpdatePosition(objWorldMatrix);
 
@@ -48,7 +71,7 @@ void Object::Update()
 
 void Object::Render()
 {
-	//Draw Meshes for this Obj
+	///Draw Meshes for OBJ here
 	for (Mesh& m : objMeshes)
 		m.Draw();
 }
@@ -105,7 +128,6 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 		v.vertexPosition.x = mesh->mVertices[i].x;
 		v.vertexPosition.y = mesh->mVertices[i].y;
 		v.vertexPosition.z = mesh->mVertices[i].z;
-		//TODO: COULD DO OVERLOAD OPERATOR FOR +
 
 		///If this Mesh has a texture preset, obtain the texture coordinates	NOTE: Main texture of Mesh is always the 1st texture
 		if (mesh->mTextureCoords[0])

@@ -12,7 +12,13 @@ public:
 	Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath);
 	~Object();
 
-	///Required for 16-bit alignment of Object class for unordered_map in DXGraphics Class
+	///Copy Constructor for Object class
+	Object(const Object& oldObject);
+
+	///Copy Assignment Operator for Object class
+	Object& operator=(const Object& oldObject);
+
+	///Operators required for 16-bit alignment of Object class for unordered_map in DXGraphics Class
 	void* operator new(size_t i);
 	void operator delete(void* p);
 
@@ -24,12 +30,11 @@ public:
 	void CreateObjGeometry(const std::string& filepath);
 	void ProcessNodes(const aiScene* pScene, const aiNode* node);
 	Mesh ProcessMeshes(const aiScene* pScene, const aiMesh* mesh);
+	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
+	Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr);
 
 	void SetWorldPosition(const DirectX::XMMATRIX& pos);
 	const DirectX::XMMATRIX& GetWorldPosition() const;
-
-	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
-	Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
@@ -37,7 +42,6 @@ private:
 
 	DirectX::XMMATRIX objWorldMatrix;	///Matrix is passed to Meshes to set world position
 	std::vector<Mesh> objMeshes;
-
 	std::string objectFileDirectory;
 
 	/*TODO: in future, GameObject class will inherit Object class adding:
