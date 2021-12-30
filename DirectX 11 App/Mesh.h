@@ -14,11 +14,18 @@ public:
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon, 
 		const std::vector<Vertex>& vertices, const std::vector<DWORD>& indices, const std::vector<Texture>& textures);
 
-	//TODO: Need a copy constructor?
-
 	///Constructor used for default triangle rendered ONLY when no filename was given
 	Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceCon);
+
+	///Copy Constructor for Mesh Class
+	Mesh(const Mesh& otherMesh);
 	
+	///Destructor for Mesh Class
+	~Mesh();
+
+	///Copy Assignment operator for Mesh class
+	Mesh& operator=(const Mesh& otherMesh);
+
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix);
 	void Draw();
 
@@ -31,6 +38,7 @@ public:
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);
 
 private:
+	///Default Geometry included in Engine
 	void CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device);
 	
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -41,6 +49,5 @@ private:
 	///Stores amount of indices used by Mesh for DrawIndexed function, requires less than storing vector of indices
 	UINT indicesCount = 0;
 	VS_CB_DATA meshData;
-
 	std::vector<Texture> meshTextures;
 };

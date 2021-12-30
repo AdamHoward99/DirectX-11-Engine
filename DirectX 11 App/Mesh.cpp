@@ -8,6 +8,18 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<
 	CreateBuffers(device, v, i);
 }
 
+Mesh::Mesh(const Mesh& m)
+{
+	pVertexBuffer = m.pVertexBuffer;
+	pIndexBuffer = m.pIndexBuffer;
+	pConstantBuffer = m.pConstantBuffer;
+	pDeviceContext = m.pDeviceContext;
+	
+	indicesCount = m.indicesCount;
+	meshData = m.meshData;
+	meshTextures = m.meshTextures;
+}
+
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
 {
 	pDeviceContext = deviceContext;
@@ -85,6 +97,27 @@ void Mesh::CreateBuffers(Microsoft::WRL::ComPtr<ID3D11Device>& device, const std
 	CreateBuffer(device, D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	
 	///Store Indices count for DrawIndexed()
 	indicesCount = i.size();
+}
+
+Mesh::~Mesh()
+{}
+
+Mesh& Mesh::operator=(const Mesh& otherMesh)
+{
+	///Ensure this is not a self-assignment
+	if (this != &otherMesh)
+	{
+		this->pVertexBuffer = otherMesh.pVertexBuffer;
+		this->pIndexBuffer = otherMesh.pIndexBuffer;
+		this->pConstantBuffer = otherMesh.pConstantBuffer;
+		this->pDeviceContext = otherMesh.pDeviceContext;
+
+		this->indicesCount = otherMesh.indicesCount;
+		this->meshData = otherMesh.meshData;
+		this->meshTextures = otherMesh.meshTextures;
+	}
+
+	return *this;
 }
 
 void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix)
