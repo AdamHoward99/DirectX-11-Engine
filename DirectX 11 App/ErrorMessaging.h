@@ -19,6 +19,15 @@ public:
 		exit(-1);
 	}
 
+	static void DisplayErrorMessage(const int codeLine, const std::string& errorDes, const std::string& fileLocation)
+	{
+		///Create message used for the MessageBox
+		const std::string outputMes = errorDes + ". Thrown at line " + std::to_string(codeLine);
+		///Gets Relative filepath for MessageBox header
+		MessageBox(NULL, outputMes.c_str(), fileLocation.substr(61, fileLocation.size()).c_str(), MB_OK | MB_ICONERROR);
+		exit(-1);
+	}
+
 private:
 	static std::string GetHRESULTValueByHexNumber(const std::string& ss)
 	{

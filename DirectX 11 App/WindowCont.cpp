@@ -12,7 +12,7 @@ WindowContainer::WindowContainer()
 		rawDevice.usUsagePage = 0x01;		//Correlates to Mouse
 
 		if (!RegisterRawInputDevices(&rawDevice, 1, sizeof rawDevice))
-			exit(-1);
+			ErrorMes::DisplayErrorMessage(__LINE__, "RegisterRawInputDevices(): Failed to register input devices", __FILE__);
 
 		isRawInputInitialized = true;
 	}

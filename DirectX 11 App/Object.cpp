@@ -94,7 +94,7 @@ void Object::CreateObjGeometry(const std::string& filepath)
 
 	///If File failed to load or was not found
 	if (pScene == nullptr)
-		exit(-1);		//TODO: CHANGE TO BOOL FUNCTION RETURNS FALSE TO CREATE OBJ BUFFERS OR INITIALIZE
+		ErrorMes::DisplayErrorMessage(__LINE__, "Assimp Importer::ReadFile(): failed to load file", __FILE__);
 
 	//Process Nodes
 	ProcessNodes(pScene, pScene->mRootNode);

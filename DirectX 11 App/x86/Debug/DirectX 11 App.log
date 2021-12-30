@@ -1,10 +1,2 @@
-﻿  App.cpp
-  DXGraphics.cpp
-  Engine.cpp
-  Mesh.cpp
-  Object.cpp
-  RenderWindow.cpp
-  Vertex.cpp
-  WindowCont.cpp
-  Generating Code...
+﻿  Object.cpp
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

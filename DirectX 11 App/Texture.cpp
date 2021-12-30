@@ -55,7 +55,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const uint8_t * pD
 	textureType = texType;
 	HRESULT hr = DirectX::CreateWICTextureFromMemory(device.Get(), pData, size, texture.GetAddressOf(), textureSRV.GetAddressOf());
 	if (FAILED(hr))
-		exit(-1);
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "DirectX::CreateWICTextureFromMemory()");
 }
 
 const aiTextureType Texture::GetTextureType() const
@@ -85,7 +85,7 @@ void Texture::InitializeColourTexture(Microsoft::WRL::ComPtr<ID3D11Device> devic
 	///const D3D11_SUBRESOURCE_DATA* pInitialData - Pointer to array of Subresource data structures describing the 2D texture resource
 	///ID3D11Texture2D** ppTexture2D			  - Pointer to buffer which receives the created textures information 
 	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateTexture2D()");
 
 	texture = pTex;
 
@@ -97,5 +97,5 @@ void Texture::InitializeColourTexture(Microsoft::WRL::ComPtr<ID3D11Device> devic
 	///const D3D11_SHADER_RESOURCE_VIEW_DESC* pDesc - Pointer to the shader resource description
 	///ID3D11ShaderResourceView** ppSRView			- Address of a pointer to a SRV
 	if (FAILED(hr))
-		ErrorMes::DisplayErrMessage(hr);
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateShaderResourceView()");
 }

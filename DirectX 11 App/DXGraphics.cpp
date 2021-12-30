@@ -75,7 +75,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	std::vector<Data> adapters = adapterReader.GetData();
 
 	if (adapters.size() < 1)
-		exit(-1);
+		ErrorMes::DisplayErrorMessage(__LINE__, "DXGraphics::adapterReader: No adapters found", __FILE__);
 
 	//Create Description for Swap Chain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;

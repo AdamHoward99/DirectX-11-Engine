@@ -76,7 +76,7 @@ LRESULT CALLBACK HandleMessageStart(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
 		WindowContainer* pWindow = reinterpret_cast<WindowContainer*>(pCreate->lpCreateParams);
 		if (pWindow == nullptr)
-			exit(-1);
+			ErrorMes::DisplayErrorMessage(__LINE__, "HandleMessageStart(): Failed to create WindowContainer pointer", __FILE__);
 
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(HandleMessageRedirect));
