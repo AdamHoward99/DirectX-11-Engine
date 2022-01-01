@@ -225,7 +225,9 @@ Texture Object::GetTextureByStorageType(const aiScene* pScene, const aiTextureTy
 	///Compressed Indexed Check (Indexed textures always have * as the starting char)
 	if (textureStr[0] == '*')
 	{
-		//TODO: error to check that the length is at least 2
+		if (textureStr.size() < 2)
+			ErrorMes::DisplayErrorMessage(__LINE__, "Texture material index string has size less than 2", __FILE__);
+
 		///Get the index of the texture being used by this mesh
 		int textureIndex = std::atoi(&textureStr[1]);
 		return Texture(pObjDevice, reinterpret_cast<uint8_t*>(pScene->mTextures[textureIndex]->pcData), pScene->mTextures[textureIndex]->mWidth, texType);	///Creates an Embedded Compressed Texture
