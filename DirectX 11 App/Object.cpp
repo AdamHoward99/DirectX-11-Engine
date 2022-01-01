@@ -152,12 +152,43 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 	///Find the material that this mesh is using
 	const aiMaterial* mat = pScene->mMaterials[mesh->mMaterialIndex];
 
-	///Get Diffuse Textures
-	std::vector<Texture> diffuseTexs;
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DIFFUSE, diffuseTexs);
+	//TODO: Could use threads to obtain all different texture types used by OBJ's material
+	std::vector<Texture> ObjMaterialTextures;
+	///Get Diffuse Textures (Main texture of object) 
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DIFFUSE, ObjMaterialTextures);
+
+	///Get Specular Textures (Strength of specular reflection)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_SPECULAR, ObjMaterialTextures);
+
+	///Get Ambient Textures
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_AMBIENT, ObjMaterialTextures);
+
+	///Get Emissive Textures (Receives no lighting so texture is unaffected by incoming light)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_EMISSIVE, ObjMaterialTextures);
+
+	///Get Height Textures (Uses gray scale values to show higher elevations on a material)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_HEIGHT, ObjMaterialTextures);
+
+	///Get Normal Textures (Bump maps used for smaller bumps)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_NORMALS, ObjMaterialTextures);
+
+	///Get Shininess Textures (Sharpness of the reflections in the material, also called roughness)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_SHININESS, ObjMaterialTextures);
+
+	///Get Opacity Textures (Opacity of the material, black for transparency, white for opaque)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_OPACITY, ObjMaterialTextures);
+
+	///Get Displacement Textures (Bump maps for larger bumps such as terrain)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DISPLACEMENT, ObjMaterialTextures);
+
+	///Get Lightmap & Ambient Occlusion Textures (Pronounced detail in material with shadowing)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_LIGHTMAP, ObjMaterialTextures);
+
+	///Get Reflection Textures (States where reflection should and shoudn't be, not used frequently)
+	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_REFLECTION, ObjMaterialTextures);
 
 	///Calls the OBJ Constructor of Mesh which creates Index and Vertex buffers based on the imported Vertices and Indices values.
-	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, diffuseTexs);
+	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, ObjMaterialTextures);
 }
 
 void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
