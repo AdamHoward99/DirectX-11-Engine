@@ -24,9 +24,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	if (!InitialiseScene(w, h))
 		return false;
 
-	//Initialize Timer TODO: in future use Utility class
-	timer.Start();
-
+	Timer::fTimer.StartTimer();
 	return true;
 }
 
@@ -58,12 +56,12 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	renderObjects["Square"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
 
 	//Display FPS Timer
-	timer.IncrementFPSCounter();
-	if (timer.GetMilliseconds() > 1000.0)		//After a second has passed
+	Timer::IncrementFPSCounter();
+	if (Timer::fTimer.GetTimerMilliseconds() > 1000.0)		//After a second has passed
 	{
-		timer.SetFPSString();
-		timer.Reset();
-		timer.ResetFPSCounter();
+		Timer::SetFPSString();
+		Timer::fTimer.RestartFrameTimer();
+		Timer::ResetFPSCounter();
 	}
 
 	DrawString();
@@ -259,6 +257,6 @@ void DXGraphics::DrawString()
 {
 	///Notice: Draw all strings to be outputted here
 	spBatch->Begin();
-	font->DrawString(spBatch, StringCon::StringToCString(timer.GetFPSString()), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
+	font->DrawString(spBatch, StringCon::StringToCString(Timer::GetFPSString()), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
 	spBatch->End();
 }

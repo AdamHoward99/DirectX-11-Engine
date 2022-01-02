@@ -50,6 +50,4 @@ private:
 	DirectX::SpriteFont* font;
 	DirectX::SpriteBatch* spBatch;
 	//TODO: Create Text class to use fonts
-
-	Timer timer;
 };

@@ -2,22 +2,72 @@
 #include <chrono>
 #include <string>
 
+///Timers used in this engine will use this structure
+struct TimerStruct
+{
+	///Functions
+	void StartTimer()
+	{
+		if (TimerEnabled)
+			return;
+
+		TimerEnabled = true;
+		TimerStartPoint = std::chrono::high_resolution_clock::now();
+	}
+
+	void StopTimer()
+	{
+		if (!TimerEnabled)
+			return;
+
+		TimerEnabled = false;
+		TimerEndPoint = std::chrono::high_resolution_clock::now();
+	}
+
+	void RestartFrameTimer()
+	{
+		StopTimer();
+		StartTimer();
+	}
+
+	bool IsTimerActive()
+	{
+		return TimerEnabled;
+	}
+
+	float GetTimerMilliseconds()
+	{
+		if (TimerEnabled)
+		{
+			auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - TimerStartPoint);
+			return elapsedTime.count();
+		}
+
+		auto elapsedTime = std::chrono::duration<float, std::milli>(TimerEndPoint - TimerStartPoint);
+		return elapsedTime.count();
+	}
+
+	///Variables
+	std::chrono::time_point<std::chrono::steady_clock> TimerStartPoint;
+	std::chrono::time_point<std::chrono::steady_clock> TimerEndPoint;
+	bool TimerEnabled;
+};
+
+
 class Timer
 {
 public:
-	Timer();
-
 	///Overall game timer / frame timer / float dt variable (frame timer)
 	///Application Timer Functions
 	static float GetApplicationLifetime();
 
-	///Frame Timer Functions
-	static void StartFrameTimer();
-	static void StopFrameTimer();
-	static void RestartFrameTimer();
-	static bool IsFrameTimerActive();
 
-	static float GetFrameTimerMilliseconds();
+	///Frame Timer (Used to monitor FPS Count, DEBUG)
+	static TimerStruct fTimer;
+
+	///Game Speed Timer (Allows movement to be consistent with FPS)
+	static TimerStruct gTimer;
+
 
 	static void IncrementFPSCounter();
 	static void ResetFPSCounter();
@@ -25,14 +75,10 @@ public:
 	static void SetFPSString();
 	static std::string& GetFPSString();
 
+	static float dt;
 private:
 	///Application Lifetime timer
 	static std::chrono::time_point<std::chrono::steady_clock> ApplicationTimerStartPoint;
-
-	///Frame timer
-	static std::chrono::time_point<std::chrono::steady_clock> FrameTimerStartPoint;
-	static std::chrono::time_point<std::chrono::steady_clock> FrameTimerEndPoint;
-	static bool FrameTimerEnabled;
 
 	bool active = false;
 	static int FPSCounter;
@@ -48,13 +94,3 @@ private:
 	std::chrono::time_point<std::chrono::system_clock> EndPoint;
 #endif
 };
-
-///Static Variable Definitions
-std::chrono::time_point<std::chrono::steady_clock> Timer::ApplicationTimerStartPoint = std::chrono::high_resolution_clock::now();
-
-static std::chrono::time_point<std::chrono::steady_clock> FrameTimerStartPoint = std::chrono::high_resolution_clock::now();
-static std::chrono::time_point<std::chrono::steady_clock> FrameTimerEndPoint = std::chrono::high_resolution_clock::now();
-static bool FrameTimerEnabled = false;
-
-int Timer::FPSCounter = 0;
-std::string Timer::FPSString = "FPS: 0";

@@ -11,7 +11,7 @@ bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string wind
 	//Initialize Camera / Set Camera Properties
 	camera.SetupCamera(DirectX::XMFLOAT3A(0.f, 0.f, -1.f), (float)w / float(h), 0.1f, 100.f);
 
-	tr.Start();
+	Timer::gTimer.StartTimer();
 	return true;
 }
 
@@ -22,8 +22,8 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-	dt = tr.GetMilliseconds();
-	tr.Reset();
+	dt = Timer::gTimer.GetTimerMilliseconds();
+	Timer::gTimer.RestartFrameTimer();
 
 	while (!keyboard.IsCharBufferEmpty())
 	{
