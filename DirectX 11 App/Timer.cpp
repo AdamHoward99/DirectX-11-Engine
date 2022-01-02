@@ -1,10 +1,5 @@
 #include "Timer.h"
 
-std::chrono::time_point<std::chrono::steady_clock> Timer::ApplicationTimerStartPoint = std::chrono::high_resolution_clock::now();
-
-int Timer::FPSCounter = 0;
-std::string Timer::FPSString = "FPS: 0";
-
 Timer::Timer()
 {
 	startPoint = std::chrono::high_resolution_clock::now();
@@ -17,39 +12,44 @@ float Timer::GetApplicationLifetime()
 	return elapsedTime.count();
 }
 
-void Timer::Start()
+void Timer::StartFrameTimer()
 {
-	if (active)
+	if (FrameTimerEnabled)
 		return;
 
-	active = true;
-	startPoint = std::chrono::high_resolution_clock::now();
+	FrameTimerEnabled = true;
+	FrameTimerStartPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::Stop()
+void Timer::StopFrameTimer()
 {
-	if (!active)
+	if (!FrameTimerEnabled)
 		return;
 
-	active = false;
-	EndPoint = std::chrono::high_resolution_clock::now();
+	FrameTimerEnabled = false;
+	FrameTimerEndPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::Reset()
+void Timer::RestartFrameTimer()
 {
-	Stop();
-	Start();
+	StopFrameTimer();
+	StartFrameTimer();
 }
 
-float Timer::GetMilliseconds()
+bool Timer::IsFrameTimerActive()
 {
-	if(active)
+	return FrameTimerEnabled;
+}
+
+float Timer::GetFrameTimerMilliseconds()
+{
+	if (FrameTimerEnabled)
 	{
-		auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - startPoint);
-		return elapsedTime.count();	
+		auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - FrameTimerStartPoint);
+		return elapsedTime.count();
 	}
 
-	auto elapsedTime = std::chrono::duration<float, std::milli>(EndPoint - startPoint);
+	auto elapsedTime = std::chrono::duration<float, std::milli>(FrameTimerEndPoint - FrameTimerStartPoint);
 	return elapsedTime.count();
 }
 
