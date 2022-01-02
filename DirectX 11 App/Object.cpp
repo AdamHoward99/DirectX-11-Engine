@@ -151,41 +151,26 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 
 	///Find the material that this mesh is using
 	const aiMaterial* mat = pScene->mMaterials[mesh->mMaterialIndex];
-
-	//TODO: Could use threads to obtain all different texture types used by OBJ's material
 	std::vector<Texture> ObjMaterialTextures;
-	///Get Diffuse Textures (Main texture of object) 
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DIFFUSE, ObjMaterialTextures);
 
-	///Get Specular Textures (Strength of specular reflection)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_SPECULAR, ObjMaterialTextures);
+	///Loops through to obtain all texture types used by mesh
+	for(int i = 1; i < 12; i++)
+		LoadMaterialTexture(pScene, mat, static_cast<aiTextureType>(i), ObjMaterialTextures);
 
-	///Get Ambient Textures
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_AMBIENT, ObjMaterialTextures);
-
-	///Get Emissive Textures (Receives no lighting so texture is unaffected by incoming light)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_EMISSIVE, ObjMaterialTextures);
-
-	///Get Height Textures (Uses gray scale values to show higher elevations on a material)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_HEIGHT, ObjMaterialTextures);
-
-	///Get Normal Textures (Bump maps used for smaller bumps)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_NORMALS, ObjMaterialTextures);
-
-	///Get Shininess Textures (Sharpness of the reflections in the material, also called roughness)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_SHININESS, ObjMaterialTextures);
-
-	///Get Opacity Textures (Opacity of the material, black for transparency, white for opaque)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_OPACITY, ObjMaterialTextures);
-
-	///Get Displacement Textures (Bump maps for larger bumps such as terrain)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_DISPLACEMENT, ObjMaterialTextures);
-
-	///Get Lightmap & Ambient Occlusion Textures (Pronounced detail in material with shadowing)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_LIGHTMAP, ObjMaterialTextures);
-
-	///Get Reflection Textures (States where reflection should and shoudn't be, not used frequently)
-	LoadMaterialTexture(pScene, mat, aiTextureType::aiTextureType_REFLECTION, ObjMaterialTextures);
+	///Texture types by index
+	/*
+		1  = aiTextureType_DIFFUSE      - Main texture of object
+		2  = aiTextureType_SPECULAR     - Strength of specular reflection
+		3  = aiTextureType_AMBIENT      - Ambient texture, does not incorporate lighting
+		4  = aiTextureType_EMISSIVE     - Receives no lighting so texture is unaffected by incoming light
+		5  = aiTextureType_HEIGHT       - Uses gray scale values to show higher elevations on a material
+		6  = aiTextureType_NORMALS      - Bump maps used for smaller bumps
+		7  = aiTextureType_SHININESS    - Sharpness of the reflections in the material, also called roughness
+		8  = aiTextureType_OPACITY	    - Opacity of the material, black for transparency, white for opaque
+		9  = aiTextureType_DISPLACEMENT - Bump maps for larger bumps such as terrain
+		10 = aiTextureType_LIGHTMAP     - Pronounced detail in material with shadowing
+		11 = aiTextureType_REFLECTION   - States where reflection should and shoudn't be, not used frequently
+	*/
 
 	///Calls the OBJ Constructor of Mesh which creates Index and Vertex buffers based on the imported Vertices and Indices values.
 	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, ObjMaterialTextures);

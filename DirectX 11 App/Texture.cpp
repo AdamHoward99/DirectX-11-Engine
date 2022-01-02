@@ -50,7 +50,7 @@ Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const std::string&
 		InitializeColourTexture(device, &defaultColour, texType);
 }
 
-Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const uint8_t * pData, size_t size, aiTextureType texType)
+Texture::Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const uint8_t* pData, size_t size, aiTextureType texType)
 {
 	textureType = texType;
 	HRESULT hr = DirectX::CreateWICTextureFromMemory(device.Get(), pData, size, texture.GetAddressOf(), textureSRV.GetAddressOf());
