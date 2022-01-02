@@ -23,6 +23,6 @@ public:
 
 private:
 	Camera camera;
-	FrameTimer tr;		//Application Lifetime
+	Timer tr;		//Application Lifetime
 	float dt = 0.f;
 };

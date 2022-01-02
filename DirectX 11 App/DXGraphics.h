@@ -6,7 +6,7 @@
 #include "Shaders.h"
 #include "Vertex.h"
 #include "Camera.h"
-#include "FrameTimer.h"
+#include "Timer.h"
 #include "Object.h"
 #include "StringConverter.h"
 #include <SpriteBatch.h>
@@ -51,5 +51,5 @@ private:
 	DirectX::SpriteBatch* spBatch;
 	//TODO: Create Text class to use fonts
 
-	FrameTimer timer;
+	Timer timer;
 };
