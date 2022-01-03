@@ -1,16 +1,16 @@
 #include "Timer.h"
 
-///Static Variable Definitions
+///Static Variable Definition
 std::chrono::time_point<std::chrono::steady_clock> Timer::ApplicationTimerStartPoint = std::chrono::high_resolution_clock::now();
 
-float Timer::GetApplicationLifetime()
+const float Timer::GetApplicationLifetime()
 {
 	///Get lifetime of this application at this current point
 	auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - ApplicationTimerStartPoint);
 	return elapsedTime.count();
 }
 
-void Timer::StartTimer()
+const void Timer::StartTimer()
 {
 	if (TimerEnabled)
 		return;
@@ -19,7 +19,7 @@ void Timer::StartTimer()
 	TimerStartPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::StopTimer()
+const void Timer::StopTimer()
 {
 	if (!TimerEnabled)
 		return;
@@ -28,18 +28,18 @@ void Timer::StopTimer()
 	TimerEndPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::RestartFrameTimer()
+const void Timer::RestartFrameTimer()
 {
 	StopTimer();
 	StartTimer();
 }
 
-bool Timer::IsTimerActive()
+const bool Timer::IsTimerActive() const
 {
 	return TimerEnabled;
 }
 
-float Timer::GetTimerMilliseconds()
+const float Timer::GetTimerMilliseconds() const
 {
 	if (TimerEnabled)
 	{

@@ -5,18 +5,19 @@
 class Timer
 {
 public:
-	static float GetApplicationLifetime();
+	///Returns total time since application was launched
+	static const float GetApplicationLifetime();
 
-	void StartTimer();
-	void StopTimer();
-	void RestartFrameTimer();
-	bool IsTimerActive();
-	float GetTimerMilliseconds();
+	///Functionality which is inherited by GameSpeedTimer & FrameTimer classes
+	const void StartTimer();
+	const void StopTimer();
+	const void RestartFrameTimer();
+	const bool IsTimerActive() const;
+	const float GetTimerMilliseconds() const;
 
 private:
 	static std::chrono::time_point<std::chrono::steady_clock> ApplicationTimerStartPoint;
-
-protected:
+	bool TimerEnabled = false;
 
 #ifdef _WIN32
 	std::chrono::time_point<std::chrono::steady_clock> TimerStartPoint;
@@ -27,6 +28,4 @@ protected:
 	std::chrono::time_point<std::chrono::system_clock> startPoint;
 	std::chrono::time_point<std::chrono::system_clock> EndPoint;
 #endif
-
-	bool TimerEnabled = false;
 };
