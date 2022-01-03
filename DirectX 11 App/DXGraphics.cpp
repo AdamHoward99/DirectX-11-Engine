@@ -4,11 +4,7 @@ UINT DXGraphics::ViewportCount = 0;
 
 DXGraphics::~DXGraphics()
 {
-	delete spBatch;
-	delete font;
-
-	spBatch = nullptr;
-	font = nullptr;
+	fonts["default"]->~TextFont();
 }
 
 bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
@@ -185,8 +181,8 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
 
-	font = new DirectX::SpriteFont(pDevice.Get(), L"Fonts\\Arial_16.spritefont");
-	spBatch = new DirectX::SpriteBatch(pDeviceContext.Get());
+	///Note: Add fonts here
+	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
 
 	//Create sampler desc
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -255,8 +251,6 @@ void DXGraphics::InitialiseOBJs()
 
 void DXGraphics::DrawString()
 {
-	///Notice: Draw all strings to be outputted here
-	spBatch->Begin();
-	font->DrawString(spBatch, StringCon::StringToCString(fTimer.GetFPSString()), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f);
-	spBatch->End();
+	///Note: Draw all strings to be outputted here
+	fonts["default"]->DrawString(StringCon::StringToCString(fTimer.GetFPSString()));
 }

@@ -1,8 +1,14 @@
 ﻿  App.cpp
   DXGraphics.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\memory(2538): warning C4316: 'TextFont': object allocated on the heap may not be aligned 16
+  c:\users\adamh\source\repos\directx-11-engine\directx 11 app\dxgraphics.cpp(185): note: see reference to function template instantiation 'std::unique_ptr<TextFont,std::default_delete<_Ty>> std::make_unique<TextFont,T*,ID3D11DeviceContext*,0>(T *&&,ID3D11DeviceContext *&&)' being compiled
+          with
+          [
+              _Ty=TextFont,
+              T=ID3D11Device
+          ]
   Engine.cpp
   RenderWindow.cpp
-  Timer.cpp
   WindowCont.cpp
   Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

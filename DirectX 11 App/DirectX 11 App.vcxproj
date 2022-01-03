@@ -162,6 +162,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXGraphics.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="KeyboardEvent.cpp" />
