@@ -1,14 +1,7 @@
 #include "Timer.h"
 
 ///Static Variable Definitions
-std::chrono::time_point<std::chrono::steady_clock> Timer::ApplicationTimerStartPoint = std::chrono::steady_clock::now();
-
-TimerStruct Timer::fTimer;
-TimerStruct Timer::gTimer;
-
-int Timer::FPSCounter = 0;
-std::string Timer::FPSString = "FPS: 0";
-float Timer::dt = 0.0f;
+std::chrono::time_point<std::chrono::steady_clock> Timer::ApplicationTimerStartPoint = std::chrono::high_resolution_clock::now();
 
 float Timer::GetApplicationLifetime()
 {
@@ -17,22 +10,43 @@ float Timer::GetApplicationLifetime()
 	return elapsedTime.count();
 }
 
-void Timer::IncrementFPSCounter()
+void Timer::StartTimer()
 {
-	FPSCounter++;
+	if (TimerEnabled)
+		return;
+
+	TimerEnabled = true;
+	TimerStartPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::ResetFPSCounter()
+void Timer::StopTimer()
 {
-	FPSCounter = 0;
+	if (!TimerEnabled)
+		return;
+
+	TimerEnabled = false;
+	TimerEndPoint = std::chrono::high_resolution_clock::now();
 }
 
-void Timer::SetFPSString()
+void Timer::RestartFrameTimer()
 {
-	FPSString = "FPS: " + std::to_string(FPSCounter);
+	StopTimer();
+	StartTimer();
 }
 
-std::string& Timer::GetFPSString()
+bool Timer::IsTimerActive()
 {
-	return FPSString;
+	return TimerEnabled;
+}
+
+float Timer::GetTimerMilliseconds()
+{
+	if (TimerEnabled)
+	{
+		auto elapsedTime = std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - TimerStartPoint);
+		return elapsedTime.count();
+	}
+
+	auto elapsedTime = std::chrono::duration<float, std::milli>(TimerEndPoint - TimerStartPoint);
+	return elapsedTime.count();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "WindowCont.h"
 #include "Camera.h"
+#include "GameSpeedTimer.h"
 
 #ifdef _DEBUG
 #define CAMERA_FORWARD			87 //W
@@ -23,5 +24,5 @@ public:
 
 private:
 	Camera camera;
-	float dt = 0.f;
+	GameSpeedTimer gTimer;
 };

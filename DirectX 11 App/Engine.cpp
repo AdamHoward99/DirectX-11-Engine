@@ -11,7 +11,7 @@ bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string wind
 	//Initialize Camera / Set Camera Properties
 	camera.SetupCamera(DirectX::XMFLOAT3A(0.f, 0.f, -1.f), (float)w / float(h), 0.1f, 100.f);
 
-	Timer::gTimer.StartTimer();
+	gTimer.StartTimer();
 	return true;
 }
 
@@ -22,8 +22,8 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-	dt = Timer::gTimer.GetTimerMilliseconds();
-	Timer::gTimer.RestartFrameTimer();
+	gTimer.UpdateDeltaTime();
+	gTimer.RestartFrameTimer();
 
 	while (!keyboard.IsCharBufferEmpty())
 	{
@@ -50,22 +50,22 @@ void Engine::Update()
 		camera.SetMouseMovement(false);
 
 	if (keyboard.IsKeyPressed(CAMERA_FORWARD))
-		camera.MoveCameraForwardD(dt);
+		camera.MoveCameraForwardD(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_BACK))
-		camera.MoveCameraBackwardsD(dt);
+		camera.MoveCameraBackwardsD(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_LEFT))
-		camera.MoveCameraLeftD(dt);
+		camera.MoveCameraLeftD(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_RIGHT))
-		camera.MoveCameraRightD(dt);
+		camera.MoveCameraRightD(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_ELEVATE))
-		camera.ElevateCameraD(dt);
+		camera.ElevateCameraD(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_LOWER))
-		camera.LowerCameraD(dt);
+		camera.LowerCameraD(gTimer.GetDeltaTime());
 }
 
 void Engine::Render()
