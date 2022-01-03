@@ -21,11 +21,16 @@ public:
 	~TextFont();
 	///Copy Assignment Operator
 	TextFont& operator=(const TextFont& fontA);
+
 	///Function that uses SpriteFont::DrawString(), only passes string to be outputted
 	const void DrawString(const CString& text);
 	///Overload function of DrawString() which passes desired position, colour, and origin
 	const void DrawString(const CString& text, const DirectX::XMFLOAT2A& position, const DirectX::XMVECTOR& textColour = DirectX::Colors::White,
 		const float textRotation = 0.0f);
+
+	///Operators required for 16-bit alignment of Object class for unordered_map in DXGraphics Class
+	void* operator new(size_t i);
+	void operator delete(void* p);
 
 private:
 	DirectX::SpriteFont* pFont;

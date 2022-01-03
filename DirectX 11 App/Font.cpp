@@ -62,3 +62,14 @@ const void TextFont::DrawString(const CString& text, const DirectX::XMFLOAT2A& p
 	pFont->DrawString(pFontBatch, text, position, textColour, textRotation);
 	pFontBatch->End();
 }
+
+void* TextFont::operator new(size_t i)
+{
+	///Aligns to 16-bits for unique_ptr creation
+	return _mm_malloc(i, 16);
+}
+
+void TextFont::operator delete(void* p)
+{
+	_mm_free(p);
+}
