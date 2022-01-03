@@ -31,25 +31,35 @@ public:
 	void* operator new(size_t i);
 	void operator delete(void* p);
 
-	//Getters and setters for private variables TODO
+	///Encapsulation functions for private font component variables
+	const float GetFontRotation() const;
+	const float GetFontScale() const;
+	const float GetFontLayerDepth() const;
+	const DirectX::XMFLOAT2A& GetFontPosition() const;
+	const DirectX::XMFLOAT2A& GetFontOrigin() const;
+	const DirectX::XMVECTOR& GetFontColour() const;
+
+	const void SetFontRotation(const float newRotation);
+	const void SetFontScale(const float newScale);
+	const void SetFontLayerDepth(const float newLayerDepth);
+	const void SetFontPosition(const DirectX::XMFLOAT2A& newPosition);
+	const void SetFontOrigin(const DirectX::XMFLOAT2A& newOrigin);
+	const void SetFontColour(const DirectX::XMVECTOR& newColour);
 
 private:
 	DirectX::SpriteFont* pFont;
 	DirectX::SpriteBatch* pFontBatch;
 
-	DirectX::XMVECTOR fontColour;
+	///Variables to edit components of Font
 	float fontRotation;
-
-	DirectX::XMFLOAT2A fontPosition;
-	DirectX::XMFLOAT2A fontOrigin;
 	float fontScale;
 	float fontLayerDepth;
-
+	DirectX::XMFLOAT2A fontPosition;
+	DirectX::XMFLOAT2A fontOrigin;
+	DirectX::XMVECTOR fontColour;
 
 	/*
 	fontsize
-
-	spriteeffects?
 	fontBorder?
 	fontOutline
 	*/

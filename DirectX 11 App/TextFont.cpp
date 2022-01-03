@@ -82,3 +82,63 @@ void TextFont::operator delete(void* p)
 {
 	_mm_free(p);
 }
+
+const DirectX::XMFLOAT2A& TextFont::GetFontPosition() const
+{
+	return fontPosition;
+}
+
+const void TextFont::SetFontPosition(const DirectX::XMFLOAT2A& newPosition)
+{
+	fontPosition = newPosition;
+}
+
+const float TextFont::GetFontRotation() const
+{
+	return fontRotation;
+}
+
+const void TextFont::SetFontRotation(const float newRotation)
+{
+	fontRotation = newRotation;
+}
+
+const DirectX::XMFLOAT2A& TextFont::GetFontOrigin() const
+{
+	return fontOrigin;
+}
+
+const void TextFont::SetFontOrigin(const DirectX::XMFLOAT2A& newOrigin)
+{
+	fontOrigin = newOrigin;
+}
+
+const float TextFont::GetFontScale() const
+{
+	return fontScale;
+}
+
+const void TextFont::SetFontScale(const float newScale)
+{
+	fontScale = newScale;
+}
+
+const float TextFont::GetFontLayerDepth() const
+{
+	return fontLayerDepth;
+}
+
+const void TextFont::SetFontLayerDepth(const float newLayerDepth)
+{
+	fontLayerDepth = newLayerDepth;
+}
+
+const DirectX::XMVECTOR& TextFont::GetFontColour() const
+{
+	return fontColour;
+}
+
+const void TextFont::SetFontColour(const DirectX::XMVECTOR& newColour)
+{
+	fontColour = newColour;
+}
