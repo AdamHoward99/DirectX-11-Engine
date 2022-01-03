@@ -21,7 +21,6 @@ public:
 	~TextFont();
 	///Copy Assignment Operator
 	TextFont& operator=(const TextFont& fontA);
-
 	///Function that uses SpriteFont::DrawString(), only passes string to be outputted
 	const void DrawString(const CString& text);
 	///Overload function of DrawString() which passes desired position, colour, and origin
@@ -32,18 +31,23 @@ public:
 	void* operator new(size_t i);
 	void operator delete(void* p);
 
+	//Getters and setters for private variables TODO
+
 private:
 	DirectX::SpriteFont* pFont;
 	DirectX::SpriteBatch* pFontBatch;
 
 	DirectX::XMVECTOR fontColour;
-
 	float fontRotation;
+
+	DirectX::XMFLOAT2A fontPosition;
+	DirectX::XMFLOAT2A fontOrigin;
+	float fontScale;
+	float fontLayerDepth;
+
 
 	/*
 	fontsize
-	fontscale
-	fontrotation?
 
 	spriteeffects?
 	fontBorder?

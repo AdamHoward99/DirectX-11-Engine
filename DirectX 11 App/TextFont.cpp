@@ -1,7 +1,8 @@
 #include "TextFont.h"
 
 TextFont::TextFont()
-	:pFont(nullptr), pFontBatch(nullptr), fontColour(DirectX::Colors::White), fontRotation(0.0f)
+	:pFont(nullptr), pFontBatch(nullptr), fontColour(DirectX::Colors::White), fontRotation(0.0f), fontPosition(0.0f, 0.0f),
+	fontOrigin(0.0f, 0.0f), fontScale(0.0f), fontLayerDepth(0.0f)
 {}
 
 TextFont::TextFont(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
@@ -23,6 +24,10 @@ TextFont::TextFont(const TextFont& otherFont)
 	pFontBatch = otherFont.pFontBatch;
 	fontColour = otherFont.fontColour;
 	fontRotation = otherFont.fontRotation;
+	fontPosition = otherFont.fontPosition;
+	fontOrigin = otherFont.fontOrigin;
+	fontScale = otherFont.fontScale;
+	fontLayerDepth = otherFont.fontLayerDepth;
 }
 
 TextFont::~TextFont()
@@ -44,6 +49,10 @@ TextFont& TextFont::operator=(const TextFont& fontA)
 		this->pFontBatch = fontA.pFontBatch;
 		this->fontColour = fontA.fontColour;
 		this->fontRotation = fontA.fontRotation;
+		this->fontPosition = fontA.fontPosition;
+		this->fontOrigin = fontA.fontOrigin;
+		this->fontScale = fontA.fontScale;
+		this->fontLayerDepth = fontA.fontLayerDepth;
 	}
 
 	return *this;
