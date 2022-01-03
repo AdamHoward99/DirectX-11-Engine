@@ -1,4 +1,4 @@
-#include "Font.h"
+#include "TextFont.h"
 
 TextFont::TextFont()
 	:pFont(nullptr), pFontBatch(nullptr), fontColour(DirectX::Colors::White), fontRotation(0.0f)

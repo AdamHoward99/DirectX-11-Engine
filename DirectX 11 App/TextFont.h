@@ -28,7 +28,7 @@ public:
 	const void DrawString(const CString& text, const DirectX::XMFLOAT2A& position, const DirectX::XMVECTOR& textColour = DirectX::Colors::White,
 		const float textRotation = 0.0f);
 
-	///Operators required for 16-bit alignment of Object class for unordered_map in DXGraphics Class
+	///Operators required for 16-bit alignment
 	void* operator new(size_t i);
 	void operator delete(void* p);
 

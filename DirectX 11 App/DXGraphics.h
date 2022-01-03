@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11.h>		//Could remove since its in font.h
 #include <wrl/client.h>
 #include "ErrorMessaging.h"
 #include "AdapterReader.h"
@@ -8,8 +7,7 @@
 #include "Camera.h"
 #include "FrameTimer.h"
 #include "Object.h"
-#include "StringConverter.h"		//could remove since its in font.h
-#include "Font.h"
+#include "TextFont.h"
 #include <unordered_map>
 
 class DXGraphics
@@ -47,7 +45,6 @@ private:
 	static UINT ViewportCount;
 
 	std::unordered_map<std::string, std::unique_ptr<TextFont>> fonts;
-	//TODO: Create Text class to use fonts
 
 	FrameTimer fTimer;
 };
