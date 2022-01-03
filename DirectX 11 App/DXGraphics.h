@@ -1,5 +1,5 @@
 #pragma once
-#include <d3d11.h>
+#include <d3d11.h>		//Could remove since its in font.h
 #include <wrl/client.h>
 #include "ErrorMessaging.h"
 #include "AdapterReader.h"
@@ -9,8 +9,6 @@
 #include "FrameTimer.h"
 #include "Object.h"
 #include "StringConverter.h"
-#include <SpriteBatch.h>
-#include <spriteFont.h>
 #include <unordered_map>
 
 class DXGraphics
@@ -47,8 +45,6 @@ private:
 	AdapterReader adapterReader;
 	static UINT ViewportCount;
 
-	DirectX::SpriteFont* font;
-	DirectX::SpriteBatch* spBatch;
 	//TODO: Create Text class to use fonts
 
 	FrameTimer fTimer;
