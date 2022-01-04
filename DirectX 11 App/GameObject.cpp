@@ -45,6 +45,38 @@ void GameObject::SetPosition(const DirectX::XMMATRIX& newPosition)
 	object.SetWorldPosition(newPosition);
 }
 
+void GameObject::SetPosition(const DirectX::XMVECTOR& newPosition)
+{
+	///Converts XMVECTOR to XMMATRIX
+	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslationFromVector(newPosition);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(positionMat);
+}
+
+void GameObject::SetPosition(const DirectX::XMFLOAT4X4A& newPosition)
+{
+	///Converts XMFLOAT4X4A to XMMATRIX
+	const DirectX::XMMATRIX positionMat = DirectX::XMLoadFloat4x4A(&newPosition);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(positionMat);
+}
+
+void GameObject::SetPosition(const DirectX::XMFLOAT3A& newPosition)
+{
+	///Converts XMFLOAT3A to XMMATRIX
+	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslation(newPosition.x, newPosition.y, newPosition.z);		//TODO: Test if conversion to XMVECTOR is more efficient than singly obtaining the values
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(positionMat);
+}
+
+void GameObject::SetPosition(const float x, const float y, const float z)
+{
+	///Converts floats to XMMATRIX
+	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslation(x, y, z);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(positionMat);
+}
+
 void* GameObject::operator new(size_t i)
 {
 	///Aligns to 16-bits for unique_ptr creation

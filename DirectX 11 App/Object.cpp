@@ -36,8 +36,6 @@ Object& Object::operator=(const Object& oldObject)
 
 void Object::Initialize(const std::string& filepath)
 {
-	SetWorldPosition(DirectX::XMMatrixIdentity());
-
 	///Model filename given in DXGraphics::InitialiseOBJs()
 	if (filepath != "")
 	{
@@ -168,7 +166,7 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
 {
 	///World Matrix value is passed onto Mesh class where the position is actually set each Update()
-	objWorldMatrix = pos;
+	objWorldMatrix *= pos;
 
 	///Transposed as DirectX uses a column-major coordinate system
 	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);

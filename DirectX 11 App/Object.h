@@ -29,6 +29,7 @@ public:
 	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
 	Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr);
 
+	///Changes position of object in game world by multiplying with current world matrix
 	void SetWorldPosition(const DirectX::XMMATRIX& pos);
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 
@@ -36,7 +37,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
 
-	DirectX::XMMATRIX objWorldMatrix;	///Matrix is passed to Meshes to set world position
+	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();	///Matrix is passed to Meshes to set world position
 	std::vector<Mesh> objMeshes;
 	std::string objectFileDirectory;
 

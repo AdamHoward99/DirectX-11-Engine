@@ -8,16 +8,24 @@ public:
 	GameObject(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath, 
 		const std::string& gameObjectName = "Default_GameObject");
 	///GameObject Class Destructor
-	~GameObject();
+	virtual ~GameObject();
 	///Copy Assignment Operator
-	GameObject& operator=(const GameObject& otherObj);
+	virtual GameObject& operator=(const GameObject& otherObj);
 	///Move Assignment Operator
-	GameObject& operator=(const GameObject&& otherObj);
+	virtual GameObject& operator=(const GameObject&& otherObj);
 
 	///Updates Movement of GameObject
-	void Update();
+	virtual void Update();
 	///Matrix version of SetPosition function
 	void SetPosition(const DirectX::XMMATRIX& newPosition);
+	///XMVECTOR version of SetPosition function
+	void SetPosition(const DirectX::XMVECTOR& newPosition);
+	///XMFLOAT4X4A version of SetPosition function
+	void SetPosition(const DirectX::XMFLOAT4X4A& newPosition);
+	///XMFLOAT3A version of SetPosition function
+	void SetPosition(const DirectX::XMFLOAT3A& newPosition);
+	///Singular floats version of SetPosition function
+	void SetPosition(const float x, const float y, const float z);
 
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);
