@@ -5,7 +5,15 @@ class GameObject
 {
 public:
 	///Constructor to initiliaze GameObject's model object
-	GameObject(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath);
+	GameObject(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath, 
+		const std::string& gameObjectName = "Default_GameObject");
+	///GameObject Class Destructor
+	~GameObject();
+	///Copy Assignment Operator
+	GameObject& operator=(const GameObject& otherObj);
+	///Move Assignment Operator
+	GameObject& operator=(const GameObject&& otherObj);
+
 	///Updates Movement of GameObject
 	void Update();
 	///Matrix version of SetPosition function
@@ -19,4 +27,6 @@ public:
 private:
 	///Mesh of the GameObject, Keeps Mesh loading and Geometry creation hidden from this class
 	Object object;
+	///Stores name used by unordered_map in DXGraphics class
+	std::string gameObjectName;
 };
