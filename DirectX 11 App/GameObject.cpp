@@ -77,6 +77,66 @@ void GameObject::SetPosition(const float x, const float y, const float z)
 	object.SetWorldPosition(positionMat);
 }
 
+void GameObject::SetPositionInView(const DirectX::XMMATRIX& newPosition)
+{
+	///Passes value to Object class to change Mesh position based on Camera
+	object.SetWorldPositionInViewport(newPosition);
+}
+
+const DirectX::XMMATRIX& GameObject::GetPositionMatrix()
+{
+	return object.GetWorldPosition();
+}
+
+const DirectX::XMFLOAT4X4A GameObject::GetPosition4X4()
+{
+	///Convert matrix to XMFLOAT4X4A
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+	return float4x4;
+}
+
+const DirectX::XMFLOAT3A GameObject::GetPosition3A()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	//TODO: find another way that doesnt involve individual obtaining
+	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._14, float4x4._24, float4x4._34);
+	return float3;
+}
+
+const float GameObject::GetPositionX()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Obtain individual X value from XMFLOAT4X4 variable
+	return float4x4._14;
+}
+
+const float GameObject::GetPositionY()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Obtain individual Y value from XMFLOAT4X4 variable
+	return float4x4._24;
+}
+
+const float GameObject::GetPositionZ()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Obtain individual Z value from XMFLOAT4X4 variable
+	return float4x4._34;
+}
+
 void* GameObject::operator new(size_t i)
 {
 	///Aligns to 16-bits for unique_ptr creation

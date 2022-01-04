@@ -177,6 +177,15 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 	return objWorldMatrix;
 }
 
+void Object::SetWorldPositionInViewport(const DirectX::XMMATRIX& pos)
+{
+	///World Matrix value is passed onto Mesh class where the position is actually set each Update()
+	objWorldMatrix = pos;
+
+	///Transposed as DirectX uses a column-major coordinate system
+	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
+}
+
 const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)
 {
 	///Obtain total amount of textures on Material

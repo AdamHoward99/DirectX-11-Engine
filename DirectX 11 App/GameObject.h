@@ -26,6 +26,20 @@ public:
 	void SetPosition(const DirectX::XMFLOAT3A& newPosition);
 	///Singular floats version of SetPosition function
 	void SetPosition(const float x, const float y, const float z);
+	///Sets position of Object based on Camera View
+	void SetPositionInView(const DirectX::XMMATRIX& newPosition);
+	///Matrix version of GetPosition function
+	const DirectX::XMMATRIX& GetPositionMatrix();
+	///XMFLOAT4X4A version of GetPosition function
+	const DirectX::XMFLOAT4X4A GetPosition4X4();
+	///XMFLOAT3A version of GetPosition function
+	const DirectX::XMFLOAT3A GetPosition3A();
+	///Obtains X position from Object world matrix
+	const float GetPositionX();
+	///Obtains Y position from Object world matrix
+	const float GetPositionY();
+	///Obtains Z position from Object world matrix
+	const float GetPositionZ();
 
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);

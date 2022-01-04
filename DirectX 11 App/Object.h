@@ -33,6 +33,9 @@ public:
 	void SetWorldPosition(const DirectX::XMMATRIX& pos);
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 
+	///Sets position of Object according to camera viewport (Camera View * Camera Projection)
+	void SetWorldPositionInViewport(const DirectX::XMMATRIX& pos);
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;

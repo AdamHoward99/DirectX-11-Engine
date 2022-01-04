@@ -49,7 +49,7 @@ void DXGraphics::RenderFrame(Camera* const camera)
 
 	///Notice: Update OBJ's here
 	renderObjects["Square"]->Update();
-	renderObjects["Square"]->SetPosition(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["Square"]->SetPositionInView(camera->GetCameraView() * camera->GetProjection());
 
 	//Display FPS Timer
 	fTimer.IncrementFPSCounter();
