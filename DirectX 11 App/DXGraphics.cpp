@@ -49,7 +49,7 @@ void DXGraphics::RenderFrame(Camera* const camera)
 
 	///Notice: Update OBJ's here
 	renderObjects["Square"]->Update();
-	renderObjects["Square"]->SetWorldPosition(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["Square"]->SetPosition(camera->GetCameraView() * camera->GetProjection());
 
 	//Display FPS Timer
 	fTimer.IncrementFPSCounter();
@@ -246,7 +246,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Square"] = std::move(std::make_unique<Object>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
+	renderObjects["Square"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
 }
 
 void DXGraphics::DrawString()

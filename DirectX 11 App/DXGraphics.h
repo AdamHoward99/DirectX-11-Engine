@@ -6,7 +6,7 @@
 #include "Vertex.h"
 #include "Camera.h"
 #include "FrameTimer.h"
-#include "Object.h"
+#include "GameObject.h"
 #include "TextFont.h"
 #include <unordered_map>
 
@@ -37,7 +37,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
 
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
-	std::unordered_map<std::string, std::unique_ptr<Object>> renderObjects;
+	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;
 
 	VertexShader vShader;
 	PixelShader pShader;

@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include "Mesh.h"
 
-class Object			//Model
+class Object			///Class to load OBJs, textures and Meshes
 {
 public:
 	Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath);
@@ -17,10 +17,6 @@ public:
 
 	///Copy Assignment Operator for Object class
 	Object& operator=(const Object& oldObject);
-
-	///Operators required for 16-bit alignment of Object class for unordered_map in DXGraphics Class
-	void* operator new(size_t i);
-	void operator delete(void* p);
 
 	void Initialize(const std::string& filepath);
 	void Update();
@@ -44,7 +40,7 @@ private:
 	std::vector<Mesh> objMeshes;
 	std::string objectFileDirectory;
 
-	/*TODO: in future, GameObject class will inherit Object class adding:
+	/*TODO: in future, GameObject class will include Object class adding:
 	position variables
 	rotation variables
 	scaling variables

@@ -34,17 +34,6 @@ Object& Object::operator=(const Object& oldObject)
 	return *this;
 }
 
-void* Object::operator new(size_t i)
-{
-	///Aligns to 16-bits for unique_ptr creation
-	return _mm_malloc(i, 16);
-}
-
-void Object::operator delete(void* p)
-{
-	_mm_free(p);
-}
-
 void Object::Initialize(const std::string& filepath)
 {
 	SetWorldPosition(DirectX::XMMatrixIdentity());
