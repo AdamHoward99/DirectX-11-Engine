@@ -120,10 +120,13 @@ Mesh& Mesh::operator=(const Mesh& otherMesh)
 	return *this;
 }
 
-void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix)
+void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix)
 {
 	///Updates world position of Mesh/Object each Update() call
-	meshData.pos = worldMatrix;
+	///worldMatrix - Stores all transformations made to the Object (Translation, Scaling, Rotation etc.)
+	///viewProjectionMatrix - Is the camera view * camera projection
+	meshData.pos = worldMatrix * viewProjectionMatrix;
+	meshData.pos = DirectX::XMMatrixTranspose(meshData.pos);
 }
 
 void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)

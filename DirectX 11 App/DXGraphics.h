@@ -16,7 +16,7 @@ public:
 	bool InitialiseClass(HWND, int, int);
 	~DXGraphics();
 
-	void RenderFrame(Camera* const cam);
+	void RenderFrame(Camera* const cam, const float deltaTime);
 private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();

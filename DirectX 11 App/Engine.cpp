@@ -70,5 +70,5 @@ void Engine::Update()
 
 void Engine::Render()
 {
-	graphics.RenderFrame(&camera);
+	graphics.RenderFrame(&camera, gTimer.GetDeltaTime());
 }

@@ -34,13 +34,14 @@ public:
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 
 	///Sets position of Object according to camera viewport (Camera View * Camera Projection)
-	void SetWorldPositionInViewport(const DirectX::XMMATRIX& pos);
+	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
 
 	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();	///Matrix is passed to Meshes to set world position
+	DirectX::XMMATRIX viewProjectionMatrix = DirectX::XMMatrixIdentity();		///Used for VP Matrix, multipled with world matrix in Mesh::UpdatePosition function 
 	std::vector<Mesh> objMeshes;
 	std::string objectFileDirectory;
 

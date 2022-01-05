@@ -51,7 +51,7 @@ void Object::Update()
 {
 	///Update Position of OBJ here
 	for (Mesh& m : objMeshes)
-		m.UpdatePosition(objWorldMatrix);
+		m.UpdatePosition(objWorldMatrix, viewProjectionMatrix);
 
 	Render();
 }
@@ -167,9 +167,6 @@ void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
 {
 	///World Matrix value is passed onto Mesh class where the position is actually set each Update()
 	objWorldMatrix *= pos;
-
-	///Transposed as DirectX uses a column-major coordinate system
-	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
 }
 
 const DirectX::XMMATRIX& Object::GetWorldPosition() const
@@ -177,13 +174,10 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 	return objWorldMatrix;
 }
 
-void Object::SetWorldPositionInViewport(const DirectX::XMMATRIX& pos)
+void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix)
 {
-	///World Matrix value is passed onto Mesh class where the position is actually set each Update()
-	objWorldMatrix = pos;
-
-	///Transposed as DirectX uses a column-major coordinate system
-	objWorldMatrix = DirectX::XMMatrixTranspose(objWorldMatrix);
+	///View Projection Matrix is calculated in Mesh class with World Matrix
+	viewProjectionMatrix = viewProjMatrix;
 }
 
 const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)

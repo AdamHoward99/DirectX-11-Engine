@@ -27,7 +27,7 @@ public:
 	///Singular floats version of SetPosition function
 	void SetPosition(const float x, const float y, const float z);
 	///Sets position of Object based on Camera View
-	void SetPositionInView(const DirectX::XMMATRIX& newPosition);
+	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 	///Matrix version of GetPosition function
 	const DirectX::XMMATRIX& GetPositionMatrix();
 	///XMFLOAT4X4A version of GetPosition function

@@ -26,7 +26,7 @@ public:
 	///Copy Assignment operator for Mesh class
 	Mesh& operator=(const Mesh& otherMesh);
 
-	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix);
+	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix);
 	void Draw();
 
 	///Overloaded function for CreateBuffer creating Index, Constant and Vertex buffers

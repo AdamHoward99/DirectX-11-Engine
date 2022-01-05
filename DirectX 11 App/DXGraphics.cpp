@@ -24,7 +24,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	return true;
 }
 
-void DXGraphics::RenderFrame(Camera* const camera)
+void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -48,8 +48,18 @@ void DXGraphics::RenderFrame(Camera* const camera)
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
 	///Notice: Update OBJ's here
+	renderObjects["Square"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["Square"]->Update();
-	renderObjects["Square"]->SetPositionInView(camera->GetCameraView() * camera->GetProjection());
+
+	std::string txt = "Object X: " + std::to_string(renderObjects["Square"]->GetPositionX()) + "Object Y: " + std::to_string(renderObjects["Square"]->GetPositionY()) +
+		"Object Z: " + std::to_string(renderObjects["Square"]->GetPositionZ());
+
+	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + "Camera Y: " + std::to_string(camera->GetPosition().y) + 
+		"Camera Z: " + std::to_string(camera->GetPosition().z);
+
+	fonts["default"]->DrawString(StringCon::StringToCString(txt), DirectX::XMFLOAT2A(0.f, 20.f));
+	fonts["default"]->DrawString(StringCon::StringToCString(txt2), DirectX::XMFLOAT2A(0.f, 40.f));
+
 
 	//Display FPS Timer
 	fTimer.IncrementFPSCounter();
@@ -247,6 +257,7 @@ void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
 	renderObjects["Square"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
+	renderObjects["Square"]->SetPosition(DirectX::XMMatrixTranslation(0.f, 2.f, 0.f));
 }
 
 void DXGraphics::DrawString()

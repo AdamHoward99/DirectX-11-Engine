@@ -77,10 +77,9 @@ void GameObject::SetPosition(const float x, const float y, const float z)
 	object.SetWorldPosition(positionMat);
 }
 
-void GameObject::SetPositionInView(const DirectX::XMMATRIX& newPosition)
+void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 {
-	///Passes value to Object class to change Mesh position based on Camera
-	object.SetWorldPositionInViewport(newPosition);
+	object.SetViewProjectionMatrix(viewProjMat);
 }
 
 const DirectX::XMMATRIX& GameObject::GetPositionMatrix()
@@ -103,7 +102,7 @@ const DirectX::XMFLOAT3A GameObject::GetPosition3A()
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
 	//TODO: find another way that doesnt involve individual obtaining
-	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._14, float4x4._24, float4x4._34);
+	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._41, float4x4._42, float4x4._43);
 	return float3;
 }
 
@@ -114,7 +113,7 @@ const float GameObject::GetPositionX()
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
 	///Obtain individual X value from XMFLOAT4X4 variable
-	return float4x4._14;
+	return float4x4._41;
 }
 
 const float GameObject::GetPositionY()
@@ -124,7 +123,7 @@ const float GameObject::GetPositionY()
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
 	///Obtain individual Y value from XMFLOAT4X4 variable
-	return float4x4._24;
+	return float4x4._42;
 }
 
 const float GameObject::GetPositionZ()
@@ -134,7 +133,7 @@ const float GameObject::GetPositionZ()
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
 	///Obtain individual Z value from XMFLOAT4X4 variable
-	return float4x4._34;
+	return float4x4._43;
 }
 
 void* GameObject::operator new(size_t i)
