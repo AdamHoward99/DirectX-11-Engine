@@ -136,7 +136,7 @@ const float GameObject::GetPositionZ()
 	return float4x4._43;
 }
 
-void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)
+void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)		///Rotation angles need to be in Radians
 {
 	///Converts XMVECTOR to XMMATRIX
 	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYawFromVector(newRotation);
@@ -146,21 +146,29 @@ void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)
 
 void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)
 {
+	DirectX::XMFLOAT3A radianAngles;
+	radianAngles.x = DirectX::XMConvertToRadians(newRotation.x);
+	radianAngles.y = DirectX::XMConvertToRadians(newRotation.y);
+	radianAngles.z = DirectX::XMConvertToRadians(newRotation.z);
+
 	///Converts XMFLOAT3A to XMMATRIX
-	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(newRotation.x, newRotation.y, newRotation.z);
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radianAngles.x, radianAngles.y, radianAngles.z);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(rotationMat);
 }
 
 void GameObject::SetRotation(const float x, const float y, const float z)
 {
-	//TODO: have conversion parts here so parameters in function can be angles instead of radians
+	///Convert Angle Degree Parameters into radians
+	const float radX = DirectX::XMConvertToRadians(x);
+	const float radY = DirectX::XMConvertToRadians(y);
+	const float radZ = DirectX::XMConvertToRadians(z);
+
 	//TODO: Look into using either right hand or left hand coordinate system, for right hand, all angles will need to be negated
 	//TODO: Obtain matrix from mesh and apply to object.WorldMatrix in case model comes with rotations
 
-
 	///Converts floats to XMMATRIX
-	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radX, radY, radZ);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(rotationMat);
 }
