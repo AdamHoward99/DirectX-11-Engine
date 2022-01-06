@@ -77,7 +77,7 @@ void GameObject::SetPosition(const DirectX::XMVECTOR& newPosition)
 void GameObject::SetPosition(const DirectX::XMFLOAT3A& newPosition)
 {
 	///Converts XMFLOAT3A to XMMATRIX
-	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslation(newPosition.x, newPosition.y, newPosition.z);		//TODO: Test if conversion to XMVECTOR is more efficient than singly obtaining the values
+	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslation(newPosition.x, newPosition.y, newPosition.z);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(positionMat);
 }
@@ -179,8 +179,8 @@ const DirectX::XMFLOAT3A GameObject::GetRotation3A()
 
 	DirectX::XMFLOAT3A angles;
 	angles.x = DirectX::XMConvertToDegrees(atan2f(float4x4._32, float4x4._33));
-	angles.y = DirectX::XMConvertToDegrees(atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2))));
-	angles.z = DirectX::XMConvertToDegrees(atan2f(float4x4._21, float4x4._11));
+	angles.y = DirectX::XMConvertToDegrees(atan2f(float4x4._21, float4x4._11));
+	angles.z = DirectX::XMConvertToDegrees(atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2))));
 	return angles;
 }
 
@@ -201,8 +201,8 @@ const float GameObject::GetRotationY()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
-	///Calculates Y rotation angle in Degrees using formula: atan2(-r31, sqrt(r32^2 + r33^2)
-	float angle = atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2)));
+	///Calculates Y rotation angle in Degrees using formula: atan2(r21, r11)
+	float angle = atan2f(float4x4._21, float4x4._11);
 	return DirectX::XMConvertToDegrees(angle);
 }
 
@@ -212,8 +212,8 @@ const float GameObject::GetRotationZ()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
-	///Calculates Z rotation angle in Degrees using formula: atan2(r21, r11)
-	float angle = atan2f(float4x4._21, float4x4._11);
+	///Calculates Z rotation angle in Degrees using formula: atan2(-r31, sqrt(r32 ^ 2 + r33 ^ 2)
+	float angle = atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2)));
 	return DirectX::XMConvertToDegrees(angle);
 }
 
@@ -239,6 +239,55 @@ void GameObject::SetScale(const float x, const float y, const float z)
 	const DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(x, y, z);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(scaleMat);
+}
+
+const DirectX::XMFLOAT3A GameObject::GetScale3A()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+	DirectX::XMFLOAT3A scaleValues;
+
+	///Work out X Scale Value from Transformation Matrix
+	scaleValues.x = sqrtf(powf(float4x4._11, 2) + powf(float4x4._12, 2) + powf(float4x4._13, 2));
+	///Work out Y Scale Value from Transformation Matrix
+	scaleValues.y = sqrtf(powf(float4x4._31, 2) + powf(float4x4._32, 2) + powf(float4x4._33, 2));
+	///Work out Z Scale Value from Transformation Matrix
+	scaleValues.z = sqrtf(powf(float4x4._21, 2) + powf(float4x4._22, 2) + powf(float4x4._23, 2));
+	return scaleValues;
+}
+
+const float GameObject::GetScaleX()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Work out X Scale Value from Transformation Matrix
+	float scaleX = sqrtf(powf(float4x4._11, 2) + powf(float4x4._12, 2) + powf(float4x4._13, 2));
+	return scaleX;
+}
+
+const float GameObject::GetScaleY()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Work out Y Scale Value from Transformation Matrix
+	float scaleY = sqrtf(powf(float4x4._31, 2) + powf(float4x4._32, 2) + powf(float4x4._33, 2));
+	return scaleY;
+}
+
+const float GameObject::GetScaleZ()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	///Work out Z Scale Value from Transformation Matrix
+	float scaleZ = sqrtf(powf(float4x4._21, 2) + powf(float4x4._22, 2) + powf(float4x4._23, 2));
+	return scaleZ;
 }
 
 void* GameObject::operator new(size_t i)

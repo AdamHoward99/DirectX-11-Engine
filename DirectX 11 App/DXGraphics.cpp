@@ -49,11 +49,11 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	///Notice: Update OBJ's here
 	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.05f * dt, 0.f);
+	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["Ice_Cream"]->Update();		///All transformations should be applied before this is called
 
-	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +
-		" Object Z: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationZ());
+	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetPositionX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetPositionY()) +
+		" Object Z: " + std::to_string(renderObjects["Ice_Cream"]->GetPositionZ());
 
 	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + " Camera Y: " + std::to_string(camera->GetPosition().y) + 
 		" Camera Z: " + std::to_string(camera->GetPosition().z);

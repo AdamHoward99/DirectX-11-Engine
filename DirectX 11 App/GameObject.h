@@ -1,6 +1,37 @@
 #pragma once
 #include "Object.h"
 
+/*
+	Since this engine is using the Left-Handed Coordinate System, the Y and Z values are reversed.
+	Diagram of a Left-Handed Coordinate System:
+	Z
+	|
+	|
+	|
+	|__ __ __ __X
+	 \
+	  \
+	   \
+	    \
+	     Y
+
+	All parameter inputs for transformation functions such as SetPosition, SetRotation etc, will be passed as XYZ. The DirectX11 operations will then swap
+	the Y and Z values and store in the order of XZY. I.e passing (1.f, 2.f, 1.f) would be stored as (1.f, 1.f, 2.f) by the engine.
+
+	When passing a parameter by the Y or Z value, expect for the opposite value to be affected (apart from translations but this is being looked at).
+	For example, calling SetScale with (1.f, 2.f, 1.f) as parameters will scale the model in the Z axis, NOT the Y axis.
+
+	For all Get functions regarding transformations, these will return values according to the right-handed coordinate system. For easier remembering, if
+	you call SetRotation with parameters (0.f, 90.f, 0.f) and then call GetRotationY; it will return 90. The Y and Z get functions will obtain information from the opposite
+	axis position. This change was made to make it easier to understand what axis is being changed since most associate with the right-handed coordinate system.
+
+	Setting the axis uses Right-Hand (XYZ) -> DirectX Operations change order to Left-Hand (XZY) -> Getting axis value converts back to Right-Hand (XYZ)
+
+
+	in set position functions set -y is moving towards the camera and +y is moving away from the camera
+	TODO: FIX Y value being entered as negative but shows up as positive number
+*/
+
 class GameObject
 {
 public:
@@ -58,6 +89,14 @@ public:
 	void SetScale(const DirectX::XMFLOAT3A& newScale);
 	///Singular float version of SetScale function
 	void SetScale(const float x, const float y, const float z);
+	///XMFLOAT3A version of GetScale function
+	const DirectX::XMFLOAT3A GetScale3A();
+	///Obtains X scale value from Object world matrix
+	const float GetScaleX();
+	///Obtains Y scale value from Object world matrix
+	const float GetScaleY();
+	///Obtains Z scale value from Object world matrix
+	const float GetScaleZ();
 
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);
