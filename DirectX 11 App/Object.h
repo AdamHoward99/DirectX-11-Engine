@@ -46,8 +46,6 @@ private:
 	std::string objectFileDirectory;
 
 	/*TODO: in future, GameObject class will include Object class adding:
-	position variables
-	rotation variables
 	scaling variables
 	collision
 	etc.

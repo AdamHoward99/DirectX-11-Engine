@@ -217,6 +217,30 @@ const float GameObject::GetRotationZ()
 	return DirectX::XMConvertToDegrees(angle);
 }
 
+void GameObject::SetScale(const DirectX::XMVECTOR& newScale)
+{
+	///Converts XMVECTOR to XMMATRIX
+	const DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScalingFromVector(newScale);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(scaleMat);
+}
+
+void GameObject::SetScale(const DirectX::XMFLOAT3A& newScale)
+{
+	///Converts XMFLOAT3A to XMMATRIX
+	const DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(newScale.x, newScale.y, newScale.z);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(scaleMat);
+}
+
+void GameObject::SetScale(const float x, const float y, const float z)
+{
+	///Convert floats to XMMATRIX
+	const DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(x, y, z);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(scaleMat);
+}
+
 void* GameObject::operator new(size_t i)
 {
 	///Aligns to 16-bits for unique_ptr creation

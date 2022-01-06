@@ -52,6 +52,12 @@ public:
 	const float GetRotationY();
 	///Obtains Z rotation from Object world matrix
 	const float GetRotationZ();
+	///XMVECTOR version of SetScale function
+	void SetScale(const DirectX::XMVECTOR& newScale);
+	///XMFLOAT3A version of SetScale function
+	void SetScale(const DirectX::XMFLOAT3A& newScale);
+	///Singular float version of SetScale function
+	void SetScale(const float x, const float y, const float z);
 
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);
