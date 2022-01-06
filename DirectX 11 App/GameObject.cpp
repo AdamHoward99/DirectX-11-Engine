@@ -144,8 +144,9 @@ void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)		///Rotation 
 	object.SetWorldPosition(rotationMat);
 }
 
-void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)
+void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)		///Rotation angles need to be in Degrees
 {
+	///Convert Degree angles to Radians
 	DirectX::XMFLOAT3A radianAngles;
 	radianAngles.x = DirectX::XMConvertToRadians(newRotation.x);
 	radianAngles.y = DirectX::XMConvertToRadians(newRotation.y);
@@ -157,7 +158,7 @@ void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)
 	object.SetWorldPosition(rotationMat);
 }
 
-void GameObject::SetRotation(const float x, const float y, const float z)
+void GameObject::SetRotation(const float x, const float y, const float z)	///Rotation angles need to be in Degrees
 {
 	///Convert Angle Degree Parameters into radians
 	const float radX = DirectX::XMConvertToRadians(x);
@@ -176,8 +177,11 @@ const DirectX::XMFLOAT3A GameObject::GetRotation3A()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
-	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._41, float4x4._42, float4x4._43);
-	return float3;
+	DirectX::XMFLOAT3A angles;
+	angles.x = DirectX::XMConvertToDegrees(atan2f(float4x4._32, float4x4._33));
+	angles.y = DirectX::XMConvertToDegrees(atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2))));
+	angles.z = DirectX::XMConvertToDegrees(atan2f(float4x4._21, float4x4._11));
+	return angles;
 }
 
 const float GameObject::GetRotationX()
@@ -186,11 +190,9 @@ const float GameObject::GetRotationX()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
+	///Calculates X rotation angle in Degrees using formula: atan2(r32, r33)
 	float angle = atan2f(float4x4._32, float4x4._33);
-	angle = DirectX::XMConvertToDegrees(angle);
-
-	///Obtain individual X value from XMFLOAT4X4 variable
-	return angle;
+	return DirectX::XMConvertToDegrees(angle);
 }
 
 const float GameObject::GetRotationY()
@@ -199,11 +201,9 @@ const float GameObject::GetRotationY()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
+	///Calculates Y rotation angle in Degrees using formula: atan2(-r31, sqrt(r32^2 + r33^2)
 	float angle = atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2)));
-	angle = DirectX::XMConvertToDegrees(angle);
-
-	///Obtain individual Y value from XMFLOAT4X4 variable
-	return angle;
+	return DirectX::XMConvertToDegrees(angle);
 }
 
 const float GameObject::GetRotationZ()
@@ -212,11 +212,9 @@ const float GameObject::GetRotationZ()
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
+	///Calculates Z rotation angle in Degrees using formula: atan2(r21, r11)
 	float angle = atan2f(float4x4._21, float4x4._11);
-	angle = DirectX::XMConvertToDegrees(angle);
-
-	///Obtain individual Z value from XMFLOAT4X4 variable
-	return angle;
+	return DirectX::XMConvertToDegrees(angle);
 }
 
 void* GameObject::operator new(size_t i)
