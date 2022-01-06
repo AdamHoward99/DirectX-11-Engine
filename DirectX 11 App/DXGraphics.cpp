@@ -48,14 +48,15 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
 	///Notice: Update OBJ's here
-	renderObjects["Square"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["Square"]->Update();
+	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.05f * dt, 0.f);
+	renderObjects["Ice_Cream"]->Update();
 
-	std::string txt = "Object X: " + std::to_string(renderObjects["Square"]->GetRotationX()) + "Object Y: " + std::to_string(renderObjects["Square"]->GetRotationY()) +
-		"Object Z: " + std::to_string(renderObjects["Square"]->GetRotationZ());
+	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +
+		" Object Z: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationZ());
 
-	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + "Camera Y: " + std::to_string(camera->GetPosition().y) + 
-		"Camera Z: " + std::to_string(camera->GetPosition().z);
+	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + " Camera Y: " + std::to_string(camera->GetPosition().y) + 
+		" Camera Z: " + std::to_string(camera->GetPosition().z);
 
 	fonts["default"]->DrawString(StringCon::StringToCString(txt), DirectX::XMFLOAT2A(0.f, 20.f));
 	fonts["default"]->DrawString(StringCon::StringToCString(txt2), DirectX::XMFLOAT2A(0.f, 40.f));
@@ -256,9 +257,8 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Square"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
-	renderObjects["Square"]->SetRotation(0.f, 0.f, 0.f);
-	//renderObjects["Square"]->SetTransformations(DirectX::XMMatrixRotationZ(1.507f));
+	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
+	renderObjects["Ice_Cream"]->SetRotation(-90.f, 0.f, 0.f);
 }
 
 void DXGraphics::DrawString()

@@ -164,9 +164,6 @@ void GameObject::SetRotation(const float x, const float y, const float z)
 	const float radY = DirectX::XMConvertToRadians(y);
 	const float radZ = DirectX::XMConvertToRadians(z);
 
-	//TODO: Look into using either right hand or left hand coordinate system, for right hand, all angles will need to be negated
-	//TODO: Obtain matrix from mesh and apply to object.WorldMatrix in case model comes with rotations
-
 	///Converts floats to XMMATRIX
 	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radX, radY, radZ);
 	///Passes value to Object class to change Mesh position
