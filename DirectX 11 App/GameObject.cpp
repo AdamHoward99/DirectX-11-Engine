@@ -39,24 +39,37 @@ void GameObject::Update()
 	object.Update();
 }
 
-void GameObject::SetPosition(const DirectX::XMMATRIX& newPosition)
+void GameObject::SetTransformations(const DirectX::XMMATRIX& newMatrix)
 {
 	///Passes value to Object class to change Mesh position
-	object.SetWorldPosition(newPosition);
+	object.SetWorldPosition(newMatrix);
+}
+
+void GameObject::SetTransformations(const DirectX::XMFLOAT4X4A& newF4X4)
+{
+	///Converts XMFLOAT4X4A to XMMATRIX
+	const DirectX::XMMATRIX matrix = DirectX::XMLoadFloat4x4A(&newF4X4);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(matrix);
+}
+
+const DirectX::XMMATRIX& GameObject::GetTransformationsMatrix()
+{
+	return object.GetWorldPosition();
+}
+
+const DirectX::XMFLOAT4X4A GameObject::GetTransformations4X4()
+{
+	///Convert matrix to XMFLOAT4X4A
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+	return float4x4;
 }
 
 void GameObject::SetPosition(const DirectX::XMVECTOR& newPosition)
 {
 	///Converts XMVECTOR to XMMATRIX
 	const DirectX::XMMATRIX positionMat = DirectX::XMMatrixTranslationFromVector(newPosition);
-	///Passes value to Object class to change Mesh position
-	object.SetWorldPosition(positionMat);
-}
-
-void GameObject::SetPosition(const DirectX::XMFLOAT4X4A& newPosition)
-{
-	///Converts XMFLOAT4X4A to XMMATRIX
-	const DirectX::XMMATRIX positionMat = DirectX::XMLoadFloat4x4A(&newPosition);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(positionMat);
 }
@@ -80,19 +93,6 @@ void GameObject::SetPosition(const float x, const float y, const float z)
 void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 {
 	object.SetViewProjectionMatrix(viewProjMat);
-}
-
-const DirectX::XMMATRIX& GameObject::GetPositionMatrix()
-{
-	return object.GetWorldPosition();
-}
-
-const DirectX::XMFLOAT4X4A GameObject::GetPosition4X4()
-{
-	///Convert matrix to XMFLOAT4X4A
-	DirectX::XMFLOAT4X4A float4x4;
-	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
-	return float4x4;
 }
 
 const DirectX::XMFLOAT3A GameObject::GetPosition3A()
@@ -134,6 +134,84 @@ const float GameObject::GetPositionZ()
 
 	///Obtain individual Z value from XMFLOAT4X4 variable
 	return float4x4._43;
+}
+
+void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)
+{
+	///Converts XMVECTOR to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYawFromVector(newRotation);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
+}
+
+void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)
+{
+	///Converts XMFLOAT3A to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(newRotation.x, newRotation.y, newRotation.z);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
+}
+
+void GameObject::SetRotation(const float x, const float y, const float z)
+{
+	//TODO: have conversion parts here so parameters in function can be angles instead of radians
+	//TODO: Look into using either right hand or left hand coordinate system, for right hand, all angles will need to be negated
+	//TODO: Obtain matrix from mesh and apply to object.WorldMatrix in case model comes with rotations
+
+
+	///Converts floats to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
+}
+
+const DirectX::XMFLOAT3A GameObject::GetRotation3A()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._41, float4x4._42, float4x4._43);
+	return float3;
+}
+
+const float GameObject::GetRotationX()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	float angle = atan2f(float4x4._32, float4x4._33);
+	angle = DirectX::XMConvertToDegrees(angle);
+
+	///Obtain individual X value from XMFLOAT4X4 variable
+	return angle;
+}
+
+const float GameObject::GetRotationY()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	float angle = atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2)));
+	angle = DirectX::XMConvertToDegrees(angle);
+
+	///Obtain individual Y value from XMFLOAT4X4 variable
+	return angle;
+}
+
+const float GameObject::GetRotationZ()
+{
+	///Store matrix into XMFLOAT4X4 variable
+	DirectX::XMFLOAT4X4A float4x4;
+	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
+
+	float angle = atan2f(float4x4._21, float4x4._11);
+	angle = DirectX::XMConvertToDegrees(angle);
+
+	///Obtain individual Z value from XMFLOAT4X4 variable
+	return angle;
 }
 
 void* GameObject::operator new(size_t i)

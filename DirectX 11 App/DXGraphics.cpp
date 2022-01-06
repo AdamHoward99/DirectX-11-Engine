@@ -51,8 +51,8 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["Square"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["Square"]->Update();
 
-	std::string txt = "Object X: " + std::to_string(renderObjects["Square"]->GetPositionX()) + "Object Y: " + std::to_string(renderObjects["Square"]->GetPositionY()) +
-		"Object Z: " + std::to_string(renderObjects["Square"]->GetPositionZ());
+	std::string txt = "Object X: " + std::to_string(renderObjects["Square"]->GetRotationX()) + "Object Y: " + std::to_string(renderObjects["Square"]->GetRotationY()) +
+		"Object Z: " + std::to_string(renderObjects["Square"]->GetRotationZ());
 
 	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + "Camera Y: " + std::to_string(camera->GetPosition().y) + 
 		"Camera Z: " + std::to_string(camera->GetPosition().z);
@@ -257,7 +257,8 @@ void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
 	renderObjects["Square"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
-	renderObjects["Square"]->SetPosition(DirectX::XMMatrixTranslation(0.f, 2.f, 0.f));
+	renderObjects["Square"]->SetRotation(0.f, 0.f, 0.f);
+	//renderObjects["Square"]->SetTransformations(DirectX::XMMatrixRotationZ(1.507f));
 }
 
 void DXGraphics::DrawString()
