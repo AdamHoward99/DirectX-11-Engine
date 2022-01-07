@@ -28,6 +28,9 @@
 	Setting the axis uses Right-Hand (XYZ) -> DirectX Operations change order to Left-Hand (XZY) -> Getting axis value converts back to Right-Hand (XYZ)
 */
 
+//When Deriving classes from the GameObject class, to utilize the GameObject constructor use "using GameObject::GameObject" to inherit this class' constructor
+//When assigning derived classes to a GameObject class type, create custom move operator to prevent object slicing
+
 class GameObject
 {
 public:
