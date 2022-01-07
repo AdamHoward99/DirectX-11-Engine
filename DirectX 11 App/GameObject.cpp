@@ -90,6 +90,15 @@ void GameObject::SetPosition(const float x, const float y, const float z)
 	object.SetWorldPosition(positionMat);
 }
 
+const DirectX::XMVECTOR GameObject::GetPositionVec()
+{
+	///Get XMFLOAT3A from XMMATRIX
+	const DirectX::XMFLOAT3A float3 = GetPosition3A();
+	///Convert XMFLOAT3A to XMVECTOR
+	DirectX::XMVECTOR vector = DirectX::XMLoadFloat3A(&float3);
+	return vector;
+}
+
 void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 {
 	object.SetViewProjectionMatrix(viewProjMat);
@@ -97,11 +106,10 @@ void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 
 const DirectX::XMFLOAT3A GameObject::GetPosition3A()
 {
-	///Store matrix into XMFLOAT4X4 variable
+	///Store matrix into XMFLOAT4X4A variable
 	DirectX::XMFLOAT4X4A float4x4;
 	DirectX::XMStoreFloat4x4A(&float4x4, object.GetWorldPosition());
 
-	//TODO: find another way that doesnt involve individual obtaining
 	DirectX::XMFLOAT3A float3 = DirectX::XMFLOAT3A(float4x4._41, float4x4._42, float4x4._43);
 	return float3;
 }
@@ -169,6 +177,15 @@ void GameObject::SetRotation(const float x, const float y, const float z)	///Rot
 	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radX, radY, radZ);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(rotationMat);
+}
+
+const DirectX::XMVECTOR GameObject::GetRotationVec()
+{
+	///Get XMFLOAT3A from XMMATRIX
+	const DirectX::XMFLOAT3A float3 = GetRotation3A();
+	///Convert XMFLOAT3A to XMVECTOR
+	DirectX::XMVECTOR vector = DirectX::XMLoadFloat3A(&float3);
+	return vector;
 }
 
 const DirectX::XMFLOAT3A GameObject::GetRotation3A()
@@ -239,6 +256,15 @@ void GameObject::SetScale(const float x, const float y, const float z)
 	const DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(x, y, z);
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(scaleMat);
+}
+
+const DirectX::XMVECTOR GameObject::GetScaleVec()
+{
+	///Get XMFLOAT3A version of XMMATRIX
+	const DirectX::XMFLOAT3A float3 = GetScale3A();
+	///Convert XMFLOAT3A to XMVECTOR
+	DirectX::XMVECTOR vector = DirectX::XMLoadFloat3A(&float3);
+	return vector;
 }
 
 const DirectX::XMFLOAT3A GameObject::GetScale3A()

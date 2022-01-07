@@ -44,10 +44,4 @@ private:
 	DirectX::XMMATRIX viewProjectionMatrix = DirectX::XMMatrixIdentity();		///Used for VP Matrix, multipled with world matrix in Mesh::UpdatePosition function 
 	std::vector<Mesh> objMeshes;
 	std::string objectFileDirectory;
-
-	/*TODO: in future, GameObject class will include Object class adding:
-	scaling variables
-	collision
-	etc.
-	*/
 };

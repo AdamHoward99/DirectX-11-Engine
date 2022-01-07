@@ -26,10 +26,6 @@
 	axis position. This change was made to make it easier to understand what axis is being changed since most associate with the right-handed coordinate system.
 
 	Setting the axis uses Right-Hand (XYZ) -> DirectX Operations change order to Left-Hand (XZY) -> Getting axis value converts back to Right-Hand (XYZ)
-
-
-	in set position functions set -y is moving towards the camera and +y is moving away from the camera
-	TODO: FIX Y value being entered as negative but shows up as positive number
 */
 
 class GameObject
@@ -61,6 +57,8 @@ public:
 	void SetPosition(const DirectX::XMFLOAT3A& newPosition);
 	///Singular floats version of SetPosition function
 	void SetPosition(const float x, const float y, const float z);
+	///XMVECTOR version of GetPosition function
+	const DirectX::XMVECTOR GetPositionVec();
 	///XMFLOAT3A version of GetPosition function
 	const DirectX::XMFLOAT3A GetPosition3A();
 	///Obtains X position from Object world matrix
@@ -75,6 +73,8 @@ public:
 	void SetRotation(const DirectX::XMFLOAT3A& newRotation);
 	///Singular floats version of SetRotation function
 	void SetRotation(const float x, const float y, const float z);
+	///XMVECTOR version of GetRotation function
+	const DirectX::XMVECTOR GetRotationVec();
 	///XMFLOAT3A version of GetRotation function
 	const DirectX::XMFLOAT3A GetRotation3A();
 	///Obtains X rotation from Object world matrix
@@ -89,6 +89,8 @@ public:
 	void SetScale(const DirectX::XMFLOAT3A& newScale);
 	///Singular float version of SetScale function
 	void SetScale(const float x, const float y, const float z);
+	///XMVECTOR version of GetScale function
+	const DirectX::XMVECTOR GetScaleVec();
 	///XMFLOAT3A version of GetScale function
 	const DirectX::XMFLOAT3A GetScale3A();
 	///Obtains X scale value from Object world matrix
@@ -103,7 +105,10 @@ public:
 	///Frees memory allocated in unique_pointer declaration
 	void operator delete(void* p);
 
-	//TODO : Get for XMVECTOR?
+	//look at function
+	//rotation around point 
+	//Collision functions?
+
 
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
