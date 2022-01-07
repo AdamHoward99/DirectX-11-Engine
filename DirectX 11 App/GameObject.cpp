@@ -326,3 +326,86 @@ void GameObject::operator delete(void* p)
 {
 	_mm_free(p);
 }
+
+void GameObject::LookAt(const DirectX::XMFLOAT3A& differencePos)
+{
+	//TODO: Test with a scene containing more than 1 model, preferably with a model which has a face
+	///Calculate distance between using Pythagoras' theorem
+	const float distance = sqrtf(powf(differencePos.x, 2.f) + powf(differencePos.z, 2.f));
+
+	///Calculate Pitch using formula: (Y / sqrt(X ^ 2 + Z ^ 2))
+	const float pitchAngle = atanf(differencePos.y * (1.f / distance));
+
+	///Calculate Yaw using formula: (X / Z) + PI
+	float yawAngle = atanf(differencePos.x * (1.f / differencePos.z));
+	///Yaw angle needs to be larger than radian range atanf allows
+	if (differencePos.z > 0.f)
+		yawAngle += DirectX::XM_PI;
+
+	///Apply Pitch and Yaw angles to GameObjects rotation, Has to be XMVECTOR since angles are in Radians
+	SetRotation(DirectX::XMVectorSet(pitchAngle, yawAngle, 0.f, 0.f));
+}
+
+void GameObject::SetLookAt(const DirectX::XMMATRIX& targetPos)
+{
+	///Get the position of this GameObject
+	const DirectX::XMFLOAT4X4A thisPosition = GetTransformations4X4();
+
+	///Convert Target position XMMATRIX into XMFLOAT4X4A
+	DirectX::XMFLOAT4X4A targetPos4x4;
+	DirectX::XMStoreFloat4x4A(&targetPos4x4, targetPos);
+
+	///Get the difference of position between this and target
+	DirectX::XMFLOAT3A difference;
+	difference.x = thisPosition._41 - targetPos4x4._41;
+	difference.y = thisPosition._42 - targetPos4x4._42;
+	difference.z = thisPosition._43 - targetPos4x4._43;
+
+	LookAt(difference);
+}
+
+void GameObject::SetLookAt(const DirectX::XMVECTOR& targetPos)
+{
+	///Get the position of this GameObject
+	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
+
+	///Convert Target position XMVECTOR into XMFLOAT3A
+	DirectX::XMFLOAT3A targetPos3A;
+	DirectX::XMStoreFloat3A(&targetPos3A, targetPos);
+
+	///Get the difference of position between this and target
+	DirectX::XMFLOAT3A difference;
+	difference.x = thisPosition.x - targetPos3A.x;
+	difference.y = thisPosition.y - targetPos3A.y;
+	difference.z = thisPosition.z - targetPos3A.z;
+
+	LookAt(difference);
+}
+
+void GameObject::SetLookAt(const DirectX::XMFLOAT3A& targetPos)
+{
+	///Get the position of this GameObject
+	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
+
+	///Get the difference of position between this and target
+	DirectX::XMFLOAT3A difference;
+	difference.x = thisPosition.x - targetPos.x;
+	difference.y = thisPosition.y - targetPos.y;
+	difference.z = thisPosition.z - targetPos.z;
+
+	LookAt(difference);
+}
+
+void GameObject::SetLookAt(const float x, const float y, const float z)
+{
+	///Get the position of this GameObject
+	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
+
+	///Get the difference of position between this and target
+	DirectX::XMFLOAT3A difference;
+	difference.x = thisPosition.x - x;
+	difference.y = thisPosition.y - y;
+	difference.z = thisPosition.z - z;
+
+	LookAt(difference);
+}

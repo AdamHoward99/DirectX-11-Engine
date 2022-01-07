@@ -99,16 +99,23 @@ public:
 	const float GetScaleY();
 	///Obtains Z scale value from Object world matrix
 	const float GetScaleZ();
-
+	///XMMATRIX overload wrapper function for LookAt
+	void SetLookAt(const DirectX::XMMATRIX& targetPos);
+	///XMVECTOR overload wrapper function for LookAt
+	void SetLookAt(const DirectX::XMVECTOR& targetPos);
+	///XMFLOAT3A overload wrapper function for LookAt
+	void SetLookAt(const DirectX::XMFLOAT3A& targetPos);
+	///Singular float overload wrapper function for LookAt
+	void SetLookAt(const float x, const float y, const float z);
+	///Function to rotate GameObject to look towards a position
+	void LookAt(const DirectX::XMFLOAT3A& position);
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);
 	///Frees memory allocated in unique_pointer declaration
 	void operator delete(void* p);
 
-	//look at function
 	//rotation around point 
 	//Collision functions?
-
 
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
