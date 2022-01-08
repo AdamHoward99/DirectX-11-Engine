@@ -39,6 +39,11 @@ void GameObject::Update()
 	object.Update();
 }
 
+void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
+{
+	object.SetViewProjectionMatrix(viewProjMat);
+}
+
 void GameObject::SetTransformations(const DirectX::XMMATRIX& newMatrix)
 {
 	///Passes value to Object class to change Mesh position
@@ -66,6 +71,7 @@ const DirectX::XMFLOAT4X4A GameObject::GetTransformations4X4()
 	return float4x4;
 }
 
+///Position Functions----------------------------------------------------------------------
 void GameObject::SetPosition(const DirectX::XMVECTOR& newPosition)
 {
 	///Converts XMVECTOR to XMMATRIX
@@ -97,11 +103,6 @@ const DirectX::XMVECTOR GameObject::GetPositionVec()
 	///Convert XMFLOAT3A to XMVECTOR
 	DirectX::XMVECTOR vector = DirectX::XMLoadFloat3A(&float3);
 	return vector;
-}
-
-void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
-{
-	object.SetViewProjectionMatrix(viewProjMat);
 }
 
 const DirectX::XMFLOAT3A GameObject::GetPosition3A()
@@ -143,7 +144,9 @@ const float GameObject::GetPositionZ()
 	///Obtain individual Z value from XMFLOAT4X4 variable
 	return float4x4._43;
 }
+///End of Position Functions----------------------------------------------------------------------
 
+///Rotation Functions----------------------------------------------------------------------
 void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)		///Rotation angles need to be in Radians
 {
 	///Converts XMVECTOR to XMMATRIX
@@ -233,7 +236,9 @@ const float GameObject::GetRotationZ()
 	float angle = atan2f(-float4x4._31, sqrt(pow(float4x4._32, 2) + pow(float4x4._33, 2)));
 	return DirectX::XMConvertToDegrees(angle);
 }
+///End of Rotation Functions----------------------------------------------------------------------
 
+///Scale Functions----------------------------------------------------------------------
 void GameObject::SetScale(const DirectX::XMVECTOR& newScale)
 {
 	///Converts XMVECTOR to XMMATRIX
@@ -315,18 +320,40 @@ const float GameObject::GetScaleZ()
 	float scaleZ = sqrtf(powf(float4x4._21, 2) + powf(float4x4._22, 2) + powf(float4x4._23, 2));
 	return scaleZ;
 }
+///End of Scale Functions----------------------------------------------------------------------
 
-void* GameObject::operator new(size_t i)
+///Collision Functions----------------------------------------------------------------------
+bool GameObject::CheckCollisionAABB(const DirectX::XMFLOAT3A& otherObject)
 {
-	///Aligns to 16-bits for unique_ptr creation
-	return _mm_malloc(i, 16);
+	//TODO: Test with multiple different models
+	///Get Position of this GameObject
+	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
+
+	///Detect if GameObjects are colliding using Axis-Aligned Bounding Box method
+	if (fabsf(thisPosition.x - otherObject.x) < 5.f)
+		if (fabsf(thisPosition.y - otherObject.y) < 5.f)
+			if (fabsf(thisPosition.z - otherObject.z) < 5.f)
+				return true;
+
+	return false;
 }
 
-void GameObject::operator delete(void* p)
+bool GameObject::CheckCollisionAABB(const DirectX::XMFLOAT3A & otherObject, const float distance)
 {
-	_mm_free(p);
-}
+	///Get Position of this GameObject
+	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
 
+	///Detect if GameObjects are colliding using Axis-Aligned Bounding Box method
+	if (fabsf(thisPosition.x - otherObject.x) < distance)
+		if (fabsf(thisPosition.y - otherObject.y) < distance)
+			if (fabsf(thisPosition.z - otherObject.z) < distance)
+				return true;
+
+	return false;
+}
+///End of Collision Functions----------------------------------------------------------------------
+
+///LookAt Functions----------------------------------------------------------------------
 void GameObject::LookAt(const DirectX::XMFLOAT3A& differencePos)
 {
 	//TODO: Test with a scene containing more than 1 model, preferably with a model which has a face
@@ -408,4 +435,16 @@ void GameObject::SetLookAt(const float x, const float y, const float z)
 	difference.z = thisPosition.z - z;
 
 	LookAt(difference);
+}
+///End of LookAt Functions----------------------------------------------------------------------
+
+void* GameObject::operator new(size_t i)
+{
+	///Aligns to 16-bits for unique_ptr creation
+	return _mm_malloc(i, 16);
+}
+
+void GameObject::operator delete(void* p)
+{
+	_mm_free(p);
 }

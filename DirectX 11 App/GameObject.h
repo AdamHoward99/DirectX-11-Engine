@@ -46,6 +46,8 @@ public:
 
 	///Updates Movement of GameObject
 	virtual void Update();
+	///Sets position of Object based on Camera View
+	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 	///Matrix version of SetTransformations function, usable for any XMMATRIX transformation
 	void SetTransformations(const DirectX::XMMATRIX& newMatrix);
 	///XMFLOAT4X4A version of SetTransformations function, usable for any XMFLOAT4X4A transformation
@@ -112,19 +114,20 @@ public:
 	void SetLookAt(const float x, const float y, const float z);
 	///Function to rotate GameObject to look towards a position
 	void LookAt(const DirectX::XMFLOAT3A& position);
+	///Returns if this GameObject is colliding with given position using AABB method
+	bool CheckCollisionAABB(const DirectX::XMFLOAT3A& otherObject);
+	///Overloaded function of CheckCollisionAABB to add the distance to check for collision
+	bool CheckCollisionAABB(const DirectX::XMFLOAT3A& otherObject, const float distance);
 	///Required for 16-bit alignment of GameObject class
 	void* operator new(size_t i);
 	///Frees memory allocated in unique_pointer declaration
 	void operator delete(void* p);
-
-	//rotation around point 
-	//Collision functions?
-
-	///Sets position of Object based on Camera View
-	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 private:
 	///Mesh of the GameObject, Keeps Mesh loading and Geometry creation hidden from this class
 	Object object;
 	///Stores name used by unordered_map in DXGraphics class
 	std::string gameObjectName;
+
+	//velocity?
+
 };

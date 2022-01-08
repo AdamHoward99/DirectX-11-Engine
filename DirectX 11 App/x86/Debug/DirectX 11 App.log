@@ -1,4 +1,5 @@
-﻿  DXGraphics.cpp
+﻿  App.cpp
+  DXGraphics.cpp
   Engine.cpp
   GameObject.cpp
   RenderWindow.cpp
