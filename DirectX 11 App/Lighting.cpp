@@ -52,3 +52,18 @@ void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	///UINT NumBuffers					- Number of constant buffers to set
 	///ID3D11Buffer** ppConstantBuffers - Pointer to array of constant buffers to set
 }
+
+void Lighting::SetAmbientLightingColour(const DirectX::XMFLOAT3A& newColour)
+{
+	lightingData.ambientLightingColour = newColour;
+}
+
+void Lighting::SetAmbientLightingColour(const float colourX, const float colourY, const float colourZ)
+{
+	lightingData.ambientLightingColour = DirectX::XMFLOAT3A(colourX, colourY, colourZ);
+}
+
+void Lighting::SetAmbientLightingStrength(const float newStrength)
+{
+	lightingData.ambientLightingStrength = newStrength;
+}
