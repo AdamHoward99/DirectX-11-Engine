@@ -163,6 +163,7 @@
     <ClCompile Include="DXGraphics.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="TextFont.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Keyboard.cpp" />
