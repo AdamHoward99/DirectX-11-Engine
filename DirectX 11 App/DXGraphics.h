@@ -47,4 +47,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<TextFont>> fonts;
 
 	FrameTimer fTimer;
+
+	//TODO: put lighting into its own class
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightingBuffer;
+	PS_CB_DATA lightingData;
 };
