@@ -37,13 +37,14 @@ public:
 	///Constructor to initiliaze GameObject's model object
 	GameObject(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath, 
 		const std::string& gameObjectName = "Default_GameObject");
+	///GameObject Copy Constructor
+	GameObject(const GameObject& otherObj);
 	///GameObject Class Destructor
 	virtual ~GameObject();
 	///Copy Assignment Operator
 	virtual GameObject& operator=(const GameObject& otherObj);
 	///Move Assignment Operator
 	virtual GameObject& operator=(const GameObject&& otherObj);
-
 	///Updates Movement of GameObject
 	virtual void Update();
 	///Sets position of Object based on Camera View
@@ -129,5 +130,4 @@ private:
 	std::string gameObjectName;
 
 	//velocity?
-
 };

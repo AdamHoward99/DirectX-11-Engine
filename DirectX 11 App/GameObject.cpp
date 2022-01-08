@@ -5,6 +5,10 @@ GameObject::GameObject(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::
 	:object(pDevice, pDeviceContext, filepath), gameObjectName(gameObjectName)
 {}
 
+GameObject::GameObject(const GameObject& otherObj)
+	: object(otherObj.object), gameObjectName(otherObj.gameObjectName + "_Copy")
+{}
+
 GameObject::~GameObject()
 {}
 
