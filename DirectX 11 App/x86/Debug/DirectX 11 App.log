@@ -1,8 +1,6 @@
-﻿  App.cpp
-  DXGraphics.cpp
-  Engine.cpp
+﻿  DXGraphics.cpp
   GameObject.cpp
-  RenderWindow.cpp
-  WindowCont.cpp
   Generating Code...
+  LINK : C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe not found or not built by the last incremental link; performing full link
+Camera.obj : warning LNK4205: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing current debugging information for referencing module; linking object as if no debug info
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

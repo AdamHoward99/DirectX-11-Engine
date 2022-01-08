@@ -329,14 +329,13 @@ const float GameObject::GetScaleZ()
 ///Collision Functions----------------------------------------------------------------------
 bool GameObject::CheckCollisionAABB(const DirectX::XMFLOAT3A& otherObject)
 {
-	//TODO: Test with multiple different models
 	///Get Position of this GameObject
 	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
 
 	///Detect if GameObjects are colliding using Axis-Aligned Bounding Box method
-	if (fabsf(thisPosition.x - otherObject.x) < 5.f)
-		if (fabsf(thisPosition.y - otherObject.y) < 5.f)
-			if (fabsf(thisPosition.z - otherObject.z) < 5.f)
+	if (abs(thisPosition.x - otherObject.x) < 5.f)
+		if (abs(thisPosition.y - otherObject.y) < 5.f)
+			if (abs(thisPosition.z - otherObject.z) < 5.f)
 				return true;
 
 	return false;
@@ -348,9 +347,9 @@ bool GameObject::CheckCollisionAABB(const DirectX::XMFLOAT3A & otherObject, cons
 	const DirectX::XMFLOAT3A thisPosition = GetPosition3A();
 
 	///Detect if GameObjects are colliding using Axis-Aligned Bounding Box method
-	if (fabsf(thisPosition.x - otherObject.x) < distance)
-		if (fabsf(thisPosition.y - otherObject.y) < distance)
-			if (fabsf(thisPosition.z - otherObject.z) < distance)
+	if (abs(thisPosition.x - otherObject.x) < distance)
+		if (abs(thisPosition.y - otherObject.y) < distance)
+			if (abs(thisPosition.z - otherObject.z) < distance)
 				return true;
 
 	return false;
