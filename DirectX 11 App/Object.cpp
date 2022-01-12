@@ -116,6 +116,11 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 		v.vertexPosition.y = mesh->mVertices[i].y;
 		v.vertexPosition.z = mesh->mVertices[i].z;
 
+		///Get Normal coordinates
+		v.normalCoordinates.x = mesh->mNormals[i].x;
+		v.normalCoordinates.y = mesh->mNormals[i].y;
+		v.normalCoordinates.z = mesh->mNormals[i].z;
+
 		///If this Mesh has a texture preset, obtain the texture coordinates	NOTE: Main texture of Mesh is always the 1st texture
 		if (mesh->mTextureCoords[0])
 		{

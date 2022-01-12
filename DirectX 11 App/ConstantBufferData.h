@@ -3,7 +3,8 @@
 
 struct VS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
 {
-	DirectX::XMMATRIX pos;	//64-bit size
+	DirectX::XMMATRIX WVPMatrix;	//64-bit size
+	DirectX::XMMATRIX WorldMatrix;	//64-bit size
 };
 
 struct PS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
