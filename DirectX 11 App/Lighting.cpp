@@ -1,6 +1,7 @@
 #include "Lighting.h"
 
-void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& ambientLightingColour, const float ambientLightingStrength)
+void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& ambientLightingColour, const float ambientLightingStrength,
+	const DirectX::XMFLOAT3& dynamicLightingColour, const float dynamicLightingStrength, const DirectX::XMFLOAT3A& dynamicLightingPos)
 {
 	///Create Lighting Buffer Desc
 	D3D11_BUFFER_DESC bufferDesc;
@@ -20,9 +21,14 @@ void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 
-	///Set Lighting Variables
+	///Set Ambient Lighting Variables
 	lightingData.ambientLightingColour = ambientLightingColour;
 	lightingData.ambientLightingStrength = ambientLightingStrength;
+
+	///Set Dynamic Lighting Variables
+	lightingData.dynamicLightingColour = dynamicLightingColour;
+	lightingData.dynamicLightingStrength = dynamicLightingStrength;
+	lightingData.dynamicLightPosition = dynamicLightingPos;
 }
 
 void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -66,4 +72,24 @@ void Lighting::SetAmbientLightingColour(const float colourX, const float colourY
 void Lighting::SetAmbientLightingStrength(const float newStrength)
 {
 	lightingData.ambientLightingStrength = newStrength;
+}
+
+void Lighting::SetDynamicLightingColour(const DirectX::XMFLOAT3A& newColour)
+{
+	lightingData.dynamicLightingColour = newColour;
+}
+
+void Lighting::SetDynamicLightingColour(const float colourX, const float colourY, const float colourZ)
+{
+	lightingData.dynamicLightingColour = DirectX::XMFLOAT3A(colourX, colourY, colourZ);
+}
+
+void Lighting::SetDynamicLightingStrength(const float newStrength)
+{
+	lightingData.dynamicLightingStrength = newStrength;
+}
+
+void Lighting::SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition)
+{
+	lightingData.dynamicLightPosition = newPosition;
 }
