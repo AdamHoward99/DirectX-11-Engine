@@ -16,6 +16,7 @@ struct VertexOutputs
     float4 retPos : SV_POSITION;
     float2 retTexCoord : TEXCOORD;
 	float3 retNormCoord : NORMAL;
+    float3 retWorldPos : WORLD_POSITION;
 };
 
 VertexOutputs merge(VertexInputs input, VertexOutputs output)
@@ -23,6 +24,7 @@ VertexOutputs merge(VertexInputs input, VertexOutputs output)
 	output.retPos = mul(float4(input.pos, 1.0f), WorldViewProjectionMatrix);
     output.retTexCoord = input.texCoord;
 	output.retNormCoord = normalize(mul(float4(input.normCoord, 0.f), WorldMatrix));
+	output.retWorldPos = mul(float4(input.pos, 1.f), WorldMatrix);
     return output;
 }
 

@@ -93,3 +93,8 @@ void Lighting::SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition)
 {
 	lightingData.dynamicLightPosition = newPosition;
 }
+
+void Lighting::SetDynamicLightingPosition(const float posX, const float posY, const float posZ)
+{
+	lightingData.dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+}

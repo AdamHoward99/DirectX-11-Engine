@@ -26,6 +26,8 @@ public:
 	void SetDynamicLightingStrength(const float newStrength);
 	///XMFLOAT3A version of function to set the position of the dynamic lighting
 	void SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition);
+	///Singular floats version of function to set the position of the dynamic lighting
+	void SetDynamicLightingPosition(const float colourX, const float colourY, const float colourZ);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightingBuffer;
