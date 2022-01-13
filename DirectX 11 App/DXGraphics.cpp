@@ -30,7 +30,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	lights.SetAmbientLightingStrength(0.1f);
+	lights.GetAmbientLight()->SetLightStrength(0.1f);
 	lights.GetPointLight()->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
 	lights.GetPointLight()->SetLightPosition(DirectX::XMFLOAT3A(0.f, 4.f, 0.f));
 

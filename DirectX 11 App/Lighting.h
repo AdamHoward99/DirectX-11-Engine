@@ -4,6 +4,7 @@
 #include "ConstantBufferData.h"
 #include "ErrorMessaging.h"
 #include "PointLight.h"
+#include "AmbientLight.h"
 
 class Lighting
 {
@@ -13,18 +14,12 @@ public:
 		const DirectX::XMFLOAT3& dynamicLightingColour = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const float dynamicLightingStrength = 1.f, const DirectX::XMFLOAT3A& dynamicLightingPos = DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	///Function called every frame to visually update lighting
 	void RenderLighting(ID3D11DeviceContext* pDeviceCon);
-	///XMFLOAT3A version of function to set the colour of the ambient lighting
-	void SetAmbientLightingColour(const DirectX::XMFLOAT3A& newColour);
-	///Singular floats version of function to set the colour of the ambient lighting
-	void SetAmbientLightingColour(const float colourX, const float colourY, const float colourZ);
-	///Function to set the strength of the ambient lighting
-	void SetAmbientLightingStrength(const float newStrength);
 
 	//Debug functions
 	PointLight* const GetPointLight() { return &pLight; }
+	AmbientLight* const GetAmbientLight() { return &aLight; }
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightingBuffer;
-	AmbientLightData lightingData;
+	AmbientLight aLight;
 	PointLight pLight;
 };
