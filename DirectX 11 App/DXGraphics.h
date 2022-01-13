@@ -1,6 +1,4 @@
 #pragma once
-#include <wrl/client.h>
-#include "ErrorMessaging.h"
 #include "AdapterReader.h"
 #include "Shaders.h"
 #include "Vertex.h"
@@ -8,7 +6,8 @@
 #include "FrameTimer.h"
 #include "GameObject.h"
 #include "TextFont.h"
-#include "Lighting.h"
+#include "AmbientLight.h"
+#include "PointLight.h"
 #include <unordered_map>
 
 class DXGraphics
@@ -48,5 +47,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<TextFont>> fonts;
 
 	FrameTimer fTimer;
-	Lighting lights;
+
+	///Scene Lights
+	AmbientLight ambientLight;
+	PointLight pointLight1;
 };
