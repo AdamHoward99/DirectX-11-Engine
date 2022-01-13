@@ -8,7 +8,7 @@ void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3
 	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.ByteWidth = sizeof PS_CB_DATA;
+	bufferDesc.ByteWidth = sizeof AmbientLightData;
 	///Sets to 0 for Index and Vertex Buffers, Gives Write Access for Constant Buffer Only
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -26,7 +26,7 @@ void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3
 	lightingData.ambientLightingStrength = ambientLightingStrength;
 
 	///Setup Point Light
-	pLight.InitialisePointLight(pDevice);
+	pLight.InitialiseLighting(pDevice);
 }
 
 void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -44,7 +44,7 @@ void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapRes.pData, &lightingData, sizeof PS_CB_DATA);
+	CopyMemory(mapRes.pData, &lightingData, sizeof AmbientLightData);
 	pDeviceCon->Unmap(pLightingBuffer.Get(), NULL);
 	///Unmap(IN, IN)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
@@ -73,29 +73,4 @@ void Lighting::SetAmbientLightingColour(const float colourX, const float colourY
 void Lighting::SetAmbientLightingStrength(const float newStrength)
 {
 	lightingData.ambientLightingStrength = newStrength;
-}
-
-void Lighting::SetDynamicLightingColour(const DirectX::XMFLOAT3A& newColour)
-{
-	pLight.SetDynamicLightingColour(newColour);
-}
-
-void Lighting::SetDynamicLightingColour(const float colourX, const float colourY, const float colourZ)
-{
-	pLight.SetDynamicLightingColour(colourX, colourY, colourZ);
-}
-
-void Lighting::SetDynamicLightingStrength(const float newStrength)
-{
-	pLight.SetDynamicLightingStrength(newStrength);
-}
-
-void Lighting::SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition)
-{
-	pLight.SetDynamicLightingPosition(newPosition);
-}
-
-void Lighting::SetDynamicLightingPosition(const float posX, const float posY, const float posZ)
-{
-	pLight.SetDynamicLightingPosition(posX, posY, posZ);
 }

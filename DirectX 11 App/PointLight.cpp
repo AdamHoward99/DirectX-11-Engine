@@ -1,6 +1,6 @@
 #include "PointLight.h"
 
-void PointLight::InitialisePointLight(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength, const DirectX::XMFLOAT3& lightPos)
+void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
 {
 	///Create Lighting Buffer Desc
 	D3D11_BUFFER_DESC bufferDesc;
@@ -23,7 +23,7 @@ void PointLight::InitialisePointLight(ID3D11Device* pDevice, const DirectX::XMFL
 	///Set Dynamic Lighting Variables
 	lightData.dynamicLightingColour = lightColour;
 	lightData.dynamicLightingStrength = lightStrength;
-	lightData.dynamicLightPosition = lightPos;
+	lightData.dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 }
 
 void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -54,27 +54,27 @@ void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	///ID3D11Buffer** ppConstantBuffers - Pointer to array of constant buffers to set
 }
 
-void PointLight::SetDynamicLightingColour(const DirectX::XMFLOAT3A& newColour)
+void PointLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
 	lightData.dynamicLightingColour = newColour;
 }
 
-void PointLight::SetDynamicLightingColour(const float colourX, const float colourY, const float colourZ)
+void PointLight::SetLightColour(const float r, const float g, const float b)
 {
-	lightData.dynamicLightingColour = DirectX::XMFLOAT3A(colourX, colourY, colourZ);
+	lightData.dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
-void PointLight::SetDynamicLightingStrength(const float newStrength)
+void PointLight::SetLightStrength(const float newStrength)
 {
 	lightData.dynamicLightingStrength = newStrength;
 }
 
-void PointLight::SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition)
+void PointLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 {
 	lightData.dynamicLightPosition = newPosition;
 }
 
-void PointLight::SetDynamicLightingPosition(const float posX, const float posY, const float posZ)
+void PointLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
 	lightData.dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
 }

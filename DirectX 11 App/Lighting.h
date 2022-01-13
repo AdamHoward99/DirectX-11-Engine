@@ -19,19 +19,12 @@ public:
 	void SetAmbientLightingColour(const float colourX, const float colourY, const float colourZ);
 	///Function to set the strength of the ambient lighting
 	void SetAmbientLightingStrength(const float newStrength);
-	///XMFLOAT3A version of function to set the colour of the dynamic lighting
-	void SetDynamicLightingColour(const DirectX::XMFLOAT3A& newColour);
-	///Singular floats version of function to set the colour of the dynamic lighting
-	void SetDynamicLightingColour(const float colourX, const float colourY, const float colourZ);
-	///Function to set the strength of the dynamic lighting
-	void SetDynamicLightingStrength(const float newStrength);
-	///XMFLOAT3A version of function to set the position of the dynamic lighting
-	void SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition);
-	///Singular floats version of function to set the position of the dynamic lighting
-	void SetDynamicLightingPosition(const float colourX, const float colourY, const float colourZ);
+
+	//Debug functions
+	PointLight* const GetPointLight() { return &pLight; }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightingBuffer;
-	PS_CB_DATA lightingData;
+	AmbientLightData lightingData;
 	PointLight pLight;
 };
