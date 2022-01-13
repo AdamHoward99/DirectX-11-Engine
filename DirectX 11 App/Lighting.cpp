@@ -25,10 +25,8 @@ void Lighting::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3
 	lightingData.ambientLightingColour = ambientLightingColour;
 	lightingData.ambientLightingStrength = ambientLightingStrength;
 
-	///Set Dynamic Lighting Variables
-	lightingData.dynamicLightingColour = dynamicLightingColour;
-	lightingData.dynamicLightingStrength = dynamicLightingStrength;
-	lightingData.dynamicLightPosition = dynamicLightingPos;
+	///Setup Point Light
+	pLight.InitialisePointLight(pDevice);
 }
 
 void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -57,6 +55,9 @@ void Lighting::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	///UINT StartSlot					- Starting index of array for constant buffer
 	///UINT NumBuffers					- Number of constant buffers to set
 	///ID3D11Buffer** ppConstantBuffers - Pointer to array of constant buffers to set
+
+	///Render Point Light
+	pLight.RenderLighting(pDeviceCon);
 }
 
 void Lighting::SetAmbientLightingColour(const DirectX::XMFLOAT3A& newColour)
@@ -76,25 +77,25 @@ void Lighting::SetAmbientLightingStrength(const float newStrength)
 
 void Lighting::SetDynamicLightingColour(const DirectX::XMFLOAT3A& newColour)
 {
-	lightingData.dynamicLightingColour = newColour;
+	pLight.SetDynamicLightingColour(newColour);
 }
 
 void Lighting::SetDynamicLightingColour(const float colourX, const float colourY, const float colourZ)
 {
-	lightingData.dynamicLightingColour = DirectX::XMFLOAT3A(colourX, colourY, colourZ);
+	pLight.SetDynamicLightingColour(colourX, colourY, colourZ);
 }
 
 void Lighting::SetDynamicLightingStrength(const float newStrength)
 {
-	lightingData.dynamicLightingStrength = newStrength;
+	pLight.SetDynamicLightingStrength(newStrength);
 }
 
 void Lighting::SetDynamicLightingPosition(const DirectX::XMFLOAT3A& newPosition)
 {
-	lightingData.dynamicLightPosition = newPosition;
+	pLight.SetDynamicLightingPosition(newPosition);
 }
 
 void Lighting::SetDynamicLightingPosition(const float posX, const float posY, const float posZ)
 {
-	lightingData.dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+	pLight.SetDynamicLightingPosition(posX, posY, posZ);
 }

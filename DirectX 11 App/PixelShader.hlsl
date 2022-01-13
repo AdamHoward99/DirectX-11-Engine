@@ -2,10 +2,13 @@ cbuffer lightingBuffer : register(b0)
 {
 	float3 ambientLightingColour;
 	float ambientLightingStrength;
+};
 
-	float3 dynamicLightingColour;
-	float dynamicLightingStrength;
-	float3 dynamicLightingPosition;
+cbuffer PointLightBuffer : register(b1)
+{
+    float3 dynamicLightingColour;
+    float dynamicLightingStrength;
+    float3 dynamicLightingPosition;
 };
 
 SamplerState samplerState : SAMPLER : register(s0);

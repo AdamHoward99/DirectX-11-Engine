@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include "ConstantBufferData.h"
 #include "ErrorMessaging.h"
+#include "PointLight.h"
 
 class Lighting
 {
@@ -32,4 +33,5 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightingBuffer;
 	PS_CB_DATA lightingData;
+	PointLight pLight;
 };

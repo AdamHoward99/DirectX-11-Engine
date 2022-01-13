@@ -164,6 +164,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Lighting.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="TextFont.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="ErrorMessaging.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Lighting.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="TextFont.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="GameSpeedTimer.h" />
