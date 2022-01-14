@@ -23,6 +23,10 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	//Initialise lighting
 	ambientLight.InitialiseLighting(pDevice.Get());
 	pointLight1.InitialiseLighting(pDevice.Get());
+	pointLight2.InitialiseLighting(pDevice.Get());
+
+	pointLight1.SetNumber(1);
+	pointLight1.SetNumber(2);
 
 	fTimer.StartTimer();
 	return true;
@@ -37,9 +41,13 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pointLight1.SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
 	pointLight1.SetLightPosition(DirectX::XMFLOAT3A(0.f, 4.f, 0.f));
 
+	pointLight2.SetLightColour(DirectX::XMFLOAT3A(1.f, 0.f, 0.f));
+	pointLight2.SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
+
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
 	pointLight1.RenderLighting(pDeviceContext.Get());
+	pointLight2.RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };

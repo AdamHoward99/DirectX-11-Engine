@@ -47,7 +47,7 @@ void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
 	///UINT Subresource			 - index of a subresource which needs to be unmapped
 
-	pDeviceCon->PSSetConstantBuffers(1, 1, pLightBuffer.GetAddressOf());
+	pDeviceCon->PSSetConstantBuffers(pointLightNo, 1, pLightBuffer.GetAddressOf());
 	///VSSetConstantBuffers(IN, IN, OPTIONAL)
 	///UINT StartSlot					- Starting index of array for constant buffer
 	///UINT NumBuffers					- Number of constant buffers to set

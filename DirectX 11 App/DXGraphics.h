@@ -51,4 +51,5 @@ private:
 	///Scene Lights
 	AmbientLight ambientLight;
 	PointLight pointLight1;
+	PointLight pointLight2;
 };
