@@ -7,8 +7,6 @@ public:
 	void InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const float lightStrength = 1.f) override;
 	void RenderLighting(ID3D11DeviceContext* pDeviceCon) override;
 
-	void SetNumber(const int number) { pointLightNo = number; }
-
 	void SetLightColour(const DirectX::XMFLOAT3A& newColour) override;
 	void SetLightColour(const float r, const float g, const float b) override;
 	void SetLightStrength(const float newStrength) override;
@@ -17,5 +15,6 @@ public:
 
 private:
 	PointLightData lightData;
-	int pointLightNo = 1;
+	int pointLightNo;
+	static int pointLightCount;
 };

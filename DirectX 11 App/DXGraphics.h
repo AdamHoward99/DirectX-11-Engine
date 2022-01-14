@@ -50,6 +50,5 @@ private:
 
 	///Scene Lights
 	AmbientLight ambientLight;
-	PointLight pointLight1;
-	PointLight pointLight2;
+	std::unordered_map<int, std::unique_ptr<PointLight>> pointLights;
 };

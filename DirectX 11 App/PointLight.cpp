@@ -1,5 +1,7 @@
 #include "PointLight.h"
 
+int PointLight::pointLightCount = 0;
+
 void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
 {
 	///Create Lighting Buffer Desc
@@ -24,6 +26,10 @@ void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOA
 	lightData.dynamicLightingColour = lightColour;
 	lightData.dynamicLightingStrength = lightStrength;
 	lightData.dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
+
+	///Set number of the point light, maximum value is stored in TODO
+	pointLightCount++;
+	pointLightNo = pointLightCount;
 }
 
 void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
