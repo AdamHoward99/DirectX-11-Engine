@@ -4,18 +4,16 @@ cbuffer lightingBuffer : register(b0)
 	float ambientLightingStrength;
 };
 
-cbuffer PointLightBuffer : register(b1)
+struct PointLightData
 {
     float3 dynamicLightingColour;
     float dynamicLightingStrength;
     float3 dynamicLightingPosition;
 };
 
-cbuffer PointLightBuffer : register(b2)
+cbuffer PointLightBuffer : register(b1) 
 {
-    float3 dynamicLightingColour2;
-    float dynamicLightingStrength2;
-    float3 dynamicLightingPosition2;
+    PointLightData pLights[2];
 };
 
 SamplerState samplerState : SAMPLER : register(s0);
@@ -38,22 +36,27 @@ float4 main(PixelInput data) : SV_TARGET
 	///Obtain the ambient lighting
 	float3 ambientLight = ambientLightingColour * ambientLightingStrength;
     
-	///Obtain vector from pixel to light
-	float3 vectorToLightSource = normalize(dynamicLightingPosition - data.worldPos.xyz);
-	///Get Diffuse light intensity
-	float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f);
-	///Calculate Diffuse lighting
-	float3 diffuseLight = diffuseLightInt * dynamicLightingStrength * dynamicLightingColour;
+    float3 combinedLight;
+    for (int i = 0; i < 2; i++)
+    {
+	    ///Obtain vector from pixel to light
+        float3 vectorToLightSource = normalize(pLights[i].dynamicLightingPosition - data.worldPos.xyz);
+	    ///Get Diffuse light intensity
+	    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f);
+	    ///Calculate Diffuse lighting
+        float3 diffuseLight = diffuseLightInt * pLights[i].dynamicLightingStrength * pLights[i].dynamicLightingColour;
+        combinedLight += diffuseLight;
+    }
     
-    	///Obtain vector from pixel to light
-    float3 vectorToLight2Source = normalize(dynamicLightingPosition2 - data.worldPos.xyz);
-	///Get Diffuse light intensity
-    float3 diffuseLight2Int = max(dot(vectorToLight2Source, data.normals), 0.f);
-	///Calculate Diffuse lighting
-    float3 diffuseLight2 = diffuseLight2Int * dynamicLightingStrength2 * dynamicLightingColour2;
+ //   	///Obtain vector from pixel to light
+ //   float3 vectorToLight2Source = normalize(pLight2.dynamicLightingPosition - data.worldPos.xyz);
+	/////Get Diffuse light intensity
+ //   float3 diffuseLight2Int = max(dot(vectorToLight2Source, data.normals), 0.f);
+	/////Calculate Diffuse lighting
+ //   float3 diffuseLight2 = diffuseLight2Int * pLight2.dynamicLightingStrength * pLight2.dynamicLightingColour;
     
 	///Obtain overall final lighting for pixel
-	float3 finalLight = ambientLight + diffuseLight + diffuseLight2;
+	float3 finalLight = ambientLight + combinedLight;
 	///Obtain overall final colour of pixel
 	float3 finalColour = pixelColour * saturate(finalLight);
     return float4(finalColour, 1.0f);

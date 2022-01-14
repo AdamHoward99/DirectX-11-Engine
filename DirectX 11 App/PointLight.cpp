@@ -1,6 +1,7 @@
 #include "PointLight.h"
 
 int PointLight::pointLightCount = 0;
+PLights PointLight::lightData;
 
 void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
 {
@@ -9,7 +10,7 @@ void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOA
 	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.ByteWidth = sizeof PointLightData;
+	bufferDesc.ByteWidth = sizeof PLights;
 	///Sets to 0 for Index and Vertex Buffers, Gives Write Access for Constant Buffer Only
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -22,14 +23,14 @@ void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOA
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 
-	///Set Dynamic Lighting Variables
-	lightData.dynamicLightingColour = lightColour;
-	lightData.dynamicLightingStrength = lightStrength;
-	lightData.dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
-
 	///Set number of the point light, maximum value is stored in TODO
-	pointLightCount++;
 	pointLightNo = pointLightCount;
+	pointLightCount++;
+
+	///Set Dynamic Lighting Variables
+	lightData.lights[pointLightNo].dynamicLightingColour = lightColour;
+	lightData.lights[pointLightNo].dynamicLightingStrength = lightStrength;
+	lightData.lights[pointLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 }
 
 void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -47,13 +48,13 @@ void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapRes.pData, &lightData, sizeof PointLightData);
+	CopyMemory(mapRes.pData, &lightData, sizeof PLights);
 	pDeviceCon->Unmap(pLightBuffer.Get(), NULL);
 	///Unmap(IN, IN)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
 	///UINT Subresource			 - index of a subresource which needs to be unmapped
 
-	pDeviceCon->PSSetConstantBuffers(pointLightNo, 1, pLightBuffer.GetAddressOf());
+	pDeviceCon->PSSetConstantBuffers(1, 1, pLightBuffer.GetAddressOf());
 	///VSSetConstantBuffers(IN, IN, OPTIONAL)
 	///UINT StartSlot					- Starting index of array for constant buffer
 	///UINT NumBuffers					- Number of constant buffers to set
@@ -62,25 +63,25 @@ void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 
 void PointLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
-	lightData.dynamicLightingColour = newColour;
+	lightData.lights[pointLightNo].dynamicLightingColour = newColour;
 }
 
 void PointLight::SetLightColour(const float r, const float g, const float b)
 {
-	lightData.dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
+	lightData.lights[pointLightNo].dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
 void PointLight::SetLightStrength(const float newStrength)
 {
-	lightData.dynamicLightingStrength = newStrength;
+	lightData.lights[pointLightNo].dynamicLightingStrength = newStrength;
 }
 
 void PointLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 {
-	lightData.dynamicLightPosition = newPosition;
+	lightData.lights[pointLightNo].dynamicLightPosition = newPosition;
 }
 
 void PointLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
-	lightData.dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+	lightData.lights[pointLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
 }

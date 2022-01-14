@@ -1,19 +1,13 @@
-﻿  App.cpp
+﻿  compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\PixelShader.cso
+  AmbientLight.cpp
+  App.cpp
   DXGraphics.cpp
   Engine.cpp
+  GameObject.cpp
+  Mesh.cpp
+  Object.cpp
   PointLight.cpp
   RenderWindow.cpp
   WindowCont.cpp
   Generating Code...
-Vertex.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Texture.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Shaders.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-MouseEvent.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Mouse.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-KeyboardEvent.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Keyboard.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Timer.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-TextFont.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-Camera.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
-AdapterReader.obj : warning LNK4204: 'C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\vc141.pdb' is missing debugging information for referencing module; linking object as if no debug info
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

@@ -14,7 +14,7 @@ public:
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
 
 private:
-	PointLightData lightData;
+	static PLights lightData;		//Information of all point lights used in scene is carried across all instances so they can only require a single register
 	int pointLightNo;
 	static int pointLightCount;
 };

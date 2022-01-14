@@ -48,8 +48,8 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
 
-	for (auto& l : pointLights)
-		l.second->RenderLighting(pDeviceContext.Get());
+	//Only need to render once since data for both which is stored in an array in static and is carried across all instances of PointLight class
+	pointLights[1]->RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
