@@ -22,6 +22,7 @@ private:
 	bool InitialiseShaders();
 	bool InitialiseScene(int w, int h);
 	void InitialiseOBJs();
+	void InitialiseLighting();
 
 	void DrawString();
 

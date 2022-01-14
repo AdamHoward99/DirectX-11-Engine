@@ -19,15 +19,6 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	//Initialise the scene
 	if (!InitialiseScene(w, h))
 		return false;
-
-	//Initialise lighting
-	ambientLight.InitialiseLighting(pDevice.Get());
-	///Add Point lights to unordered map
-	pointLights[1] = std::move(std::make_unique<PointLight>());
-	pointLights[2] = std::move(std::make_unique<PointLight>());
-	///For each point light, instantiate
-	for (auto& l : pointLights)
-		l.second->InitialiseLighting(pDevice.Get());
 	
 	fTimer.StartTimer();
 	return true;
@@ -38,18 +29,18 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//Update Ambient Lighting
 	ambientLight.SetLightStrength(0.1f);
 
-	//Update Point Light 1
-	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
-	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 4.f, 0.f));
+	//Update Point Light 0
+	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
+	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 4.f, 0.f));
 
-	pointLights[2]->SetLightColour(DirectX::XMFLOAT3A(1.f, 0.f, 0.f));
-	pointLights[2]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
+	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(1.f, 0.f, 0.f));
+	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
 
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
 
 	///Point Lights only require a single light to call render since all point light data is passed across every instance (static)
-	pointLights[1]->RenderLighting(pDeviceContext.Get());
+	pointLights[0]->RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -276,6 +267,7 @@ bool DXGraphics::InitialiseShaders()
 bool DXGraphics::InitialiseScene(int w, int h)
 {
 	InitialiseOBJs();
+	InitialiseLighting();
 	return true;
 }
 
@@ -284,6 +276,19 @@ void DXGraphics::InitialiseOBJs()
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
 	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
 	renderObjects["Ice_Cream"]->SetRotation(-90.f, 0.f, 0.f);
+}
+
+void DXGraphics::InitialiseLighting()
+{
+	///Initialise Ambient Lighting linked to register b0
+	ambientLight.InitialiseLighting(pDevice.Get());
+
+	///Initialise Point Lighting linked to register b1
+	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
+	{
+		pointLights[i] = std::move(std::make_unique<PointLight>());
+		pointLights[i]->InitialiseLighting(pDevice.Get());
+	}
 }
 
 void DXGraphics::DrawString()
