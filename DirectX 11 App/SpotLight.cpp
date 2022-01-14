@@ -9,7 +9,7 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.ByteWidth = sizeof PLights;		//CHANGE
+	bufferDesc.ByteWidth = sizeof SpLights;
 	///Sets to 0 for Index and Vertex Buffers, Gives Write Access for Constant Buffer Only
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -26,9 +26,9 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 	SetSpotLightNumber();
 
 	///Set Dynamic Lighting Variables
-	lightData.lights[spotLightNo].dynamicLightingColour = lightColour;
-	lightData.lights[spotLightNo].dynamicLightingStrength = lightStrength;
-	lightData.lights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
+	lightData.SPLights[spotLightNo].dynamicLightingColour = lightColour;
+	lightData.SPLights[spotLightNo].dynamicLightingStrength = lightStrength;
+	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 }
 
 void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -46,7 +46,7 @@ void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapRes.pData, &lightData, sizeof PLights);//CHANGE
+	CopyMemory(mapRes.pData, &lightData, sizeof SpLights);
 	pDeviceCon->Unmap(pLightBuffer.Get(), NULL);
 	///Unmap(IN, IN)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
@@ -61,27 +61,37 @@ void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 
 void SpotLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
-	lightData.lights[spotLightNo].dynamicLightingColour = newColour;
+	lightData.SPLights[spotLightNo].dynamicLightingColour = newColour;
 }
 
 void SpotLight::SetLightColour(const float r, const float g, const float b)
 {
-	lightData.lights[spotLightNo].dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
+	lightData.SPLights[spotLightNo].dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
 void SpotLight::SetLightStrength(const float newStrength)
 {
-	lightData.lights[spotLightNo].dynamicLightingStrength = newStrength;
+	lightData.SPLights[spotLightNo].dynamicLightingStrength = newStrength;
 }
 
 void SpotLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 {
-	lightData.lights[spotLightNo].dynamicLightPosition = newPosition;
+	lightData.SPLights[spotLightNo].dynamicLightPosition = newPosition;
 }
 
 void SpotLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
-	lightData.lights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+}
+
+void SpotLight::SetLightRotation(const DirectX::XMFLOAT3A& newRotation)
+{
+	lightData.SPLights[spotLightNo].dynamicLightRotation = newRotation;
+}
+
+void SpotLight::SetLightRotation(const float x, const float y, const float z)
+{
+	lightData.SPLights[spotLightNo].dynamicLightRotation = DirectX::XMFLOAT3A(x, y, z);
 }
 
 const int SpotLight::GetSpotLightNumber() const
@@ -94,4 +104,3 @@ const void SpotLight::SetSpotLightNumber()
 	spotLightNo = spotLightCount;
 	spotLightCount++;
 }
-

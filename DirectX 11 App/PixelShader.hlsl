@@ -1,4 +1,5 @@
 #define NUM_POINT_LIGHTS 2
+#define NUM_SPOT_LIGHTS 1
 
 cbuffer AmbientLightBuffer : register(b0)
 {
@@ -17,6 +18,19 @@ cbuffer PointLightBuffer : register(b1)
 {
     PointLightData pLights[NUM_POINT_LIGHTS];
 };
+
+struct SpotLightData
+{
+    float3 dynamicLightingColour; //12-bit
+    float dynamicLightingStrength; //4-bit
+    float3 dynamicLightPosition; //12-bit
+    float3 dynamicLightRotation; //12-bit
+};
+
+cbuffer SpotLightBuffer : register(b2)
+{
+    SpotLightData SpLights[NUM_SPOT_LIGHTS];
+}
 
 SamplerState samplerState : SAMPLER : register(s0);
 Texture2D tex : TEXTURE : register(t0);
