@@ -23,9 +23,8 @@ void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOA
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 
-	///Set number of the point light, maximum value is stored in TODO
-	pointLightNo = pointLightCount;
-	pointLightCount++;
+	///Set number of the point light, maximum value is stored in PixelShader.hlsl
+	SetPointLightNumber();
 
 	///Set Dynamic Lighting Variables
 	lightData.lights[pointLightNo].dynamicLightingColour = lightColour;
@@ -84,4 +83,15 @@ void PointLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 void PointLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
 	lightData.lights[pointLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+}
+
+const int PointLight::GetPointLightNumber() const
+{
+	return pointLightNo;
+}
+
+const void PointLight::SetPointLightNumber()
+{
+	pointLightNo = pointLightCount;
+	pointLightCount++;
 }

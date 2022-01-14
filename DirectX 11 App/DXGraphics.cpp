@@ -48,7 +48,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
 
-	//Only need to render once since data for both which is stored in an array in static and is carried across all instances of PointLight class
+	///Point Lights only require a single light to call render since all point light data is passed across every instance (static)
 	pointLights[1]->RenderLighting(pDeviceContext.Get());
 
 	//Background

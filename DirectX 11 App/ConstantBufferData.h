@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#define MAX_POINT_LIGHTS 2
+#define NUM_POINT_LIGHTS 2		///Coresponds to header defined in PixelShader.hlsl, number of point lights defined before scene creation
 
 struct VS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
 {
@@ -24,5 +24,6 @@ struct PointLightData
 
 struct PLights		///Notice: Needs to be 16-bit aligned to work
 {
-	PointLightData lights[MAX_POINT_LIGHTS];		///Multiple point lights using single register
+	///Allows multiple point lights to use a single register
+	PointLightData lights[NUM_POINT_LIGHTS];
 };

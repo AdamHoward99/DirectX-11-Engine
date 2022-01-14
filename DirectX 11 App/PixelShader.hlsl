@@ -1,4 +1,6 @@
-cbuffer lightingBuffer : register(b0)
+#define NUM_POINT_LIGHTS 2
+
+cbuffer AmbientLightBuffer : register(b0)
 {
 	float3 ambientLightingColour;
 	float ambientLightingStrength;
@@ -13,7 +15,7 @@ struct PointLightData
 
 cbuffer PointLightBuffer : register(b1) 
 {
-    PointLightData pLights[2];
+    PointLightData pLights[NUM_POINT_LIGHTS];
 };
 
 SamplerState samplerState : SAMPLER : register(s0);
@@ -36,8 +38,9 @@ float4 main(PixelInput data) : SV_TARGET
 	///Obtain the ambient lighting
 	float3 ambientLight = ambientLightingColour * ambientLightingStrength;
     
-    float3 combinedLight;
-    for (int i = 0; i < 2; i++)
+    ///Stores combined equation of all point lights in scene
+    float3 overallPointLighting;
+    for (int i = 0; i < NUM_POINT_LIGHTS; i++)
     {
 	    ///Obtain vector from pixel to light
         float3 vectorToLightSource = normalize(pLights[i].dynamicLightingPosition - data.worldPos.xyz);
@@ -45,18 +48,12 @@ float4 main(PixelInput data) : SV_TARGET
 	    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f);
 	    ///Calculate Diffuse lighting
         float3 diffuseLight = diffuseLightInt * pLights[i].dynamicLightingStrength * pLights[i].dynamicLightingColour;
-        combinedLight += diffuseLight;
+        ///Add to total
+        overallPointLighting += diffuseLight;
     }
     
- //   	///Obtain vector from pixel to light
- //   float3 vectorToLight2Source = normalize(pLight2.dynamicLightingPosition - data.worldPos.xyz);
-	/////Get Diffuse light intensity
- //   float3 diffuseLight2Int = max(dot(vectorToLight2Source, data.normals), 0.f);
-	/////Calculate Diffuse lighting
- //   float3 diffuseLight2 = diffuseLight2Int * pLight2.dynamicLightingStrength * pLight2.dynamicLightingColour;
-    
 	///Obtain overall final lighting for pixel
-	float3 finalLight = ambientLight + combinedLight;
+    float3 finalLight = ambientLight + overallPointLighting;
 	///Obtain overall final colour of pixel
 	float3 finalColour = pixelColour * saturate(finalLight);
     return float4(finalColour, 1.0f);
