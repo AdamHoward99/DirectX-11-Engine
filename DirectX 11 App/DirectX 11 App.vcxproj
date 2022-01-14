@@ -165,6 +165,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TextFont.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TextFont.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="GameSpeedTimer.h" />
