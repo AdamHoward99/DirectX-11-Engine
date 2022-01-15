@@ -31,9 +31,9 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
-	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 4.f, 0.f));
+	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 20.f, 0.f));
 
-	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(1.f, 0.f, 0.f));
+	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
 
 	//Render lights

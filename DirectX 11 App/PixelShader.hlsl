@@ -43,6 +43,24 @@ struct PixelInput
     float4 worldPos : WORLD_POSITION;
 };
 
+float3 ComputePointLighting(PointLightData pLight, PixelInput data)
+{
+    //Obtain vector from pixel to light
+    float3 vectorToLightSource = pLight.dynamicLightingPosition - data.worldPos.xyz;
+    //Get Distance from pixel to light
+    float distance = length(vectorToLightSource);
+    //Check if light is out of range from pixel
+    if (distance > 10.f)    //TODO: add this number to pointlightdata
+        return float3(0.f, 0.f, 0.f);
+    //Normalize distance vector
+    vectorToLightSource /= distance;
+	//Get Diffuse light intensity
+    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * pLight.dynamicLightingStrength;
+	///Calculate Diffuse lighting
+    float3 diffuseLight = diffuseLightInt  * pLight.dynamicLightingColour;
+    return diffuseLight;
+}
+
 float4 main(PixelInput data) : SV_TARGET
 {
 	///Obtain colour of the texture
@@ -56,15 +74,20 @@ float4 main(PixelInput data) : SV_TARGET
     float3 overallPointLighting;
     for (int i = 0; i < NUM_POINT_LIGHTS; i++)
     {
-	    ///Obtain vector from pixel to light
-        float3 vectorToLightSource = normalize(pLights[i].dynamicLightingPosition - data.worldPos.xyz);
-	    ///Get Diffuse light intensity
-	    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f);
-	    ///Calculate Diffuse lighting
-        float3 diffuseLight = diffuseLightInt * pLights[i].dynamicLightingStrength * pLights[i].dynamicLightingColour;
-        ///Add to total
-        overallPointLighting += diffuseLight;
+        overallPointLighting += ComputePointLighting(pLights[i], data);
+        
+        //float spotFactor = pow(max(dot(-vectorToLightSource, float3(0.f, -1.f, 0.f)), 0.f), 1.f);       //Maybe works as a spot light?
+        //overallPointLighting *= spotFactor;
     }
+    
+    /*
+    vector from surface to light
+    normalize vector
+    distance from surface to light
+    scale light by lamberts cosine law
+    attenuate light by distance
+    scale by spotlight
+    */
     
 	///Obtain overall final lighting for pixel
     float3 finalLight = ambientLight + overallPointLighting;
