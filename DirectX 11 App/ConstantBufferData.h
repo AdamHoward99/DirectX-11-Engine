@@ -20,7 +20,9 @@ struct PointLightData
 	DirectX::XMFLOAT3 dynamicLightingColour;	//12-bit
 	float dynamicLightingStrength;				//4-bit
 	DirectX::XMFLOAT3 dynamicLightPosition;		//12-bit
-	float paddingVariable;						//4-bit
+	float lightFalloffStart;					//4-bit
+	float lightFalloffEnd;						//4-bit
+	float padding;								//4-bit
 };
 
 struct SpotLightData

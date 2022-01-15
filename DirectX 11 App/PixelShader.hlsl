@@ -12,6 +12,8 @@ struct PointLightData
     float3 dynamicLightingColour;
     float dynamicLightingStrength;
     float3 dynamicLightingPosition;
+    float lightFalloffStart;
+    float lightFalloffEnd;
 };
 
 cbuffer PointLightBuffer : register(b1) 
@@ -50,7 +52,7 @@ float3 ComputePointLighting(PointLightData pLight, PixelInput data)
     //Get Distance from pixel to light
     float distance = length(vectorToLightSource);
     //Check if light is out of range from pixel
-    if (distance > 10.f)    //TODO: add this number to pointlightdata
+    if (distance > pLight.lightFalloffEnd || abs(distance) < pLight.lightFalloffStart)
         return float3(0.f, 0.f, 0.f);
     //Normalize distance vector
     vectorToLightSource /= distance;
