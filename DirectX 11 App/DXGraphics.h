@@ -8,6 +8,7 @@
 #include "TextFont.h"
 #include "AmbientLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include <unordered_map>
 
 class DXGraphics
@@ -52,4 +53,5 @@ private:
 	///Scene Lights
 	AmbientLight ambientLight;
 	std::unordered_map<int, std::unique_ptr<PointLight>> pointLights;
+	std::unordered_map<int, std::unique_ptr<SpotLight>> spotLights;
 };

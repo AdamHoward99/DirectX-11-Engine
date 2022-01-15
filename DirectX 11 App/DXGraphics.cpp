@@ -36,11 +36,16 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
 
+	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 1.f, 0.f));
+	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 10.f, 0.f));
+	spotLights[0]->SetLightSpotFactor(1.f);
+
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
 
 	///Point Lights only require a single light to call render since all point light data is passed across every instance (static)
 	pointLights[0]->RenderLighting(pDeviceContext.Get());
+	spotLights[0]->RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -288,6 +293,12 @@ void DXGraphics::InitialiseLighting()
 	{
 		pointLights[i] = std::move(std::make_unique<PointLight>());
 		pointLights[i]->InitialiseLighting(pDevice.Get());
+	}
+
+	for (int i = 0; i < NUM_SPOT_LIGHTS; i++)
+	{
+		spotLights[i] = std::move(std::make_unique<SpotLight>());
+		spotLights[i]->InitialiseLighting(pDevice.Get());
 	}
 }
 
