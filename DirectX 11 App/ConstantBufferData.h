@@ -31,8 +31,8 @@ struct SpotLightData
 	float dynamicLightingStrength;				//4-bit
 	DirectX::XMFLOAT3 dynamicLightPosition;		//12-bit
 	float lightFalloffEnd;						//4-bit
-	DirectX::XMFLOAT3 dynamicLightRotation;		//12-bit
 	float spotFactor;							//4-bit
+	DirectX::XMFLOAT3 padding;					//12-bit
 };
 
 struct PLights		///Notice: Needs to be 16-bit aligned to work

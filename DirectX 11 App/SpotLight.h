@@ -13,10 +13,6 @@ public:
 	void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) override;
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
 
-	///XMFLOAT3A version of function to set the rotation of the lighting
-	void SetLightRotation(const DirectX::XMFLOAT3A& newRotation);
-	///Singular float version of function to set the rotation of the lighting
-	void SetLightRotation(const float x, const float y, const float z);
 	///Function to set the falloffEnd of the spotlight
 	void SetLightFalloffEnd(const float newEnd);
 	///Function to set the spotFactor of the spotlight, determines the size of the light circle, lower value is wider and higher value is more concentrated

@@ -27,7 +27,6 @@ struct SpotLightData
     float dynamicLightingStrength; //4-bit
     float3 dynamicLightPosition; //12-bit
     float lightFalloffEnd;     //4-bit
-    float3 dynamicLightRotation; //12-bit
     float lightSpotFactor;     //4-bit
 };
 
@@ -80,7 +79,7 @@ float3 ComputeSpotLighting(SpotLightData spotlight, PixelInput data)
     //Normalize distance vector
     vectorToLightSource /= distance;
     //Scale cone of light by the spotFactor
-    float spotFactor = pow(max(dot(-vectorToLightSource, float3(0.f, -1.f, 0.f)), 0.f), spotlight.lightSpotFactor);
+    float spotFactor = pow(max(dot(-vectorToLightSource, float3(0.f, -1.f, 0.f)), 0.f), spotlight.lightSpotFactor);     //Default position is -y (facing downwards)
 	//Get Diffuse light intensity
     float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * spotlight.dynamicLightingStrength * spotFactor;
     //attenuate light by distance

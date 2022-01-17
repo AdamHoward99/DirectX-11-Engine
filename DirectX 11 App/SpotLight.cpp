@@ -30,7 +30,6 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 	lightData.SPLights[spotLightNo].dynamicLightingColour = lightColour;
 	lightData.SPLights[spotLightNo].dynamicLightingStrength = lightStrength;
 	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
-	lightData.SPLights[spotLightNo].dynamicLightRotation = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 	lightData.SPLights[spotLightNo].lightFalloffEnd = 10.f;
 	lightData.SPLights[spotLightNo].spotFactor = 10.f;
 }
@@ -86,16 +85,6 @@ void SpotLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 void SpotLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
 	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
-}
-
-void SpotLight::SetLightRotation(const DirectX::XMFLOAT3A& newRotation)
-{
-	lightData.SPLights[spotLightNo].dynamicLightRotation = newRotation;
-}
-
-void SpotLight::SetLightRotation(const float x, const float y, const float z)
-{
-	lightData.SPLights[spotLightNo].dynamicLightRotation = DirectX::XMFLOAT3A(x, y, z);
 }
 
 void SpotLight::SetLightFalloffEnd(const float newEnd)
