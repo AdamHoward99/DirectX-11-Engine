@@ -29,6 +29,7 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 	lightData.SPLights[spotLightNo].dynamicLightingColour = lightColour;
 	lightData.SPLights[spotLightNo].dynamicLightingStrength = lightStrength;
 	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
+	lightData.SPLights[spotLightNo].dynamicLightRotation = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 	lightData.SPLights[spotLightNo].lightFalloffStart = 0.f;
 	lightData.SPLights[spotLightNo].lightFalloffEnd = 5.f;
 	lightData.SPLights[spotLightNo].spotFactor = 1.f;

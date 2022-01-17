@@ -61,6 +61,9 @@ float3 ComputePointLighting(PointLightData pLight, PixelInput data)
     vectorToLightSource /= distance;
 	//Get Diffuse light intensity
     float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * pLight.dynamicLightingStrength;
+    //attenuate light by distance
+    float att = saturate((pLight.lightFalloffEnd - distance) / (pLight.lightFalloffEnd - pLight.lightFalloffStart));
+    diffuseLightInt * att;
 	///Calculate Diffuse lighting
     float3 diffuseLight = diffuseLightInt  * pLight.dynamicLightingColour;
     return diffuseLight;
@@ -77,13 +80,12 @@ float3 ComputeSpotLighting(SpotLightData spotlight, PixelInput data)
         return float3(0.f, 0.f, 0.f);
     //Normalize distance vector
     vectorToLightSource /= distance;
-	//Get Diffuse light intensity
-    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * spotlight.dynamicLightingStrength;
-	//Calculate Diffuse lighting
-    float3 diffuseLight = diffuseLightInt * spotlight.dynamicLightingColour;
     //Scale cone of light by the spotFactor
     float spotFactor = pow(max(dot(-vectorToLightSource, float3(0.f, -1.f, 0.f)), 0.f), spotlight.lightSpotFactor);
-    diffuseLight *= spotFactor;
+	//Get Diffuse light intensity
+    float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * spotlight.dynamicLightingStrength * spotFactor;
+	//Calculate Diffuse lighting
+    float3 diffuseLight = diffuseLightInt * spotlight.dynamicLightingColour;
     return diffuseLight;
 }
 
