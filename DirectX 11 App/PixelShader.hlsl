@@ -26,9 +26,8 @@ struct SpotLightData
     float3 dynamicLightingColour; //12-bit
     float dynamicLightingStrength; //4-bit
     float3 dynamicLightPosition; //12-bit
-    float3 dynamicLightRotation; //12-bit
-    float lightFalloffStart;     //4-bit
     float lightFalloffEnd;     //4-bit
+    float3 dynamicLightRotation; //12-bit
     float lightSpotFactor;     //4-bit
 };
 
@@ -76,7 +75,7 @@ float3 ComputeSpotLighting(SpotLightData spotlight, PixelInput data)
     //Get Distance from pixel to light
     float distance = length(vectorToLightSource);
     //Check if light is out of range from pixel
-    if (distance > spotlight.lightFalloffEnd || abs(distance) < spotlight.lightFalloffStart)
+    if (distance > spotlight.lightFalloffEnd)
         return float3(0.f, 0.f, 0.f);
     //Normalize distance vector
     vectorToLightSource /= distance;
@@ -84,6 +83,9 @@ float3 ComputeSpotLighting(SpotLightData spotlight, PixelInput data)
     float spotFactor = pow(max(dot(-vectorToLightSource, float3(0.f, -1.f, 0.f)), 0.f), spotlight.lightSpotFactor);
 	//Get Diffuse light intensity
     float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * spotlight.dynamicLightingStrength * spotFactor;
+    //attenuate light by distance
+    float att = saturate((spotlight.lightFalloffEnd - distance) / (spotlight.lightFalloffEnd - 0.f));       //Defaults falloffStart to 0
+    diffuseLightInt * att;
 	//Calculate Diffuse lighting
     float3 diffuseLight = diffuseLightInt * spotlight.dynamicLightingColour;
     return diffuseLight;

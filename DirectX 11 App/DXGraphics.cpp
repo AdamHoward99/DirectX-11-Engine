@@ -30,15 +30,15 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	ambientLight.SetLightStrength(0.1f);
 
 	//Update Point Light 0
-	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
+	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 3.f, 0.f));
 
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
 
-	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
-	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
-	spotLights[0]->SetLightSpotFactor(1.f);
+	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
+	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 2.f));
+	spotLights[0]->SetLightSpotFactor(100.f);
 
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
@@ -70,7 +70,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	///Notice: Update OBJ's here
 	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
+	//renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["Ice_Cream"]->Update();		///All transformations should be applied before this is called
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +
@@ -279,8 +279,9 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
+	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/box.fbx"));
 	renderObjects["Ice_Cream"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["Ice_Cream"]->SetPosition(-2.5f, 0.f, 0.f);
 }
 
 void DXGraphics::InitialiseLighting()

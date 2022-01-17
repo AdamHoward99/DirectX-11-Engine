@@ -17,18 +17,16 @@ public:
 	void SetLightRotation(const DirectX::XMFLOAT3A& newRotation);
 	///Singular float version of function to set the rotation of the lighting
 	void SetLightRotation(const float x, const float y, const float z);
-	///Function to set the falloffStart of the spotlight
-	void SetLightFalloffStart(const float newStart);
 	///Function to set the falloffEnd of the spotlight
 	void SetLightFalloffEnd(const float newEnd);
-	///Function to set the spotFactor of the spotlight
+	///Function to set the spotFactor of the spotlight, determines the size of the light circle, lower value is wider and higher value is more concentrated
 	void SetLightSpotFactor(const float newFactor);
 
 	const int GetSpotLightNumber() const;
 
 private:
 	const void SetSpotLightNumber();
-	SpLights lightData;
+	static SpLights lightData;
 	///Coresponds to the number of the light in the above static struct variable
 	int spotLightNo;
 	///Incremented every time a point light is instantiated
