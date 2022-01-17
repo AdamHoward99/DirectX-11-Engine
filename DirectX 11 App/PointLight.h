@@ -13,8 +13,6 @@ public:
 	void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) override;
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
 
-	///Function to set the falloffStart of the point light
-	void SetLightFalloffStart(const float newStart);
 	///Function to set the falloffEnd of the point light
 	void SetLightFalloffEnd(const float newEnd);
 

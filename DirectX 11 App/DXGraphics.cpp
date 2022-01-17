@@ -30,7 +30,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	ambientLight.SetLightStrength(0.1f);
 
 	//Update Point Light 0
-	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
+	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 0.f, 0.f));
 	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 3.f, 0.f));
 
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
@@ -38,7 +38,6 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 1.f));
 	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 2.f));
-	spotLights[0]->SetLightSpotFactor(100.f);
 
 	//Render lights
 	ambientLight.RenderLighting(pDeviceContext.Get());

@@ -1,13 +1,2 @@
-﻿  AmbientLight.cpp
-  App.cpp
-  DXGraphics.cpp
-  Engine.cpp
-  GameObject.cpp
-  Mesh.cpp
-  Object.cpp
-  PointLight.cpp
-  RenderWindow.cpp
-  SpotLight.cpp
-  WindowCont.cpp
-  Generating Code...
+﻿  PointLight.cpp
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

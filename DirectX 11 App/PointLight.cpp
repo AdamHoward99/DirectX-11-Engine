@@ -30,8 +30,7 @@ void PointLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOA
 	lightData.lights[pointLightNo].dynamicLightingColour = lightColour;
 	lightData.lights[pointLightNo].dynamicLightingStrength = lightStrength;
 	lightData.lights[pointLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
-	lightData.lights[pointLightNo].lightFalloffStart = 0.f;
-	lightData.lights[pointLightNo].lightFalloffEnd = 5.f;
+	lightData.lights[pointLightNo].lightFalloffEnd = 20.f;
 }
 
 void PointLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -85,11 +84,6 @@ void PointLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 void PointLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
 	lightData.lights[pointLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
-}
-
-void PointLight::SetLightFalloffStart(const float newStart)
-{
-	lightData.lights[pointLightNo].lightFalloffStart = newStart;
 }
 
 void PointLight::SetLightFalloffEnd(const float newEnd)

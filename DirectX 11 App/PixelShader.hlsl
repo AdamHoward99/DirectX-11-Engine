@@ -12,7 +12,6 @@ struct PointLightData
     float3 dynamicLightingColour;
     float dynamicLightingStrength;
     float3 dynamicLightingPosition;
-    float lightFalloffStart;
     float lightFalloffEnd;
 };
 
@@ -53,14 +52,14 @@ float3 ComputePointLighting(PointLightData pLight, PixelInput data)
     //Get Distance from pixel to light
     float distance = length(vectorToLightSource);
     //Check if light is out of range from pixel
-    if (distance > pLight.lightFalloffEnd || abs(distance) < pLight.lightFalloffStart)
+    if (distance > pLight.lightFalloffEnd)
         return float3(0.f, 0.f, 0.f);
     //Normalize distance vector
     vectorToLightSource /= distance;
 	//Get Diffuse light intensity
     float3 diffuseLightInt = max(dot(vectorToLightSource, data.normals), 0.f) * pLight.dynamicLightingStrength;
     //attenuate light by distance
-    float att = saturate((pLight.lightFalloffEnd - distance) / (pLight.lightFalloffEnd - pLight.lightFalloffStart));
+    float att = saturate((pLight.lightFalloffEnd - distance) / (pLight.lightFalloffEnd - 0.f));
     diffuseLightInt * att;
 	///Calculate Diffuse lighting
     float3 diffuseLight = diffuseLightInt  * pLight.dynamicLightingColour;
