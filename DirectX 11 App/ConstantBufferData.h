@@ -9,38 +9,17 @@ struct VS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
 	DirectX::XMMATRIX WorldMatrix;	//64-bit size
 };
 
-struct AmbientLightData		///Notice: Needs to be 16-bit aligned to work
+struct LightData		///Notice: Needs to be 16-bit aligned to work
 {
-	DirectX::XMFLOAT3 ambientLightingColour;	//12-bit
-	float ambientLightingStrength;				//4-bit
+	DirectX::XMFLOAT3 lightColour;		//12-bit
+	float lightStrength;				//4-bit
+	DirectX::XMFLOAT3 lightPosition;	//12-bit
+	float lightFalloffEnd;				//4-bit
+	float lightSpotFactor;				//4-bit
+	DirectX::XMFLOAT3 padding;			//12-bit
 };
 
-struct PointLightData
+struct Lights
 {
-	DirectX::XMFLOAT3 dynamicLightingColour;	//12-bit
-	float dynamicLightingStrength;				//4-bit
-	DirectX::XMFLOAT3 dynamicLightPosition;		//12-bit
-	float lightFalloffEnd;						//4-bit
-	DirectX::XMFLOAT2 padding;					//8-bit
-};
-
-struct SpotLightData
-{
-	DirectX::XMFLOAT3 dynamicLightingColour;	//12-bit
-	float dynamicLightingStrength;				//4-bit
-	DirectX::XMFLOAT3 dynamicLightPosition;		//12-bit
-	float lightFalloffEnd;						//4-bit
-	float spotFactor;							//4-bit
-	DirectX::XMFLOAT3 padding;					//12-bit
-};
-
-struct PLights		///Notice: Needs to be 16-bit aligned to work
-{
-	///Allows multiple point lights to use a single register
-	PointLightData lights[NUM_POINT_LIGHTS];
-};
-
-struct SpLights
-{
-	SpotLightData SPLights[NUM_SPOT_LIGHTS];
+	LightData mLights[1 + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 };

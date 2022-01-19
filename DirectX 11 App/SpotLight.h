@@ -12,19 +12,11 @@ public:
 	void SetLightStrength(const float newStrength) override;
 	void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) override;
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
+	const void SetLightFalloffEnd(const float newEnd) override;
+	const void SetLightSpotFactor(const float newFactor) override;
 
-	///Function to set the falloffEnd of the spotlight
-	void SetLightFalloffEnd(const float newEnd);
-	///Function to set the spotFactor of the spotlight, determines the size of the light circle, lower value is wider and higher value is more concentrated
-	void SetLightSpotFactor(const float newFactor);
-
-	const int GetSpotLightNumber() const;
+	const int GetLightNumber() const override;
 
 private:
-	const void SetSpotLightNumber();
-	static SpLights lightData;
-	///Coresponds to the number of the light in the above static struct variable
-	int spotLightNo;
-	///Incremented every time a point light is instantiated
-	static int spotLightCount;
+	const void SetLightNumber() override;
 };

@@ -23,8 +23,8 @@ VertexOutputs merge(VertexInputs input, VertexOutputs output)
 {
 	output.retPos = mul(float4(input.pos, 1.0f), WorldViewProjectionMatrix);
     output.retTexCoord = input.texCoord;
-	output.retNormCoord = normalize(mul(float4(input.normCoord, 0.f), WorldMatrix));
-	output.retWorldPos = mul(float4(input.pos, 1.f), WorldMatrix);
+	output.retNormCoord = normalize(mul(float4(input.normCoord, 0.f), WorldMatrix)).xyz;
+	output.retWorldPos = mul(float4(input.pos, 1.f), WorldMatrix).xyz;
     return output;
 }
 

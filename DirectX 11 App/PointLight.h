@@ -12,22 +12,11 @@ public:
 	void SetLightStrength(const float newStrength) override;
 	void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) override;
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
+	const void SetLightFalloffEnd(const float newEnd) override;
+	const void SetLightSpotFactor(const float newFactor) override;
 
-	///Function to set the falloffEnd of the point light
-	void SetLightFalloffEnd(const float newEnd);
-
-	const int GetPointLightNumber() const;
+	const int GetLightNumber() const override;
 
 private:
-	const void SetPointLightNumber();
-
-	/*
-	Values of all point lights used in scene is carried across all instances so they can be used in a single register in PixelShader.hlsl.
-	Static data values also allows a single point light to render instead of all present in the scene.
-	*/
-	static PLights lightData;
-	///Coresponds to the number of the light in the above static struct variable
-	int pointLightNo;
-	///Incremented every time a point light is instantiated
-	static int pointLightCount;
+	const void SetLightNumber() override;
 };

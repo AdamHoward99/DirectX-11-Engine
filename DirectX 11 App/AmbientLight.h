@@ -10,7 +10,11 @@ public:
 	void SetLightColour(const DirectX::XMFLOAT3A& newColour) override;
 	void SetLightColour(const float r, const float g, const float b) override;
 	void SetLightStrength(const float newStrength) override;
+	const void SetLightFalloffEnd(const float newEnd) override;
+	const void SetLightSpotFactor(const float newFactor) override;
+
+	const int GetLightNumber() const override;
 
 private:
-	AmbientLightData lightData;
+	const void SetLightNumber() override;
 };

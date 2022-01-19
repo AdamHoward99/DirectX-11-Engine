@@ -7,7 +7,7 @@ void AmbientLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFL
 	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.ByteWidth = sizeof AmbientLightData;
+	bufferDesc.ByteWidth = sizeof Lights;
 	///Sets to 0 for Index and Vertex Buffers, Gives Write Access for Constant Buffer Only
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -20,9 +20,12 @@ void AmbientLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFL
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 
+	///Set the light number for this light
+	SetLightNumber();
+
 	///Set Dynamic Lighting Variables
-	lightData.ambientLightingColour = lightColour;
-	lightData.ambientLightingStrength = lightStrength;
+	mLightdata.mLights[lightNumber].lightColour = lightColour;
+	mLightdata.mLights[lightNumber].lightStrength = lightStrength;
 }
 
 void AmbientLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -40,7 +43,7 @@ void AmbientLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapRes.pData, &lightData, sizeof AmbientLightData);
+	CopyMemory(mapRes.pData, &mLightdata, sizeof Lights);
 	pDeviceCon->Unmap(pLightBuffer.Get(), NULL);
 	///Unmap(IN, IN)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
@@ -55,15 +58,36 @@ void AmbientLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 
 void AmbientLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
-	lightData.ambientLightingColour = newColour;
+	mLightdata.mLights[lightNumber].lightColour = newColour;
 }
 
 void AmbientLight::SetLightColour(const float r, const float g, const float b)
 {
-	lightData.ambientLightingColour = DirectX::XMFLOAT3A(r, g, b);
+	mLightdata.mLights[lightNumber].lightColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
 void AmbientLight::SetLightStrength(const float newStrength)
 {
-	lightData.ambientLightingStrength = newStrength;
+	mLightdata.mLights[lightNumber].lightStrength = newStrength;
+}
+
+const void AmbientLight::SetLightFalloffEnd(const float newEnd)
+{
+	mLightdata.mLights[lightNumber].lightFalloffEnd = newEnd;
+}
+
+const void AmbientLight::SetLightSpotFactor(const float newFactor)
+{
+	mLightdata.mLights[lightNumber].lightSpotFactor = newFactor;
+}
+
+const int AmbientLight::GetLightNumber() const
+{
+	return lightNumber;
+}
+
+const void AmbientLight::SetLightNumber()
+{
+	lightNumber = totalLightCount;
+	totalLightCount++;
 }

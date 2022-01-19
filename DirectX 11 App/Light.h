@@ -22,7 +22,27 @@ public:
 	virtual void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) {};
 	///Singular floats version of function to set the position of the lighting
 	virtual void SetLightPosition(const float x, const float y, const float z) {};
+	///Obtains light number which corresponds to alignment in array of lights in mLightdata struct.
+	virtual const int GetLightNumber() const { return 0; };
+	///Sets the light number for the array alignment
+	virtual const void SetLightNumber() {};
+	///Function to set the falloffEnd of the lighting, used for point / spot lights
+	virtual const void SetLightFalloffEnd(const float newEnd) {};
+	///Function to set the spotFactor of the lighting, determines the size of the light circle, lower value is wider and higher value is more concentrated, used for spot lights
+	virtual const void SetLightSpotFactor(const float newFactor) {};
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightBuffer;
+	///Values of all lights used in scene is carried across all instances so they can be used in a single register in PixelShader.hlsl.
+	static Lights mLightdata;
+	///Incremented every time a point light is instantiated
+	static int totalLightCount;
+	///Coresponds to the number of the light in the above static struct variable
+	int lightNumber;
+
+	/*
+	Order of lights being created in the mLightdata struct follow:
+	Ambient Lights -> Point Lights -> Spot Lights,
+	with position 1(0) of array being for ambient, 1 + NUM_POINT_LIGHTS for point lights and total of [1 + NUM_POINT_LIGHTS] + NUM_SPOT_LIGHTS being for spot lights.
+	*/
 };

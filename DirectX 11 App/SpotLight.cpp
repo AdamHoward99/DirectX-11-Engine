@@ -1,8 +1,5 @@
 #include "SpotLight.h"
 
-int SpotLight::spotLightCount = 0;
-SpLights SpotLight::lightData;
-
 void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
 {
 	///Create Lighting Buffer Desc
@@ -10,7 +7,7 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 	ZeroMemory(&bufferDesc, sizeof D3D11_BUFFER_DESC);
 
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.ByteWidth = sizeof SpLights;
+	bufferDesc.ByteWidth = sizeof Lights;
 	///Sets to 0 for Index and Vertex Buffers, Gives Write Access for Constant Buffer Only
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -24,14 +21,14 @@ void SpotLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBuffer()");
 
 	///Set number of the point light, maximum value is stored in PixelShader.hlsl
-	SetSpotLightNumber();
+	SetLightNumber();
 
 	///Set Dynamic Lighting Variables
-	lightData.SPLights[spotLightNo].dynamicLightingColour = lightColour;
-	lightData.SPLights[spotLightNo].dynamicLightingStrength = lightStrength;
-	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
-	lightData.SPLights[spotLightNo].lightFalloffEnd = 10.f;
-	lightData.SPLights[spotLightNo].spotFactor = 10.f;
+	mLightdata.mLights[lightNumber].lightColour = lightColour;
+	mLightdata.mLights[lightNumber].lightStrength = lightStrength;
+	mLightdata.mLights[lightNumber].lightPosition = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
+	mLightdata.mLights[lightNumber].lightFalloffEnd = 10.f;
+	mLightdata.mLights[lightNumber].lightSpotFactor = 10.f;
 }
 
 void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
@@ -49,13 +46,13 @@ void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapRes.pData, &lightData, sizeof SpLights);
+	CopyMemory(mapRes.pData, &mLightdata, sizeof Lights);
 	pDeviceCon->Unmap(pLightBuffer.Get(), NULL);
 	///Unmap(IN, IN)
 	///ID3D11Resource* pResource - Pointer to the constant buffer
 	///UINT Subresource			 - index of a subresource which needs to be unmapped
 
-	pDeviceCon->PSSetConstantBuffers(2, 1, pLightBuffer.GetAddressOf());
+	pDeviceCon->PSSetConstantBuffers(0, 1, pLightBuffer.GetAddressOf());
 	///VSSetConstantBuffers(IN, IN, OPTIONAL)
 	///UINT StartSlot					- Starting index of array for constant buffer
 	///UINT NumBuffers					- Number of constant buffers to set
@@ -64,46 +61,46 @@ void SpotLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 
 void SpotLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
-	lightData.SPLights[spotLightNo].dynamicLightingColour = newColour;
+	mLightdata.mLights[lightNumber].lightColour = newColour;
 }
 
 void SpotLight::SetLightColour(const float r, const float g, const float b)
 {
-	lightData.SPLights[spotLightNo].dynamicLightingColour = DirectX::XMFLOAT3A(r, g, b);
+	mLightdata.mLights[lightNumber].lightColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
 void SpotLight::SetLightStrength(const float newStrength)
 {
-	lightData.SPLights[spotLightNo].dynamicLightingStrength = newStrength;
+	mLightdata.mLights[lightNumber].lightStrength = newStrength;
 }
 
 void SpotLight::SetLightPosition(const DirectX::XMFLOAT3A& newPosition)
 {
-	lightData.SPLights[spotLightNo].dynamicLightPosition = newPosition;
+	mLightdata.mLights[lightNumber].lightPosition = newPosition;
 }
 
 void SpotLight::SetLightPosition(const float posX, const float posY, const float posZ)
 {
-	lightData.SPLights[spotLightNo].dynamicLightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
+	mLightdata.mLights[lightNumber].lightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
 }
 
-void SpotLight::SetLightFalloffEnd(const float newEnd)
+const void SpotLight::SetLightFalloffEnd(const float newEnd)
 {
-	lightData.SPLights[spotLightNo].lightFalloffEnd = newEnd;
+	mLightdata.mLights[lightNumber].lightFalloffEnd = newEnd;
 }
 
-void SpotLight::SetLightSpotFactor(const float newFactor)
+const void SpotLight::SetLightSpotFactor(const float newFactor)
 {
-	lightData.SPLights[spotLightNo].spotFactor = newFactor;
+	mLightdata.mLights[lightNumber].lightSpotFactor = newFactor;
 }
 
-const int SpotLight::GetSpotLightNumber() const
+const int SpotLight::GetLightNumber() const
 {
-	return spotLightNo;
+	return lightNumber;
 }
 
-const void SpotLight::SetSpotLightNumber()
+const void SpotLight::SetLightNumber()
 {
-	spotLightNo = spotLightCount;
-	spotLightCount++;
+	lightNumber = totalLightCount;
+	totalLightCount++;
 }
