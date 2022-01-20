@@ -37,7 +37,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
 
 	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
-	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 2.f));
+	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
 
 	//Render lights, only single light needs to be called to render since all light data is static across all lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
