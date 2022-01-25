@@ -19,7 +19,7 @@ public:
 	Object& operator=(const Object& oldObject);
 
 	void Initialize(const std::string& filepath);
-	void Update();
+	void Update(const DirectX::XMFLOAT3A&);
 	void Render();
 
 	///Functions to obtain 3D Model data from OBJ file

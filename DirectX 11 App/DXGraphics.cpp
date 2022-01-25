@@ -27,11 +27,11 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	ambientLight.SetLightStrength(1.f);
+	ambientLight.SetLightStrength(0.5f);
 
 	//Update Point Light 0
-	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
-	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 3.f, 0.f));
+	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
+	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.f, 3.f, -1.f));
 
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
@@ -67,7 +67,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	///Notice: Update OBJ's here
 	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["Ice_Cream"]->Update();		///All transformations should be applied before this is called
+	renderObjects["Ice_Cream"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +
 		" Object Z: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationZ());
@@ -275,7 +275,7 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/MultiObject/ice_cream.fbx"));
+	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/ice.fbx"));
 	renderObjects["Ice_Cream"]->SetRotation(-90.f, 0.f, 0.f);
 }
 

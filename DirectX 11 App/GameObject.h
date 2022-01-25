@@ -46,7 +46,7 @@ public:
 	///Move Assignment Operator
 	virtual GameObject& operator=(const GameObject&& otherObj);
 	///Updates Movement of GameObject
-	virtual void Update();
+	virtual void Update(const DirectX::XMFLOAT3A& camPos);
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 	///Matrix version of SetTransformations function, usable for any XMMATRIX transformation

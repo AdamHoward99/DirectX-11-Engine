@@ -23,3 +23,16 @@ struct Lights
 {
 	LightData mLights[1 + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 };
+
+struct MaterialData
+{
+	DirectX::XMFLOAT3 matFresnelEffect;	//12-bit
+	float matRoughness;					//4-bit
+	DirectX::XMFLOAT3 toEye;			//12-bit
+	float padding;						//4-bit
+};
+
+struct Material
+{
+	MaterialData matData;
+};

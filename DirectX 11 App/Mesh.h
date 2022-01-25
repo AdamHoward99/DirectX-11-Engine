@@ -37,6 +37,11 @@ public:
 	void CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Device>& device, const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);
 
+	void SetEyePosition(const DirectX::XMFLOAT3A& toEye)
+	{
+		matData.toEye = toEye;
+	}
+
 private:
 	///Default Geometry included in Engine
 	void CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device);
@@ -44,10 +49,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pMaterialBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 
 	///Stores amount of indices used by Mesh for DrawIndexed function, requires less than storing vector of indices
 	UINT indicesCount = 0;
 	VS_CB_DATA meshData;
+	MaterialData matData;
 	std::vector<Texture> meshTextures;
+
+	/*
+	set functions for material data variables
+	*/
 };

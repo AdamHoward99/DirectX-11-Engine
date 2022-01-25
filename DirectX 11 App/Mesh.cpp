@@ -6,6 +6,10 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<
 	pDeviceContext = deviceCon;
 	meshTextures = textures;
 	CreateBuffers(device, v, i);
+
+	//TODO: move this into functions in Object class which can also be called from gameobject class
+	matData.matFresnelEffect = DirectX::XMFLOAT3(0.35f, 0.35f, 0.65f);
+	matData.matRoughness = 0.4f;		//Smaller the number the more rough and less reflective it will be
 }
 
 Mesh::Mesh(const Mesh& m)
@@ -13,11 +17,13 @@ Mesh::Mesh(const Mesh& m)
 	pVertexBuffer = m.pVertexBuffer;
 	pIndexBuffer = m.pIndexBuffer;
 	pConstantBuffer = m.pConstantBuffer;
+	pMaterialBuffer = m.pMaterialBuffer;
 	pDeviceContext = m.pDeviceContext;
 	
 	indicesCount = m.indicesCount;
 	meshData = m.meshData;
 	meshTextures = m.meshTextures;
+	matData = m.matData;
 }
 
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -40,8 +46,7 @@ void Mesh::Draw()
 	///const UINT* pOffsets			  - Pointer to an array of offset values which are the offset between elements in buffer
 	
 	///Draw Texture
-	for (Texture& t : meshTextures)
-		pDeviceContext->PSSetShaderResources(0, 1, t.GetTextureRV().GetAddressOf());
+	pDeviceContext->PSSetShaderResources(0, 1, meshTextures[0].GetTextureRV().GetAddressOf());
 	///PSSetShaderResources(IN, IN, OPTIONAL)
 	///UINT StartSlot			 - Index of array to begin setting resources
 	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
@@ -72,6 +77,17 @@ void Mesh::Draw()
 	///UINT NumBuffers					- Number of constant buffers to set
 	///ID3D11Buffer** ppConstantBuffers - Pointer to array of constant buffers to set
 
+	///Set Material Buffer
+	D3D11_MAPPED_SUBRESOURCE mapResMat;
+	hr = pDeviceContext->Map(pMaterialBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapResMat);
+
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
+
+	CopyMemory(mapResMat.pData, &matData, sizeof MaterialData);
+	pDeviceContext->Unmap(pMaterialBuffer.Get(), NULL);
+	pDeviceContext->PSSetConstantBuffers(1, 1, pMaterialBuffer.GetAddressOf());
+
 	///Set Indices of OBJ using Index Buffer
 	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, NULL);
 	///IASetIndexBuffer(OPTIONAL, IN, IN)
@@ -95,6 +111,8 @@ void Mesh::CreateBuffers(Microsoft::WRL::ComPtr<ID3D11Device>& device, const std
 	CreateBuffer(device, D3D11_BIND_INDEX_BUFFER, sizeof DWORD * i.size(), pIndexBuffer.GetAddressOf(), i.data());				
 	///Constant Buffer
 	CreateBuffer(device, D3D11_BIND_CONSTANT_BUFFER, sizeof VS_CB_DATA, pConstantBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);	
+	///Material Buffer
+	CreateBuffer(device, D3D11_BIND_CONSTANT_BUFFER, sizeof MaterialData, pMaterialBuffer.GetAddressOf(), nullptr, D3D11_USAGE_DYNAMIC);
 	///Store Indices count for DrawIndexed()
 	indicesCount = i.size();
 }
@@ -110,11 +128,13 @@ Mesh& Mesh::operator=(const Mesh& otherMesh)
 		this->pVertexBuffer = otherMesh.pVertexBuffer;
 		this->pIndexBuffer = otherMesh.pIndexBuffer;
 		this->pConstantBuffer = otherMesh.pConstantBuffer;
+		this->pMaterialBuffer = otherMesh.pMaterialBuffer;
 		this->pDeviceContext = otherMesh.pDeviceContext;
 
 		this->indicesCount = otherMesh.indicesCount;
 		this->meshData = otherMesh.meshData;
 		this->meshTextures = otherMesh.meshTextures;
+		this->matData = otherMesh.matData;
 	}
 
 	return *this;

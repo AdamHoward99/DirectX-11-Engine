@@ -47,11 +47,14 @@ void Object::Initialize(const std::string& filepath)
 	objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));
 }
 
-void Object::Update()
+void Object::Update(const DirectX::XMFLOAT3A& camPos)
 {
 	///Update Position of OBJ here
 	for (Mesh& m : objMeshes)
+	{
 		m.UpdatePosition(objWorldMatrix, viewProjectionMatrix);
+		m.SetEyePosition(camPos);
+	}
 
 	Render();
 }

@@ -10,14 +10,26 @@ struct LightData
     float lightSpotFactor;  //4-bit
 };
 
+struct TextureData
+{
+    float3 fresnelEff;      //12-bit
+    float roughness;        //4-bit
+    float3 toEye;           //12-bit
+};
+
 //Single buffer to store ambient light, point lights and spot lights
 cbuffer lightsBuffer : register(b0)
 {
     LightData mLights[1 + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 };
 
+cbuffer materialBuffer : register(b1)
+{
+    TextureData texData;
+}
+
 SamplerState samplerState : SAMPLER : register(s0);
-Texture2D tex : TEXTURE : register(t0);
+Texture2D tex : register(t0);
 
 struct PixelInput
 {
@@ -27,12 +39,40 @@ struct PixelInput
     float4 worldPos : WORLD_POSITION;
 };
 
-float3 ComputeLighting(LightData pLight, PixelInput data)
+float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 vectorToLightSource)
+{
+    //R0 = ( (n-1) / (n+1) )^2
+    float cosAngle = saturate(dot(normal, vectorToLightSource));
+    
+    float f0 = 1.0f - cosAngle;
+    
+    float3 reflectPercent = matFresnel + (1.f - matFresnel) * pow(f0, 5.f);
+    return reflectPercent;
+}
+
+float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSource, float3 normal, float3 toEye, TextureData mat, float3 albedo)
+{
+    const float m = mat.roughness * 256.f;
+    
+    float3 halfDistanceVector = normalize(vectorToLightSource + toEye);     //to eye?
+    
+    float roughnessFactor = (m + 8.f) * pow(max(dot(halfDistanceVector, normal), 0.f), m) / 8.f;
+    
+    float3 fresnelFactor = ComputeFresnelEffect(mat.fresnelEff, halfDistanceVector, vectorToLightSource);
+    
+    float3 specAlbedo = fresnelFactor * roughnessFactor;
+    
+    specAlbedo = specAlbedo / (specAlbedo + 1.f);
+    
+    return (albedo + specAlbedo) * lightIntensity;
+}
+
+float3 ComputeLighting(LightData pLight, PixelInput data, TextureData mat, float3 normal, float3 albedo)
 {
      //Obtain vector from pixel to light
     float3 vectorToLightSource = pLight.lightPosition - data.worldPos.xyz;
     
-    //Get Distance from pixel to light
+    //Get Distance from pixel to lightm
     float distance = length(vectorToLightSource);
     
     //Check if light is out of range from pixel
@@ -42,7 +82,7 @@ float3 ComputeLighting(LightData pLight, PixelInput data)
     //Normalize distance vector
     vectorToLightSource /= distance;
     
-    //Check if the light is using spotFactor
+    //Check if the light is using spotFactor (Spot Lights only)
     float spotFactor = 1.f;
     if(pLight.lightSpotFactor != 0.f)
     {
@@ -56,9 +96,11 @@ float3 ComputeLighting(LightData pLight, PixelInput data)
     //attenuate light by distance
     float att = saturate((pLight.lightFalloffEnd - distance) / (pLight.lightFalloffEnd - 0.f));
     diffuseLightInt * att;
+    
+    float3 blinnPhong = ComputeLightEyeReflection(diffuseLightInt, vectorToLightSource, normal, mat.toEye, mat, albedo);
 
 	///Calculate Diffuse lighting
-    float3 diffuseLight = diffuseLightInt * pLight.lightColour;
+    float3 diffuseLight = blinnPhong * pLight.lightColour;
     return diffuseLight;
 }
 
@@ -77,7 +119,7 @@ float4 main(PixelInput data) : SV_TARGET
     float3 overallPointLighting;
     for (int i = 0; i < NUM_POINT_LIGHTS; i++)
     {
-        overallPointLighting += ComputeLighting(mLights[lightArrayOffset], data);
+        overallPointLighting += ComputeLighting(mLights[lightArrayOffset], data, texData, normalColour, pixelColour);
         lightArrayOffset++;
     }
     
@@ -85,7 +127,7 @@ float4 main(PixelInput data) : SV_TARGET
     float3 overallSpotLighting = float3(0.f, 0.f, 0.f);
     for (int j = 0; j < NUM_SPOT_LIGHTS; j++)
     {
-        overallSpotLighting += ComputeLighting(mLights[lightArrayOffset], data);
+        overallSpotLighting += ComputeLighting(mLights[lightArrayOffset], data, texData, normalColour, pixelColour);
         lightArrayOffset++;
     }
     

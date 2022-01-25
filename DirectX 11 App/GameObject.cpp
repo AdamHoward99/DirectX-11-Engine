@@ -38,9 +38,9 @@ GameObject& GameObject::operator=(const GameObject&& otherObj)
 	return *this;
 }
 
-void GameObject::Update()
+void GameObject::Update(const DirectX::XMFLOAT3A& camPos)
 {
-	object.Update();
+	object.Update(camPos);
 }
 
 void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
