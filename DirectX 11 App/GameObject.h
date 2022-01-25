@@ -49,6 +49,12 @@ public:
 	virtual void Update(const DirectX::XMFLOAT3A& camPos);
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
+	///Sets fresnel effect of material on mesh
+	void SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel);
+	///Sets fresnel effect of material on mesh
+	void SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ);
+	///Sets roughness value of material on mesh, smaller value is more rough and less reflective (Shininess = -roughness)
+	void SetMaterialRoughness(const float roughness);
 	///Matrix version of SetTransformations function, usable for any XMMATRIX transformation
 	void SetTransformations(const DirectX::XMMATRIX& newMatrix);
 	///XMFLOAT4X4A version of SetTransformations function, usable for any XMFLOAT4X4A transformation

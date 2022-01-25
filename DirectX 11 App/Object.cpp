@@ -53,7 +53,7 @@ void Object::Update(const DirectX::XMFLOAT3A& camPos)
 	for (Mesh& m : objMeshes)
 	{
 		m.UpdatePosition(objWorldMatrix, viewProjectionMatrix);
-		m.SetEyePosition(camPos);
+		m.UpdateMaterials(meshMaterialFresnel, camPos, meshMaterialRoughness);
 	}
 
 	Render();
@@ -186,6 +186,21 @@ void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix)
 {
 	///View Projection Matrix is calculated in Mesh class with World Matrix
 	viewProjectionMatrix = viewProjMatrix;
+}
+
+void Object::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
+{
+	meshMaterialFresnel = fresnel;
+}
+
+void Object::SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ)
+{
+	meshMaterialFresnel = DirectX::XMFLOAT3A(fresnelX, fresnelY, fresnelZ);
+}
+
+void Object::SetMaterialRoughness(const float roughness)
+{
+	meshMaterialRoughness = roughness;
 }
 
 const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)

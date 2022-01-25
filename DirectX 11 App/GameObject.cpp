@@ -48,6 +48,21 @@ void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 	object.SetViewProjectionMatrix(viewProjMat);
 }
 
+void GameObject::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
+{
+	object.SetMaterialFresnel(fresnel);
+}
+
+void GameObject::SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ)
+{
+	object.SetMaterialFresnel(fresnelX, fresnelY, fresnelZ);
+}
+
+void GameObject::SetMaterialRoughness(const float roughness)
+{
+	object.SetMaterialRoughness(roughness);
+}
+
 void GameObject::SetTransformations(const DirectX::XMMATRIX& newMatrix)
 {
 	///Passes value to Object class to change Mesh position

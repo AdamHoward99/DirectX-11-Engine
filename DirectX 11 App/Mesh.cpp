@@ -6,10 +6,6 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<
 	pDeviceContext = deviceCon;
 	meshTextures = textures;
 	CreateBuffers(device, v, i);
-
-	//TODO: move this into functions in Object class which can also be called from gameobject class
-	matData.matFresnelEffect = DirectX::XMFLOAT3(0.35f, 0.35f, 0.65f);
-	matData.matRoughness = 0.4f;		//Smaller the number the more rough and less reflective it will be
 }
 
 Mesh::Mesh(const Mesh& m)
@@ -151,6 +147,16 @@ void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::X
 	///Updates the World matrix
 	meshData.WorldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
 	//TODO: Instead of using transpose could declare row_major
+}
+
+void Mesh::UpdateMaterials(const DirectX::XMFLOAT3A& matFresnel, const DirectX::XMFLOAT3A& eyePos, float matRoughness)
+{
+	///eyePos is the passed camera position.
+	///matFresnel and matRoughness are obtained from class variables stored in Object class
+	///Updates every frame to adjust lighting on Mesh
+	matData.matFresnelEffect = matFresnel;
+	matData.matRoughness = matRoughness;
+	matData.toEye = eyePos;
 }
 
 void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)

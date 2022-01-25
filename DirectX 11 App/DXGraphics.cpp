@@ -67,6 +67,8 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	///Notice: Update OBJ's here
 	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
+	renderObjects["Ice_Cream"]->SetMaterialFresnel(0.35f, 0.35f, 0.65f);
+	renderObjects["Ice_Cream"]->SetMaterialRoughness(0.4f);
 	renderObjects["Ice_Cream"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +

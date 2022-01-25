@@ -27,6 +27,7 @@ public:
 	Mesh& operator=(const Mesh& otherMesh);
 
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix);
+	void UpdateMaterials(const DirectX::XMFLOAT3A& matFresnel, const DirectX::XMFLOAT3A& eyePos, float matRoughness);
 	void Draw();
 
 	///Overloaded function for CreateBuffer creating Index, Constant and Vertex buffers
@@ -36,11 +37,6 @@ public:
 	template<typename T>
 	void CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Device>& device, const int bindFlag, const UINT dataSize, ID3D11Buffer** bufferPtr, const T& resourceData,
 		const D3D11_USAGE bufferUsage = D3D11_USAGE_DEFAULT);
-
-	void SetEyePosition(const DirectX::XMFLOAT3A& toEye)
-	{
-		matData.toEye = toEye;
-	}
 
 private:
 	///Default Geometry included in Engine
@@ -57,8 +53,4 @@ private:
 	VS_CB_DATA meshData;
 	MaterialData matData;
 	std::vector<Texture> meshTextures;
-
-	/*
-	set functions for material data variables
-	*/
 };

@@ -36,12 +36,23 @@ public:
 	///Sets position of Object according to camera viewport (Camera View * Camera Projection)
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 
+	///Sets the fresnel for the material on the mesh
+	void SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel);
+	void SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ);
+
+	///Sets the roughness for the material on the mesh
+	void SetMaterialRoughness(const float roughness);
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
 
-	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();	///Matrix is passed to Meshes to set world position
+	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();				///Matrix is passed to Meshes to set world position
 	DirectX::XMMATRIX viewProjectionMatrix = DirectX::XMMatrixIdentity();		///Used for VP Matrix, multipled with world matrix in Mesh::UpdatePosition function 
 	std::vector<Mesh> objMeshes;
 	std::string objectFileDirectory;
+
+	///Variables for Mesh material variables (Fresnel, Roughness)
+	DirectX::XMFLOAT3A meshMaterialFresnel = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
+	float meshMaterialRoughness = 1.f;
 };
