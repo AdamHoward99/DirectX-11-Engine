@@ -328,7 +328,7 @@ const float GameObject::GetScaleY()
 	float scaleY = sqrtf(powf(float4x4._31, 2) + powf(float4x4._32, 2) + powf(float4x4._33, 2));
 	return scaleY;
 }
-
+//TODO: when moving a gameobject out of origin, doesnt rotate properly, create functions for translate to origin->rotation->translate back
 const float GameObject::GetScaleZ()
 {
 	///Store matrix into XMFLOAT4X4 variable

@@ -6,53 +6,73 @@
 #include <assimp/postprocess.h>
 #include "Mesh.h"
 
-class Object			///Class to load OBJs, textures and Meshes
+/*
+Object class is used to load Objects geometry from an Object file (.obj, .fbx, etc.) and pass information such as attached textures and mesh data to the Mesh class.
+Object file importing is done via Assimp version 4.5.1.
+This class is used by the GameObject class and uses the Mesh class. Structure of these classes is to keep low-level object generation hidden from the surface (GameObject class).
+Developer -> GameObject -> Object -> Mesh
+*/
+
+class Object
 {
 public:
-	Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath);
+	///Constructor to create the Object class' geometry via the Mesh class
+	const Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext, const std::string& filepath);
+	///Copy Constructor
+	const Object(const Object& oldObject);
+	///Move Constructor
+	const Object(Object&& oldObject);
+	///Class Destructor
 	~Object();
-
-	///Copy Constructor for Object class
-	Object(const Object& oldObject);
-
-	///Copy Assignment Operator for Object class
+	///Copy Assignment Operator
 	Object& operator=(const Object& oldObject);
-
-	void Initialize(const std::string& filepath);
-	void Update(const DirectX::XMFLOAT3A&);
-	void Render();
-
-	///Functions to obtain 3D Model data from OBJ file
-	void CreateObjGeometry(const std::string& filepath);
-	void ProcessNodes(const aiScene* pScene, const aiNode* node);
-	Mesh ProcessMeshes(const aiScene* pScene, const aiMesh* mesh);
-	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures);
-	Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr);
-
+	///Move Assignment Operator
+	Object& operator=(Object&& oldObject);
+	///Called in constructor, used for assigning Meshes to the Object
+	const void Initialize(const std::string& filepath);
+	///Updates transformations for Object every frame
+	const void Update(const DirectX::XMFLOAT3A& cameraPosition);
+	///Draws the Object in the game world using Mesh class
+	const void Render();
+	///Obtains Object geometry from file in given filepath
+	const void CreateObjGeometry(const std::string& filepath);
+	///Obtains all nodes from Object geometry and passes nodes to Mesh class
+	const void ProcessNodes(const aiScene* pScene, const aiNode* node);
+	///Obtains all vertices and indices from Object geometry + attached texture information, passes this to Mesh class
+	const Mesh ProcessMeshes(const aiScene* pScene, const aiMesh* mesh);
+	///Obtains the textures attached to Object geometry via stored filepath
+	const void LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures) const;
+	///Finds texture filepath based on method of storage in Object file
+	const Texture GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr) const;
 	///Changes position of object in game world by multiplying with current world matrix
-	void SetWorldPosition(const DirectX::XMMATRIX& pos);
+	const void SetWorldPosition(const DirectX::XMMATRIX& pos);
+	///Gets the world position of the Object
 	const DirectX::XMMATRIX& GetWorldPosition() const;
-
 	///Sets position of Object according to camera viewport (Camera View * Camera Projection)
-	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
-
-	///Sets the fresnel for the material on the mesh
-	void SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel);
-	void SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ);
-
+	const void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
+	///Sets the fresnel effect values for the material on the mesh
+	const void SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel);
+	///Overloaded version of SetMaterialFresnel function passing in individual floats
+	const void SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ);
 	///Sets the roughness for the material on the mesh
-	void SetMaterialRoughness(const float roughness);
+	const void SetMaterialRoughness(const float roughness);
 
 private:
+	///Passed in via GameObject class constructor, used  to pass into the Mesh class when creating Objects geometry
 	Microsoft::WRL::ComPtr<ID3D11Device> pObjDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pObjDeviceContext;
 
-	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();				///Matrix is passed to Meshes to set world position
-	DirectX::XMMATRIX viewProjectionMatrix = DirectX::XMMatrixIdentity();		///Used for VP Matrix, multipled with world matrix in Mesh::UpdatePosition function 
+	///Matrix used to calculate the WVP matrix, is passed to Mesh class each Update call
+	DirectX::XMMATRIX objWorldMatrix = DirectX::XMMatrixIdentity();
+	///Matrix used to calculate the WVP matrix, is passed to Mesh class and calculated in Mesh::UpdatePosition function
+	DirectX::XMMATRIX viewProjectionMatrix = DirectX::XMMatrixIdentity(); 
+	///Vector of Meshes found when loading the Object file
 	std::vector<Mesh> objMeshes;
+	///String location of the Object file in the local directory
 	std::string objectFileDirectory;
 
-	///Variables for Mesh material variables (Fresnel, Roughness)
+	///Values of Objects materials fresnel effect, can be changed in GameObject class, is the percentage of light that a surface reflects in the eye angle
 	DirectX::XMFLOAT3A meshMaterialFresnel = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
+	///Value of Objects materials roughness value, can be changed in GameObject class, lower values represent shinier materials
 	float meshMaterialRoughness = 1.f;
 };

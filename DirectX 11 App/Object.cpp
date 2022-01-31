@@ -5,10 +5,13 @@ Object::Object(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, Microsoft::WRL::Com
 	pObjDevice = pDevice;
 	pObjDeviceContext = pDeviceContext;
 	Initialize(filepath);
+	OutputDebugStringA("Object Class Constructor Called\n");
 }
 
 Object::~Object()
-{}
+{
+	OutputDebugStringA("Object Class Destructor Called\n");
+}
 
 Object::Object(const Object& oldObject)
 {
@@ -17,6 +20,25 @@ Object::Object(const Object& oldObject)
 	objMeshes = oldObject.objMeshes;
 	objectFileDirectory = oldObject.objectFileDirectory;
 	objWorldMatrix = oldObject.objWorldMatrix;
+	OutputDebugStringA("Object Class Copy Constructor Called\n");
+}
+
+Object::Object(Object&& oldObject)
+{
+	pObjDevice = oldObject.pObjDevice;
+	pObjDeviceContext = oldObject.pObjDeviceContext;
+	objMeshes = oldObject.objMeshes;
+	objectFileDirectory = oldObject.objectFileDirectory;
+	objWorldMatrix = oldObject.objWorldMatrix;
+
+	//Deallocate oldObject variables
+	oldObject.pObjDevice->Release();
+	oldObject.pObjDeviceContext->Release();
+	oldObject.objMeshes.empty();
+	oldObject.objectFileDirectory.empty();
+	oldObject.objWorldMatrix = DirectX::XMMatrixIdentity();
+
+	OutputDebugStringA("Object Class Move Constructor Called\n");
 }
 
 Object& Object::operator=(const Object& oldObject)
@@ -30,11 +52,34 @@ Object& Object::operator=(const Object& oldObject)
 		this->objectFileDirectory = oldObject.objectFileDirectory;
 		this->objWorldMatrix = oldObject.objWorldMatrix;
 	}
-
+	OutputDebugStringA("Object Class Copy Assignment Operator Called\n");
 	return *this;
 }
 
-void Object::Initialize(const std::string& filepath)
+Object& Object::operator=(Object&& oldObject)
+{
+	if (this != &oldObject)
+	{
+		this->pObjDevice = oldObject.pObjDevice;
+		this->pObjDeviceContext = oldObject.pObjDeviceContext;
+		this->objMeshes = oldObject.objMeshes;
+		this->objectFileDirectory = oldObject.objectFileDirectory;
+		this->objWorldMatrix = oldObject.objWorldMatrix;
+	}
+
+	///Note: Free any resources of this object
+	oldObject.pObjDevice->Release();
+	oldObject.pObjDeviceContext->Release();
+	oldObject.objMeshes.empty();
+	oldObject.objectFileDirectory.empty();
+	oldObject.objWorldMatrix = DirectX::XMMatrixIdentity();
+
+	OutputDebugStringA("Object Class Move Assignment Operator Called\n");
+	return *this;
+}
+
+
+const void Object::Initialize(const std::string& filepath)
 {
 	///Model filename given in DXGraphics::InitialiseOBJs()
 	if (filepath != "")
@@ -47,7 +92,7 @@ void Object::Initialize(const std::string& filepath)
 	objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));
 }
 
-void Object::Update(const DirectX::XMFLOAT3A& camPos)
+const void Object::Update(const DirectX::XMFLOAT3A& camPos)
 {
 	///Update Position of OBJ here
 	for (Mesh& m : objMeshes)
@@ -59,14 +104,14 @@ void Object::Update(const DirectX::XMFLOAT3A& camPos)
 	Render();
 }
 
-void Object::Render()
+const void Object::Render()
 {
 	///Draw Meshes for OBJ here
 	for (Mesh& m : objMeshes)
 		m.Draw();
 }
 
-void Object::CreateObjGeometry(const std::string& filepath)
+const void Object::CreateObjGeometry(const std::string& filepath)
 {
 	///Store file directory to obtain linked textures of OBJ
 	objectFileDirectory = filepath.substr(0, filepath.find_last_of('/') + 1);
@@ -90,7 +135,7 @@ void Object::CreateObjGeometry(const std::string& filepath)
 	ProcessNodes(pScene, pScene->mRootNode);
 }
 
-void Object::ProcessNodes(const aiScene* pScene, const aiNode* node)
+const void Object::ProcessNodes(const aiScene* pScene, const aiNode* node)
 {
 	///Loops through and obtains all Meshes of the current Node
 	for (UINT i = 0; i < node->mNumMeshes; i++)
@@ -106,7 +151,7 @@ void Object::ProcessNodes(const aiScene* pScene, const aiNode* node)
 	}
 }
 
-Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
+const Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 {
 	std::vector<Vertex> verts;
 	std::vector<DWORD> inds;
@@ -171,7 +216,7 @@ Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 	return Mesh(pObjDevice, pObjDeviceContext, verts, inds, ObjMaterialTextures);
 }
 
-void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
+const void Object::SetWorldPosition(const DirectX::XMMATRIX& pos)
 {
 	///World Matrix value is passed onto Mesh class where the position is actually set each Update()
 	objWorldMatrix *= pos;
@@ -182,28 +227,28 @@ const DirectX::XMMATRIX& Object::GetWorldPosition() const
 	return objWorldMatrix;
 }
 
-void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix)
+const void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix)
 {
 	///View Projection Matrix is calculated in Mesh class with World Matrix
 	viewProjectionMatrix = viewProjMatrix;
 }
 
-void Object::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
+const void Object::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
 {
 	meshMaterialFresnel = fresnel;
 }
 
-void Object::SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ)
+const void Object::SetMaterialFresnel(const float fresnelX, const float fresnelY, const float fresnelZ)
 {
 	meshMaterialFresnel = DirectX::XMFLOAT3A(fresnelX, fresnelY, fresnelZ);
 }
 
-void Object::SetMaterialRoughness(const float roughness)
+const void Object::SetMaterialRoughness(const float roughness)
 {
 	meshMaterialRoughness = roughness;
 }
 
-const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures)
+const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* pMat, const aiTextureType texType, std::vector<Texture>& textures) const
 {
 	///Obtain total amount of textures on Material
 	unsigned int textureCount = pMat->GetTextureCount(texType);
@@ -246,7 +291,7 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 		textures.push_back(Texture(pObjDevice, aiColor4D(255.f, 255.f, 255.f, 255.f), aiTextureType::aiTextureType_DIFFUSE));
 }
 
-Texture Object::GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr)
+const Texture Object::GetTextureByStorageType(const aiScene* pScene, const aiTextureType texType, const aiString* texStr) const
 {
 	///Function to create texture correctly depending on how it is stored (On Disk, Compressed Indexed, Non Compressed Index)
 	const std::string textureStr = texStr->C_Str();
