@@ -2,7 +2,6 @@
   DXGraphics.cpp
   Engine.cpp
   GameObject.cpp
-  Mesh.cpp
   Object.cpp
   RenderWindow.cpp
   WindowCont.cpp

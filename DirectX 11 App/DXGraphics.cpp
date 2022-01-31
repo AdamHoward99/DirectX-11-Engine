@@ -27,21 +27,22 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	ambientLight.SetLightStrength(0.5f);
+	ambientLight.SetLightStrength(0.3f);
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
-	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.f, 3.f, -1.f));
+	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.5f, 3.f, -3.f));
+	pointLights[0]->SetLightStrength(2.f);
 
-	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
-	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(5.f, 4.f, 0.f));
+	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
+	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(3.5f, 3.f, -3.f));
+	pointLights[1]->SetLightStrength(2.f);
 
 	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
 
 	//Render lights, only single light needs to be called to render since all light data is static across all lights
 	ambientLight.RenderLighting(pDeviceContext.Get());
-
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -65,14 +66,29 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
 	///Notice: Update OBJ's here
-	renderObjects["Ice_Cream"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["Ice_Cream"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["Ice_Cream"]->SetMaterialFresnel(0.35f, 0.35f, 0.65f);
-	renderObjects["Ice_Cream"]->SetMaterialRoughness(0.4f);
-	renderObjects["Ice_Cream"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
+	renderObjects["ice"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
+	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
+	renderObjects["ice"]->SetMaterialRoughness(0.2f);
+	renderObjects["ice"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
-	std::string txt = "Object X: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationY()) +
-		" Object Z: " + std::to_string(renderObjects["Ice_Cream"]->GetRotationZ());
+	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["marble"]->SetMaterialFresnel(0.5f, 0.5f, 0.5f);
+	renderObjects["marble"]->SetMaterialRoughness(0.5f);
+	renderObjects["marble"]->Update(camera->GetPosition());
+
+	renderObjects["gold"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["gold"]->SetMaterialFresnel(1.0f, 1.0f, 1.0f);
+	renderObjects["gold"]->SetMaterialRoughness(0.9f);
+	renderObjects["gold"]->Update(camera->GetPosition());
+
+	renderObjects["coral"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["coral"]->SetMaterialFresnel(0.1f, 0.1f, 0.1f);
+	renderObjects["coral"]->SetMaterialRoughness(0.1f);
+	renderObjects["coral"]->Update(camera->GetPosition());
+
+	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
+		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());
 
 	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + " Camera Y: " + std::to_string(camera->GetPosition().y) + 
 		" Camera Z: " + std::to_string(camera->GetPosition().z);
@@ -277,8 +293,20 @@ bool DXGraphics::InitialiseScene(int w, int h)
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["Ice_Cream"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/ice.fbx"));
-	renderObjects["Ice_Cream"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["ice"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/ice.fbx"));
+	renderObjects["ice"]->SetRotation(-90.f, 0.f, 0.f);
+
+	renderObjects["marble"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/marble.fbx"));
+	renderObjects["marble"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["marble"]->SetPosition(3.f, 0.f, 0.f);
+
+	renderObjects["gold"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/goldBrass.fbx"));
+	renderObjects["gold"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["gold"]->SetPosition(6.f, 0.f, 0.f);
+
+	renderObjects["coral"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/coral.fbx"));
+	renderObjects["coral"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["coral"]->SetPosition(9.f, 0.f, 0.f);
 }
 
 void DXGraphics::InitialiseLighting()

@@ -8,7 +8,7 @@ struct VS_CB_DATA		///Notice: Needs to be 16-bit aligned to work
 	DirectX::XMMATRIX WVPMatrix;	//64-bit size
 	DirectX::XMMATRIX WorldMatrix;	//64-bit size
 };
-
+ 
 struct LightData		///Notice: Needs to be 16-bit aligned to work
 {
 	DirectX::XMFLOAT3 lightColour;		//12-bit
