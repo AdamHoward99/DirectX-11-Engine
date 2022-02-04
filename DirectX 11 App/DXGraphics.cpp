@@ -27,7 +27,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	ambientLight.SetLightStrength(0.3f);
+	ambientLight.SetLightStrength(0.2f);
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
@@ -73,8 +73,8 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["ice"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["marble"]->SetMaterialFresnel(0.5f, 0.5f, 0.5f);
-	renderObjects["marble"]->SetMaterialRoughness(0.5f);
+	renderObjects["marble"]->SetMaterialFresnel(0.2f, 0.2f, 0.2f);
+	renderObjects["marble"]->SetMaterialRoughness(0.3f);
 	renderObjects["marble"]->Update(camera->GetPosition());
 
 	renderObjects["gold"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
