@@ -73,16 +73,19 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["ice"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["marble"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["marble"]->SetMaterialFresnel(0.2f, 0.2f, 0.2f);
 	renderObjects["marble"]->SetMaterialRoughness(0.3f);
 	renderObjects["marble"]->Update(camera->GetPosition());
 
 	renderObjects["gold"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["gold"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["gold"]->SetMaterialFresnel(1.0f, 1.0f, 1.0f);
 	renderObjects["gold"]->SetMaterialRoughness(0.9f);
 	renderObjects["gold"]->Update(camera->GetPosition());
 
 	renderObjects["coral"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["coral"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["coral"]->SetMaterialFresnel(0.1f, 0.1f, 0.1f);
 	renderObjects["coral"]->SetMaterialRoughness(0.1f);
 	renderObjects["coral"]->Update(camera->GetPosition());
