@@ -184,7 +184,7 @@ void GameObject::SetRotation(const DirectX::XMVECTOR& newRotation)		///Rotation 
 }
 
 void GameObject::SetRotation(const DirectX::XMFLOAT3A& newRotation)		///Rotation angles need to be in Degrees
-{//TODO could create a rotate around origin function separate to this (rotate around object center)
+{
 	///Convert Degree angles to Radians
 	DirectX::XMFLOAT3A radianAngles;
 	radianAngles.x = DirectX::XMConvertToRadians(newRotation.x);
@@ -226,6 +226,44 @@ void GameObject::SetRotation(const float x, const float y, const float z)	///Rot
 	
 	///Passes value to Object class to change Mesh position
 	object.SetWorldPosition(translation);
+}
+
+void GameObject::SetRotationAroundOrigin(const DirectX::XMVECTOR& newRotation)	///Rotation angles need to be in Radians
+{
+	///Converts XMVECTOR to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYawFromVector(newRotation);
+
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
+}
+
+void GameObject::SetRotationAroundOrigin(const DirectX::XMFLOAT3A& newRotation)	///Rotation angles need to be in Degrees
+{
+	///Convert Degree angles to Radians
+	DirectX::XMFLOAT3A radianAngles;
+	radianAngles.x = DirectX::XMConvertToRadians(newRotation.x);
+	radianAngles.y = DirectX::XMConvertToRadians(newRotation.y);
+	radianAngles.z = DirectX::XMConvertToRadians(newRotation.z);
+
+	///Converts XMFLOAT3A to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radianAngles.x, radianAngles.y, radianAngles.z);
+
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
+}
+
+void GameObject::SetRotationAroundOrigin(const float x, const float y, const float z)	///Rotation angles need to be in Degrees
+{
+	///Convert Angle Degree Parameters into radians
+	const float radX = DirectX::XMConvertToRadians(x);
+	const float radY = DirectX::XMConvertToRadians(y);
+	const float radZ = DirectX::XMConvertToRadians(z);
+
+	///Converts floats to XMMATRIX
+	const DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(radX, radY, radZ);
+
+	///Passes value to Object class to change Mesh position
+	object.SetWorldPosition(rotationMat);
 }
 
 const DirectX::XMVECTOR GameObject::GetRotationVec()

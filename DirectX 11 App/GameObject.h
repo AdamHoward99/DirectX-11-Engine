@@ -79,12 +79,18 @@ public:
 	const float GetPositionY();
 	///Obtains Z position from Object world matrix
 	const float GetPositionZ();
-	///XMVECTOR version of SetRotation function
+	///XMVECTOR version of SetRotation function, rotates around center of the Object
 	void SetRotation(const DirectX::XMVECTOR& newRotation);
-	///XMFLOAT3A version of SetRotation function
+	///XMFLOAT3A version of SetRotation function, rotates around center of the Object
 	void SetRotation(const DirectX::XMFLOAT3A& newRotation);
-	///Singular floats version of SetRotation function
+	///Singular floats version of SetRotation function, rotates around center of the Object
 	void SetRotation(const float x, const float y, const float z);
+	///XMVECTOR version of SetRotationAroundOrigin function, rotates ONLY around the origin
+	void SetRotationAroundOrigin(const DirectX::XMVECTOR& newRotation);
+	///XMFLOAT3A version of SetRotationAroundOrigin function, rotates ONLY around the origin
+	void SetRotationAroundOrigin(const DirectX::XMFLOAT3A& newRotation);
+	///Singular float version of SetRotationAroundOrigin function, rotates ONLY around the origin
+	void SetRotationAroundOrigin(const float x, const float y, const float z);
 	///XMVECTOR version of GetRotation function
 	const DirectX::XMVECTOR GetRotationVec();
 	///XMFLOAT3A version of GetRotation function
