@@ -109,7 +109,7 @@ float4 main(PixelInput data) : SV_TARGET
 	///Obtain colour of the texture
     float3 pixelColour = tex.Sample(samplerState, data.coords).xyz;
 	///Obtain normal of the texture
-	float3 normalColour = data.normals;
+    float3 normalColour = normalize(data.normals);
 	///Obtain the ambient lighting
     float3 ambientLight = mLights[0].lightColour * mLights[0].lightStrength;
     

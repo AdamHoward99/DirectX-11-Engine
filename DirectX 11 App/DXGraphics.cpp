@@ -78,17 +78,11 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["marble"]->SetMaterialRoughness(0.3f);
 	renderObjects["marble"]->Update(camera->GetPosition());
 
-	renderObjects["gold"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["gold"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["gold"]->SetMaterialFresnel(1.0f, 1.0f, 1.0f);
-	renderObjects["gold"]->SetMaterialRoughness(0.9f);
-	renderObjects["gold"]->Update(camera->GetPosition());
-
-	renderObjects["coral"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["coral"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["coral"]->SetMaterialFresnel(0.1f, 0.1f, 0.1f);
-	renderObjects["coral"]->SetMaterialRoughness(0.1f);
-	renderObjects["coral"]->Update(camera->GetPosition());
+	renderObjects["cobblestone"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
+	renderObjects["cobblestone"]->SetMaterialFresnel(0.001f, 0.001f, 0.001f);
+	renderObjects["cobblestone"]->SetMaterialRoughness(0.1f);
+	renderObjects["cobblestone"]->Update(camera->GetPosition());
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
 		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());
@@ -303,13 +297,9 @@ void DXGraphics::InitialiseOBJs()
 	renderObjects["marble"]->SetRotation(-90.f, 0.f, 0.f);
 	renderObjects["marble"]->SetPosition(3.f, 0.f, 0.f);
 
-	renderObjects["gold"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/goldBrass.fbx"));
-	renderObjects["gold"]->SetRotation(-90.f, 0.f, 0.f);
-	renderObjects["gold"]->SetPosition(6.f, 0.f, 0.f);
-
-	renderObjects["coral"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/coral.fbx"));
-	renderObjects["coral"]->SetRotation(-90.f, 0.f, 0.f);
-	renderObjects["coral"]->SetPosition(9.f, 0.f, 0.f);
+	renderObjects["cobblestone"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/cobblestone.fbx"));
+	renderObjects["cobblestone"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["cobblestone"]->SetPosition(6.f, 0.f, 0.f);
 }
 
 void DXGraphics::InitialiseLighting()
