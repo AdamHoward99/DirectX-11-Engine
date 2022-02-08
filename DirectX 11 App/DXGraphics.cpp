@@ -27,11 +27,11 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	ambientLight.SetLightStrength(0.2f);
+	ambientLight.SetLightStrength(0.0f);
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
-	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.5f, 3.f, -3.f));
+	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.f, 3.f, -3.f));
 	pointLights[0]->SetLightStrength(2.f);
 
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
@@ -64,12 +64,12 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
-
+	 
 	///Notice: Update OBJ's here
 	renderObjects["ice"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
-	renderObjects["ice"]->SetMaterialRoughness(0.2f);
+	renderObjects["ice"]->SetMaterialRoughness(0.1f);
 	renderObjects["ice"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
@@ -80,18 +80,14 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	renderObjects["cobblestone"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["cobblestone"]->SetMaterialFresnel(0.001f, 0.001f, 0.001f);
-	renderObjects["cobblestone"]->SetMaterialRoughness(0.1f);
+	renderObjects["cobblestone"]->SetMaterialFresnel(0.601f, 0.601f, 0.601f);
+	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
 	renderObjects["cobblestone"]->Update(camera->GetPosition());
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
 		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());
 
-	std::string txt2 = "Camera X: " + std::to_string(camera->GetPosition().x) + " Camera Y: " + std::to_string(camera->GetPosition().y) + 
-		" Camera Z: " + std::to_string(camera->GetPosition().z);
-
 	fonts["default"]->DrawString(StringCon::StringToCString(txt), DirectX::XMFLOAT2A(0.f, 20.f));
-	fonts["default"]->DrawString(StringCon::StringToCString(txt2), DirectX::XMFLOAT2A(0.f, 40.f));
 
 	//Display FPS Timer
 	fTimer.IncrementFPSCounter();
