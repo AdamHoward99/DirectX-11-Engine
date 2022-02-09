@@ -24,7 +24,7 @@ struct TextureData
 //Single buffer to store ambient light, point lights and spot lights
 cbuffer lightsBuffer : register(b0)
 {
-    LightData mLights[1 + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
+    LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 };
 
 cbuffer materialBuffer : register(b1)

@@ -83,14 +83,14 @@ void PointLight::SetLightPosition(const float posX, const float posY, const floa
 	mLightdata.mLights[lightNumber].lightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
 }
 
+const void PointLight::SetLightFalloffStart(const float newStart)
+{
+	mLightdata.mLights[lightNumber].lightFalloffStart = newStart;
+}
+
 const void PointLight::SetLightFalloffEnd(const float newEnd)
 {
 	mLightdata.mLights[lightNumber].lightFalloffEnd = newEnd;
-}
-
-const void PointLight::SetLightSpotFactor(const float newFactor)
-{
-	mLightdata.mLights[lightNumber].lightFalloffEnd = newFactor;
 }
 
 const int PointLight::GetLightNumber() const

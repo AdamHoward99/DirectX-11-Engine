@@ -71,14 +71,14 @@ void AmbientLight::SetLightStrength(const float newStrength)
 	mLightdata.mLights[lightNumber].lightStrength = newStrength;
 }
 
-const void AmbientLight::SetLightFalloffEnd(const float newEnd)
+void AmbientLight::SetLightDirection(const DirectX::XMFLOAT3A& newDirection)
 {
-	mLightdata.mLights[lightNumber].lightFalloffEnd = newEnd;
+	mLightdata.mLights[lightNumber].lightDirection = newDirection;
 }
 
-const void AmbientLight::SetLightSpotFactor(const float newFactor)
+void AmbientLight::SetLightDirection(const float x, const float y, const float z)
 {
-	mLightdata.mLights[lightNumber].lightSpotFactor = newFactor;
+	mLightdata.mLights[lightNumber].lightDirection = DirectX::XMFLOAT3A(x, y, z);
 }
 
 const int AmbientLight::GetLightNumber() const

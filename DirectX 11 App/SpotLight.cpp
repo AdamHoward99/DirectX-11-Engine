@@ -84,6 +84,21 @@ void SpotLight::SetLightPosition(const float posX, const float posY, const float
 	mLightdata.mLights[lightNumber].lightPosition = DirectX::XMFLOAT3A(posX, posY, posZ);
 }
 
+void SpotLight::SetLightDirection(const DirectX::XMFLOAT3A& newDirection)
+{
+	mLightdata.mLights[lightNumber].lightDirection = newDirection;
+}
+
+void SpotLight::SetLightDirection(const float x, const float y, const float z)
+{
+	mLightdata.mLights[lightNumber].lightDirection = DirectX::XMFLOAT3A(x, y, z);
+}
+
+const void SpotLight::SetLightFalloffStart(const float newStart)
+{
+	mLightdata.mLights[lightNumber].lightFalloffStart = newStart;
+}
+
 const void SpotLight::SetLightFalloffEnd(const float newEnd)
 {
 	mLightdata.mLights[lightNumber].lightFalloffEnd = newEnd;

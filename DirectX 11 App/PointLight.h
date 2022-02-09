@@ -12,8 +12,8 @@ public:
 	void SetLightStrength(const float newStrength) override;
 	void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) override;
 	void SetLightPosition(const float colourX, const float colourY, const float colourZ) override;
+	const void SetLightFalloffStart(const float newStart) override;
 	const void SetLightFalloffEnd(const float newEnd) override;
-	const void SetLightSpotFactor(const float newFactor) override;
 
 	const int GetLightNumber() const override;
 
