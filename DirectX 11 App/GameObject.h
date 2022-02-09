@@ -49,6 +49,8 @@ public:
 	virtual void Update(const DirectX::XMFLOAT3A& camPos);
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
+	///Sets Diffuse albedo of material on mesh
+	void SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4A& diffuse);
 	///Sets fresnel effect of material on mesh
 	void SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel);
 	///Sets fresnel effect of material on mesh

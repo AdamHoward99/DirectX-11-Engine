@@ -233,6 +233,11 @@ const void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatr
 	viewProjectionMatrix = viewProjMatrix;
 }
 
+const void Object::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4A& diffuse)
+{
+	meshMaterialDiffuseAlbedo = diffuse;
+}
+
 const void Object::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
 {
 	meshMaterialFresnel = fresnel;
