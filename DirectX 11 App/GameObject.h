@@ -46,7 +46,7 @@ public:
 	///Move Assignment Operator
 	virtual GameObject& operator=(const GameObject&& otherObj);
 	///Updates Movement of GameObject
-	virtual void Update(const DirectX::XMFLOAT3A& camPos);
+	virtual void Update();
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
 	///Sets Diffuse albedo of material on mesh

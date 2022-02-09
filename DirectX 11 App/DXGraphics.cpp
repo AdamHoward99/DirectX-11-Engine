@@ -28,6 +28,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
 	ambientLight.SetLightStrength(0.1f);
+	ambientLight.SetEyePosition(camera->GetPosition());		//Required for reflected light from materials to be seen at eye position, any light type can call this
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
@@ -70,19 +71,19 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["ice"]->SetMaterialRoughness(0.1f);
-	renderObjects["ice"]->Update(camera->GetPosition());		///All transformations should be applied before this is called
+	renderObjects["ice"]->Update();		///All transformations should be applied before this is called
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["marble"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["marble"]->SetMaterialFresnel(0.2f, 0.2f, 0.2f);
 	renderObjects["marble"]->SetMaterialRoughness(0.3f);
-	renderObjects["marble"]->Update(camera->GetPosition());
+	renderObjects["marble"]->Update();
 
 	renderObjects["cobblestone"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["cobblestone"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
-	renderObjects["cobblestone"]->Update(camera->GetPosition());
+	renderObjects["cobblestone"]->Update();
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
 		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());

@@ -92,13 +92,13 @@ const void Object::Initialize(const std::string& filepath)
 	objMeshes.push_back(Mesh(pObjDevice, pObjDeviceContext));
 }
 
-const void Object::Update(const DirectX::XMFLOAT3A& camPos)
+const void Object::Update()
 {
 	///Update Position of OBJ here
 	for (Mesh& m : objMeshes)
 	{
 		m.UpdatePosition(objWorldMatrix, viewProjectionMatrix);
-		m.UpdateMaterials(meshMaterialDiffuseAlbedo, meshMaterialFresnel, camPos, meshMaterialRoughness);
+		m.UpdateMaterials(meshMaterialDiffuseAlbedo, meshMaterialFresnel, meshMaterialRoughness);
 	}
 
 	Render();

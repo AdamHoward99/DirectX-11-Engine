@@ -38,6 +38,8 @@ public:
 	virtual const void SetLightSpotFactor(const float newFactor) {};
 	///Function to set the ambient lighting of the scene, ambient lighting is seperate from all other types of lights
 	const void SetAmbientLighting(const DirectX::XMFLOAT4A& aLighting) { mLightdata.ambientLighting = aLighting; }
+	///Function to set the eye position of which reflections from the material are viewed from, correlates to the camera's position
+	const void SetEyePosition(const DirectX::XMFLOAT3A& eyePos) { mLightdata.eyePosition = eyePos; }
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightBuffer;

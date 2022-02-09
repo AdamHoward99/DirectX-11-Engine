@@ -31,7 +31,7 @@ public:
 	///Called in constructor, used for assigning Meshes to the Object
 	const void Initialize(const std::string& filepath);
 	///Updates transformations for Object every frame
-	const void Update(const DirectX::XMFLOAT3A& cameraPosition);
+	const void Update();
 	///Draws the Object in the game world using Mesh class
 	const void Render();
 	///Obtains Object geometry from file in given filepath

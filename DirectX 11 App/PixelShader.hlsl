@@ -25,9 +25,6 @@ struct TextureData
     
     float3 fresnelEff;      //12-bit
     float roughness;        //4-bit
-    
-    float3 toEye;           //12-bit
-    float padding;          //4-bit
 };
 
 //Single buffer to store ambient light, point lights and spot lights
@@ -35,6 +32,8 @@ cbuffer lightsBuffer : register(b0)
 {
     LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
     float4 ambientLighting;
+    float3 eyePosition;
+    float padding;
 };
 
 cbuffer materialBuffer : register(b1)
@@ -179,7 +178,6 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
 float4 main(PixelInput data) : SV_TARGET
 {
     float4 diffuseAlbedo = texData.diffuseAlbedo;
-    float3 cameraEyePos = texData.toEye; 
     float4 materialAlbedo = tex.Sample(samplerState, data.coords);      //Could add more samplerstates in the future
     
     //Combines the albedos together
@@ -189,7 +187,7 @@ float4 main(PixelInput data) : SV_TARGET
     data.normals = normalize(data.normals);
     
     //Vector from point being lit to eye
-    float3 toEye = normalize(cameraEyePos - data.worldPos.xyz);
+    float3 toEye = normalize(eyePosition - data.worldPos.xyz);
     
     //Calculate Ambient Lighting
     float4 ambient = ambientLighting * diffuseAlbedo;
@@ -204,7 +202,6 @@ float4 main(PixelInput data) : SV_TARGET
     
     return litColour;
     
-    //move eye position into some other place (maybe into lighting struct)
     //maybe move albedo into a struct of some kind to pass to functions better
     //comment the code and remove any unneeded code
     //rename the ambient lighting to directional lights instead

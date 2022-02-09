@@ -27,7 +27,7 @@ public:
 	Mesh& operator=(const Mesh& otherMesh);
 
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix);
-	void UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const DirectX::XMFLOAT3A& matFresnel, const DirectX::XMFLOAT3A& eyePos, float matRoughness);
+	void UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const DirectX::XMFLOAT3A& matFresnel, float matRoughness);
 	void Draw();
 
 	///Overloaded function for CreateBuffer creating Index, Constant and Vertex buffers

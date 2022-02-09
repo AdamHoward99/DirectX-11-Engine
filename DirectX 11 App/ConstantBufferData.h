@@ -29,7 +29,8 @@ struct Lights
 {
 	LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 	DirectX::XMFLOAT4 ambientLighting = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
-	//TODO: could move eye position into here
+	DirectX::XMFLOAT3 eyePosition;
+	float padding;
 };
 
 struct MaterialData
@@ -38,9 +39,6 @@ struct MaterialData
 
 	DirectX::XMFLOAT3 matFresnelEffect;	//12-bit
 	float matRoughness;					//4-bit
-
-	DirectX::XMFLOAT3 toEye;			//12-bit		//Need to move this elsewhere
-	float padding;						//4-bit
 };
 
 struct Material
