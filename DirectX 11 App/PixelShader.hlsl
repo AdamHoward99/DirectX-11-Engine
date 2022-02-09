@@ -45,9 +45,15 @@ struct PixelInput
     float4 worldPos : WORLD_POSITION;
 };
 
-float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 vectorToLightSource)
+float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 lightVec)
 {
-    //Calculates the material reflect percentage using Schlick's Approximation: R = R0 + (1 - R0) * (1 - cos0)^5
+    float cosIncidentAngle = saturate(dot(normal, lightVec));
+    
+    float f0 = 1.f - cosIncidentAngle;
+    float3 reflectPerc = matFresnel + (1.f - matFresnel) * (f0 * f0 * f0 * f0 * f0);
+    return reflectPerc;
+    
+    /*//Calculates the material reflect percentage using Schlick's Approximation: R = R0 + (1 - R0) * (1 - cos0)^5
     //R is the reflect percentage returned
     //cos0 is normal dot vectorToLightSource (angle between normal of surface and direction of light)
     //R0 is the materials fresnel values which is calculated using R0 = ((1 - n2) / (1 + n2))^2 where n2 is the given matFresnel values
@@ -64,7 +70,7 @@ float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 vectorToLig
     float f0 = 1.0f - cosAngle;
     
     float3 reflectPercent = matFresnel + (1.f - matFresnel) * pow(f0, 5.f);
-    return reflectPercent;
+    return reflectPercent;*/
 }
 
 float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSource, float3 normal, float3 toEye, TextureData mat, float3 albedo)
@@ -105,6 +111,21 @@ float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSour
     //return (albedo + specAlbedo) * lightIntensity;
 }
 
+float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N, float3 toEye)
+{
+    const float m = 0.0001f * 256.f;        //Shininess
+    float3 halfVec = normalize(toEye + lightVec);
+    
+    float roughnessFactor = (m + 8.f) * pow(max(dot(halfVec, N), 0.f), m) / 8.f;
+    float fresnelFactor = ComputeFresnelEffect(M.fresnelEff, halfVec, lightVec);
+    
+    float3 specAlbedo = fresnelFactor * roughnessFactor;
+    
+    specAlbedo = specAlbedo / (specAlbedo + 1.f);
+    
+    return (M.diffuseAlbedo.rgb + specAlbedo) * lightStrength;
+}
+
 float3 ComputeDirectionalLighting(LightData dirL, TextureData M, float3 N, float3 toEye)
 {
     //Light vector aims opposite the direction the light ray travels
@@ -114,7 +135,7 @@ float3 ComputeDirectionalLighting(LightData dirL, TextureData M, float3 N, float
     float NdotL = max(dot(lightVec, N), 0.f);
     float3 lightStrength = dirL.lightColour * NdotL;        //Might be light colour or strength
     
-    //return function for blinnPhong shading
+    return BlinnPhong(M, lightStrength, lightVec, N, toEye);
 }
 
 float3 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor)
@@ -123,13 +144,14 @@ float3 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     
     int i = 0;
     
-    for (; i < NUM_POINT_LIGHTS; i++)
+    for (; i < NUM_AMBIENT_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
         result += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos);
-        
     }
+    
+
     /*
     //Obtain light vector from current pixel to the light source
     float3 lightVector = pLight.lightPosition - data.worldPos.xyz;
