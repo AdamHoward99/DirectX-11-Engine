@@ -113,7 +113,7 @@ float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSour
 
 float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N, float3 toEye)
 {
-    const float m = 0.0001f * 256.f;        //Shininess
+    const float m = M.roughness * 256.f;        //Shininess
     float3 halfVec = normalize(toEye + lightVec);
     
     float roughnessFactor = (m + 8.f) * pow(max(dot(halfVec, N), 0.f), m) / 8.f;
@@ -138,7 +138,32 @@ float3 ComputeDirectionalLighting(LightData dirL, TextureData M, float3 N, float
     return BlinnPhong(M, lightStrength, lightVec, N, toEye);
 }
 
-float3 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor)
+float3 ComputePointLighting(LightData pL, TextureData M, float3 pos, float3 N, float3 toEye)
+{
+    //Vector from the surface to the light
+    float3 lightVec = pL.lightPosition - pos;
+    
+    //Distance from surface to light
+    float d = length(lightVec);
+    
+    //Out of range test
+    if(d > pL.lightFalloffEnd)
+        return 0.f;
+    
+    lightVec /= d;
+    
+    //Scale down light by Lambert cosine law
+    float NdotL = max(dot(lightVec, N), 0.f);
+    float3 lightStrength = pL.lightColour * NdotL;      //Might be light colour or strength 
+    
+    //Attenuate light by distance
+    float att = saturate((pL.lightFalloffEnd - d) / (pL.lightFalloffEnd - pL.lightFalloffStart));
+    lightStrength *= att;
+    
+    return BlinnPhong(M, lightStrength, lightVec, N, toEye);
+}
+
+float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor)
 {    
     float3 result = 0.f;
     
@@ -151,7 +176,12 @@ float3 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
         result += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos);
     }
     
-
+    for (i = NUM_AMBIENT_LIGHTS; i < NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS; i++)
+    {
+        result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos);
+    }
+    
+    return float4(result, 0.f);
     /*
     //Obtain light vector from current pixel to the light source
     float3 lightVector = pLight.lightPosition - data.worldPos.xyz;
@@ -224,9 +254,15 @@ float4 main(PixelInput data) : SV_TARGET
     //Calculate Ambient Lighting
     float4 ambient = float4(0.2f, 0.2f, 0.2f, 1.f) * diffuseAlbedo;
     
-    const float shininess = 0.0001f;
+    const float shininess = 1.f - roughness;
     float3 shadowFactor = 1.f;
     float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, data.normals, toEye, shadowFactor);
+    
+    float4 litColour = lerp(diffuseAlbedo, ambient + directLight, diffuseAlbedo.a);
+    
+    litColour.a = diffuseAlbedo.a;
+    
+    return litColour;
     
 	/*///Obtain colour of the texture
     float3 pixelColour = tex.Sample(samplerState, data.coords).xyz;

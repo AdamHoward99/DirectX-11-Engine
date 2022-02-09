@@ -16,7 +16,7 @@ struct LightData		///Notice: Needs to be 16-bit aligned to work
 	float lightStrength;				//4-bit
 	DirectX::XMFLOAT3 lightPosition;	//12-bit
 	float lightFalloffEnd;				//4-bit
-	DirectX::XMFLOAT3 lightDirection;	//12-bit
+	DirectX::XMFLOAT3 lightDirection = DirectX::XMFLOAT3(0.f, -1.f, 0.f);	//12-bit
 	float lightFalloffStart;			//4-bit
 	float lightSpotFactor;				//4-bit
 	DirectX::XMFLOAT3 padding;			//12-bit
