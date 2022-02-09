@@ -74,7 +74,7 @@ private:
 	std::string objectFileDirectory;
 
 	///Value of Objects materials albedo values, can be changed in GameObject class, alters appearance of material
-	DirectX::XMFLOAT4 meshMaterialDiffuseAlbedo = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+	DirectX::XMFLOAT4 meshMaterialDiffuseAlbedo = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
 	///Values of Objects materials fresnel effect, can be changed in GameObject class, is the percentage of light that a surface reflects in the eye angle
 	DirectX::XMFLOAT3A meshMaterialFresnel = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
 	///Value of Objects materials roughness value, can be changed in GameObject class, lower values represent shinier materials
