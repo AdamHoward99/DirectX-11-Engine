@@ -34,6 +34,7 @@ struct TextureData
 cbuffer lightsBuffer : register(b0)
 {
     LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
+    float4 ambientLighting;
 };
 
 cbuffer materialBuffer : register(b1)
@@ -191,7 +192,7 @@ float4 main(PixelInput data) : SV_TARGET
     float3 toEye = normalize(cameraEyePos - data.worldPos.xyz);
     
     //Calculate Ambient Lighting
-    float4 ambient = float4(0.f, 0.f, 0.f, 1.f) * diffuseAlbedo;
+    float4 ambient = ambientLighting * diffuseAlbedo;
     
     const float shininess = 0.0001f;
     float3 shadowFactor = 1.f;
@@ -202,4 +203,18 @@ float4 main(PixelInput data) : SV_TARGET
     litColour.a = diffuseAlbedo.a;
     
     return litColour;
+    
+    //move eye position into some other place (maybe into lighting struct)
+    //maybe move albedo into a struct of some kind to pass to functions better
+    //comment the code and remove any unneeded code
+    //rename the ambient lighting to directional lights instead
+    
+    //leave these comments somewhere in the GameObject class for future remembering:
+    /*
+    Higher fresnel values = brighter and more condensed light reflected back at the eye
+    Lower fresnel values = lower and dimmed light reflected back at the eye
+    
+    Higher roughness = condensed reflection lighting
+    Lower roughness = scattered reflective lighting
+    */
 }

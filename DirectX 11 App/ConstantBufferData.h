@@ -28,6 +28,8 @@ struct LightData		///Notice: Needs to be 16-bit aligned to work
 struct Lights
 {
 	LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
+	DirectX::XMFLOAT4 ambientLighting = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+	//TODO: could move eye position into here
 };
 
 struct MaterialData

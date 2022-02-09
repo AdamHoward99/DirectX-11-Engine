@@ -36,6 +36,9 @@ public:
 	virtual const void SetLightFalloffEnd(const float newEnd) {};
 	///Function to set the spotFactor of the lighting, determines the size of the light circle, lower value is wider and higher value is more concentrated, used for spot lights
 	virtual const void SetLightSpotFactor(const float newFactor) {};
+	///Function to set the ambient lighting of the scene, ambient lighting is seperate from all other types of lights
+	const void SetAmbientLighting(const DirectX::XMFLOAT4A& aLighting) { mLightdata.ambientLighting = aLighting; }
+
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightBuffer;
 	///Values of all lights used in scene is carried across all instances so they can be used in a single register in PixelShader.hlsl.
