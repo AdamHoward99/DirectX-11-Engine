@@ -1,6 +1,19 @@
-﻿C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(49,11-62): warning X3206: implicit truncation of vector type
-C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(175,5-45): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
-C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(115,37): warning X4000: use of potentially uninitialized variable (ComputeLighting)
+﻿C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(53,11-62): warning X3206: implicit truncation of vector type
+C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(179,5-45): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
+C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(119,37): warning X4000: use of potentially uninitialized variable (ComputeLighting)
   
   compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\PixelShader.cso
+  AmbientLight.cpp
+  App.cpp
+  DXGraphics.cpp
+  Engine.cpp
+  GameObject.cpp
+  Light.cpp
+  Mesh.cpp
+  Object.cpp
+  PointLight.cpp
+  RenderWindow.cpp
+  SpotLight.cpp
+  WindowCont.cpp
+  Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

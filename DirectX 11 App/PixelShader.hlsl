@@ -1,3 +1,4 @@
+#define NUM_AMBIENT_LIGHTS 1
 #define NUM_POINT_LIGHTS 2
 #define NUM_SPOT_LIGHTS 1
 
@@ -7,6 +8,8 @@ struct LightData
     float lightStrength;    //4-bit
     float3 lightPosition;   //12-bit
     float lightFalloffEnd;  //4-bit
+    float3 lightDirection;  //12-bit
+    float lightFalloffStart;//4-bit
     float lightSpotFactor;  //4-bit
 };
 
@@ -14,6 +17,7 @@ struct TextureData
 {
     float3 fresnelEff;      //12-bit
     float roughness;        //4-bit
+    float4 diffuseAlbedo;   //16-bit
     float3 toEye;           //12-bit
 };
 
