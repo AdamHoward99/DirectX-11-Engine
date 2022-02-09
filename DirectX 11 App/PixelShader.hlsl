@@ -2,6 +2,8 @@
 #define NUM_POINT_LIGHTS 2
 #define NUM_SPOT_LIGHTS 1
 
+#define MAX_LIGHTS NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS
+
 struct LightData
 {
     float3 lightColour;     //12-bit
@@ -103,8 +105,32 @@ float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSour
     //return (albedo + specAlbedo) * lightIntensity;
 }
 
-float3 ComputeLighting(LightData pLight, PixelInput data, TextureData mat, float3 normal, float3 albedo)
+float3 ComputeDirectionalLighting(LightData dirL, TextureData M, float3 N, float3 toEye)
+{
+    //Light vector aims opposite the direction the light ray travels
+    float3 lightVec = -dirL.lightDirection;
+    
+    //Scale down light by Lambert Cosine Law
+    float NdotL = max(dot(lightVec, N), 0.f);
+    float3 lightStrength = dirL.lightColour * NdotL;        //Might be light colour or strength
+    
+    //return function for blinnPhong shading
+}
+
+float3 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor)
 {    
+    float3 result = 0.f;
+    
+    int i = 0;
+    
+    for (; i < NUM_POINT_LIGHTS; i++)
+    {
+        pLight[i].lightDirection = normalize(pLight[i].lightDirection);
+        
+        result += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos);
+        
+    }
+    /*
     //Obtain light vector from current pixel to the light source
     float3 lightVector = pLight.lightPosition - data.worldPos.xyz;
     
@@ -153,11 +179,34 @@ float3 ComputeLighting(LightData pLight, PixelInput data, TextureData mat, float
 
     //Final Lighting
     return (diffuseL + specularL) * pLight.lightColour;
+*/
 }
 
 float4 main(PixelInput data) : SV_TARGET
 {
-	///Obtain colour of the texture
+    float4 diffuseAlbedo = texData.diffuseAlbedo;
+    float3 fresnelR0 = texData.fresnelEff;
+    float roughness = texData.roughness;
+    
+    float3 cameraEyePos = texData.toEye;
+    
+    //Combines the albedos together
+    diffuseAlbedo *= tex.Sample(samplerState, data.coords);         //Could add more samplerstates in future
+    
+    //Renormalize the normal
+    data.normals = normalize(data.normals);
+    
+    //Vector from point being lit to eye
+    float3 toEye = normalize(cameraEyePos - data.worldPos.xyz);
+    
+    //Calculate Ambient Lighting
+    float4 ambient = float4(0.2f, 0.2f, 0.2f, 1.f) * diffuseAlbedo;
+    
+    const float shininess = 0.0001f;
+    float3 shadowFactor = 1.f;
+    float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, data.normals, toEye, shadowFactor);
+    
+	/*///Obtain colour of the texture
     float3 pixelColour = tex.Sample(samplerState, data.coords).xyz;
 	///Obtain normal of the texture
     float3 normalColour = data.normals;
@@ -187,4 +236,5 @@ float4 main(PixelInput data) : SV_TARGET
 	///Obtain overall final colour of pixel
 	float3 finalColour = pixelColour * saturate(finalLight);
     return float4(finalColour, 0.0f);
+*/
 }
