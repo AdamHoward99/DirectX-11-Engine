@@ -1,7 +1,33 @@
-﻿C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(156,5-44): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
-C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(168,5-117): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
+﻿C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(156,5-48): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
+C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(168,5-125): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
 C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(106,37): warning X4000: use of potentially uninitialized variable (ComputePointLighting)
   
   compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\PixelShader.cso
+  compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\VertexShader.cso
+  AdapterReader.cpp
+  DirectionalLight.cpp
+  App.cpp
+  Camera.cpp
   DXGraphics.cpp
+  Engine.cpp
+  GameObject.cpp
+  Light.cpp
+  PointLight.cpp
+  SpotLight.cpp
+  TextFont.cpp
+  Timer.cpp
+  Keyboard.cpp
+  KeyboardEvent.cpp
+  Mesh.cpp
+  Mouse.cpp
+  MouseEvent.cpp
+  Object.cpp
+  RenderWindow.cpp
+  Shaders.cpp
+  Generating Code...
+  Compiling...
+  Texture.cpp
+  Vertex.cpp
+  WindowCont.cpp
+  Generating Code...
   DirectX 11 App.vcxproj -> C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\DirectX 11 App.exe

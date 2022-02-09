@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#define NUM_AMBIENT_LIGHTS 1	///Coresponds to header defined in PixelShader.hlsl, number of directional lights defined before scene creation
+#define NUM_DIRECTIONAL_LIGHTS 1	///Coresponds to header defined in PixelShader.hlsl, number of directional lights defined before scene creation
 #define NUM_POINT_LIGHTS 2		///Coresponds to header defined in PixelShader.hlsl, number of point lights defined before scene creation
 #define NUM_SPOT_LIGHTS 1		///Coresponds to header defined in PixelShader.hlsl, number of spot lights defined before scene creation
 
@@ -27,7 +27,7 @@ struct LightData		///Notice: Needs to be 16-bit aligned to work
 
 struct Lights
 {
-	LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
+	LightData mLights[NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 	DirectX::XMFLOAT4 ambientLighting = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
 	DirectX::XMFLOAT3 eyePosition;
 	float padding;

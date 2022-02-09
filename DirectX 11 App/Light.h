@@ -22,9 +22,9 @@ public:
 	virtual void SetLightPosition(const DirectX::XMFLOAT3A& newPosition) {};
 	///Singular floats version of function to set the position of the lighting
 	virtual void SetLightPosition(const float x, const float y, const float z) {};
-	///XMFLOAT3A version of function to set the direction of the lighting, Ambient / Spot lights only
+	///XMFLOAT3A version of function to set the direction of the lighting, Directional / Spot lights only
 	virtual void SetLightDirection(const DirectX::XMFLOAT3A& newDirection) {};
-	///Singular floats version of function to set the direction of the lighting, Ambient / Spot lights only
+	///Singular floats version of function to set the direction of the lighting, Directional / Spot lights only
 	virtual void SetLightDirection(const float x, const float y, const float z) {};
 	///Obtains light number which corresponds to alignment in array of lights in mLightdata struct.
 	virtual const int GetLightNumber() const { return 0; };
@@ -52,7 +52,7 @@ protected:
 
 	/*
 	Order of lights being created in the mLightdata struct follow:
-	Ambient Lights -> Point Lights -> Spot Lights,
-	with position 1(0) of array being for ambient, 1 + NUM_POINT_LIGHTS for point lights and total of [1 + NUM_POINT_LIGHTS] + NUM_SPOT_LIGHTS being for spot lights.
+	Directional Lights -> Point Lights -> Spot Lights,
+	with 0 + NUM_DIRECTIONAL_LIGHTS, NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS for point lights and total of [NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS] + NUM_SPOT_LIGHTS being for spot lights.
 	*/
 };

@@ -158,7 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdapterReader.cpp" />
-    <ClCompile Include="AmbientLight.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXGraphics.cpp" />
@@ -183,7 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdapterReader.h" />
-    <ClInclude Include="AmbientLight.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBufferData.h" />
     <ClInclude Include="DXGraphics.h" />

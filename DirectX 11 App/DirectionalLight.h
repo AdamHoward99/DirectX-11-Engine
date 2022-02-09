@@ -1,9 +1,10 @@
 #pragma once
 #include "Light.h"
 
-class AmbientLight : public Light
+class DirectionalLight : public Light
 {
 public:
+
 	void InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const float lightStrength = 1.f) override;
 	void RenderLighting(ID3D11DeviceContext* pDeviceCon) override;
 

@@ -1,6 +1,6 @@
-#include "AmbientLight.h"
+#include "DirectionalLight.h"
 
-void AmbientLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
+void DirectionalLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFLOAT3& lightColour, const float lightStrength)
 {
 	///Create Lighting Buffer Desc
 	D3D11_BUFFER_DESC bufferDesc;
@@ -28,7 +28,7 @@ void AmbientLight::InitialiseLighting(ID3D11Device* pDevice, const DirectX::XMFL
 	mLightdata.mLights[lightNumber].lightStrength = lightStrength;
 }
 
-void AmbientLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
+void DirectionalLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 {
 	///Set Constant Lighting Buffer
 	D3D11_MAPPED_SUBRESOURCE mapRes;
@@ -56,37 +56,37 @@ void AmbientLight::RenderLighting(ID3D11DeviceContext* pDeviceCon)
 	///ID3D11Buffer** ppConstantBuffers - Pointer to array of constant buffers to set
 }
 
-void AmbientLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
+void DirectionalLight::SetLightColour(const DirectX::XMFLOAT3A& newColour)
 {
 	mLightdata.mLights[lightNumber].lightColour = newColour;
 }
 
-void AmbientLight::SetLightColour(const float r, const float g, const float b)
+void DirectionalLight::SetLightColour(const float r, const float g, const float b)
 {
 	mLightdata.mLights[lightNumber].lightColour = DirectX::XMFLOAT3A(r, g, b);
 }
 
-void AmbientLight::SetLightStrength(const float newStrength)
+void DirectionalLight::SetLightStrength(const float newStrength)
 {
 	mLightdata.mLights[lightNumber].lightStrength = newStrength;
 }
 
-void AmbientLight::SetLightDirection(const DirectX::XMFLOAT3A& newDirection)
+void DirectionalLight::SetLightDirection(const DirectX::XMFLOAT3A& newDirection)
 {
 	mLightdata.mLights[lightNumber].lightDirection = newDirection;
 }
 
-void AmbientLight::SetLightDirection(const float x, const float y, const float z)
+void DirectionalLight::SetLightDirection(const float x, const float y, const float z)
 {
 	mLightdata.mLights[lightNumber].lightDirection = DirectX::XMFLOAT3A(x, y, z);
 }
 
-const int AmbientLight::GetLightNumber() const
+const int DirectionalLight::GetLightNumber() const
 {
 	return lightNumber;
 }
 
-const void AmbientLight::SetLightNumber()
+const void DirectionalLight::SetLightNumber()
 {
 	lightNumber = totalLightCount;
 	totalLightCount++;

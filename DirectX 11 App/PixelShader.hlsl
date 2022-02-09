@@ -1,4 +1,4 @@
-#define NUM_AMBIENT_LIGHTS 1
+#define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_POINT_LIGHTS 2
 #define NUM_SPOT_LIGHTS 1
 
@@ -27,10 +27,10 @@ struct TextureData
     float roughness;        //4-bit
 };
 
-//Single buffer to store ambient light, point lights and spot lights
+//Single buffer to store directional light, point lights and spot lights
 cbuffer lightsBuffer : register(b0)
 {
-    LightData mLights[NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
+    LightData mLights[NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
     float4 ambientLighting;
     float3 eyePosition;
     float padding;
@@ -153,19 +153,19 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     
     int i = 0;
     
-    for (i = 0; i < NUM_AMBIENT_LIGHTS; i++)
+    for (i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
         result += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
     }
     
-    for (i = NUM_AMBIENT_LIGHTS; i < NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS; i++)
+    for (i = NUM_DIRECTIONAL_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i++)
     {
         result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
     }
     
-    for (i = NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS; i < NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
+    for (i = NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
@@ -204,7 +204,6 @@ float4 main(PixelInput data) : SV_TARGET
     
     //maybe move albedo into a struct of some kind to pass to functions better
     //comment the code and remove any unneeded code
-    //rename the ambient lighting to directional lights instead
     
     //leave these comments somewhere in the GameObject class for future remembering:
     /*

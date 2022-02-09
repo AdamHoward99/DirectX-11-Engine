@@ -26,9 +26,9 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
-	//Update Ambient Lighting
-	ambientLight.SetLightStrength(0.1f);
-	ambientLight.SetEyePosition(camera->GetPosition());		//Required for reflected light from materials to be seen at eye position, any light type can call this
+	//Update Directional Lighting
+	directionalLight.SetLightStrength(0.1f);
+	directionalLight.SetEyePosition(camera->GetPosition());		//Required for reflected light from materials to be seen at eye position, any light type can call this
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
@@ -43,7 +43,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
 
 	//Render lights, only single light needs to be called to render since all light data is static across all lights
-	ambientLight.RenderLighting(pDeviceContext.Get());
+	directionalLight.RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -301,8 +301,8 @@ void DXGraphics::InitialiseOBJs()
 
 void DXGraphics::InitialiseLighting()
 {
-	///Initialise Ambient Lighting linked to register b0
-	ambientLight.InitialiseLighting(pDevice.Get());
+	///Initialise Directional Lighting linked to register b0
+	directionalLight.InitialiseLighting(pDevice.Get());
 
 	///Initialise Point Lighting linked to register b1
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
