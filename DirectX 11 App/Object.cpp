@@ -98,7 +98,7 @@ const void Object::Update(const DirectX::XMFLOAT3A& camPos)
 	for (Mesh& m : objMeshes)
 	{
 		m.UpdatePosition(objWorldMatrix, viewProjectionMatrix);
-		m.UpdateMaterials(meshMaterialFresnel, camPos, meshMaterialRoughness);
+		m.UpdateMaterials(meshMaterialDiffuseAlbedo, meshMaterialFresnel, camPos, meshMaterialRoughness);
 	}
 
 	Render();
@@ -233,7 +233,7 @@ const void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatr
 	viewProjectionMatrix = viewProjMatrix;
 }
 
-const void Object::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4A& diffuse)
+const void Object::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse)
 {
 	meshMaterialDiffuseAlbedo = diffuse;
 }

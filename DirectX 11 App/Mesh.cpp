@@ -149,11 +149,13 @@ void Mesh::UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::X
 	//TODO: Instead of using transpose could declare row_major
 }
 
-void Mesh::UpdateMaterials(const DirectX::XMFLOAT3A& matFresnel, const DirectX::XMFLOAT3A& eyePos, float matRoughness)
+void Mesh::UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const DirectX::XMFLOAT3A& matFresnel, const DirectX::XMFLOAT3A& eyePos, float matRoughness)
 {
+	///Diffuse Albedo is given colour of the material
 	///eyePos is the passed camera position.
 	///matFresnel and matRoughness are obtained from class variables stored in Object class
 	///Updates every frame to adjust lighting on Mesh
+	matData.matDiffuseAlbedo = matDiffuseAlbedo;
 	matData.matFresnelEffect = matFresnel;
 	matData.matRoughness = matRoughness;
 	matData.toEye = eyePos;

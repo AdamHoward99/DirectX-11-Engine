@@ -27,16 +27,16 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Ambient Lighting
-	ambientLight.SetLightStrength(0.0f);
+	ambientLight.SetLightStrength(0.1f);
 
 	//Update Point Light 0
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
 	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.f, 3.f, -3.f));
-	pointLights[0]->SetLightStrength(2.f);
+	pointLights[0]->SetLightStrength(1.f);
 
 	pointLights[1]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
 	pointLights[1]->SetLightPosition(DirectX::XMFLOAT3A(3.5f, 3.f, -3.f));
-	pointLights[1]->SetLightStrength(2.f);
+	pointLights[1]->SetLightStrength(1.f);
 
 	spotLights[0]->SetLightColour(DirectX::XMFLOAT3A(0.f, 0.f, 0.f));
 	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
@@ -80,7 +80,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	renderObjects["cobblestone"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["cobblestone"]->SetMaterialFresnel(0.601f, 0.601f, 0.601f);
+	renderObjects["cobblestone"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
 	renderObjects["cobblestone"]->Update(camera->GetPosition());
 

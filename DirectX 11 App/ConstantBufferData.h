@@ -14,12 +14,15 @@ struct LightData		///Notice: Needs to be 16-bit aligned to work
 {
 	DirectX::XMFLOAT3 lightColour;		//12-bit
 	float lightStrength;				//4-bit
+
 	DirectX::XMFLOAT3 lightPosition;	//12-bit
 	float lightFalloffEnd;				//4-bit
+
 	DirectX::XMFLOAT3 lightDirection = DirectX::XMFLOAT3(0.f, -1.f, 0.f);	//12-bit
 	float lightFalloffStart;			//4-bit
-	float lightSpotFactor;				//4-bit
+
 	DirectX::XMFLOAT3 padding;			//12-bit
+	float lightSpotFactor;				//4-bit
 };
 
 struct Lights
@@ -29,9 +32,11 @@ struct Lights
 
 struct MaterialData
 {
+	DirectX::XMFLOAT4 matDiffuseAlbedo;	//16-bit
+
 	DirectX::XMFLOAT3 matFresnelEffect;	//12-bit
 	float matRoughness;					//4-bit
-	DirectX::XMFLOAT4 matDiffuseAlbedo;	//16-bit
+
 	DirectX::XMFLOAT3 toEye;			//12-bit		//Need to move this elsewhere
 	float padding;						//4-bit
 };

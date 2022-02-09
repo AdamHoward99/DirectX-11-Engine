@@ -2,25 +2,32 @@
 #define NUM_POINT_LIGHTS 2
 #define NUM_SPOT_LIGHTS 1
 
-#define MAX_LIGHTS NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS
+#define MAX_LIGHTS 4
 
 struct LightData
 {
     float3 lightColour;     //12-bit
     float lightStrength;    //4-bit
+    
     float3 lightPosition;   //12-bit
     float lightFalloffEnd;  //4-bit
+    
     float3 lightDirection;  //12-bit
     float lightFalloffStart;//4-bit
+    
+    float3 padding;         //12-bit
     float lightSpotFactor;  //4-bit
 };
 
 struct TextureData
 {
+    float4 diffuseAlbedo;   //16-bit
+    
     float3 fresnelEff;      //12-bit
     float roughness;        //4-bit
-    float4 diffuseAlbedo;   //16-bit
+    
     float3 toEye;           //12-bit
+    float padding;          //4-bit
 };
 
 //Single buffer to store ambient light, point lights and spot lights
@@ -83,7 +90,7 @@ float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSour
     //m is the Shininess of the material
     //n is the surface normal
     //hv is the vector halfway between light and eye positions (halfVector)
-    float3 roughnessFactor = ((shininess + 8.f) / 8.f) * pow(max(dot(halfVector, normal), 0.f), shininess); //max is used to prevent values going negative
+    float roughnessFactor = ((shininess + 8.f) / 8.f) * pow(max(dot(halfVector, normal), 0.f), shininess); //max is used to prevent values going negative
    
     //Obtain Fresnel Factor
     float3 fresnelFactor = ComputeFresnelEffect(mat.fresnelEff, halfVector, vectorToLightSource);
@@ -113,11 +120,11 @@ float3 ComputeLightEyeReflection(float3 lightIntensity, float3 vectorToLightSour
 
 float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N, float3 toEye)
 {
-    const float m = M.roughness * 256.f;        //Shininess
+    const float m = M.roughness * 256.f; //Shininess
     float3 halfVec = normalize(toEye + lightVec);
     
     float roughnessFactor = (m + 8.f) * pow(max(dot(halfVec, N), 0.f), m) / 8.f;
-    float fresnelFactor = ComputeFresnelEffect(M.fresnelEff, halfVec, lightVec);
+    float3 fresnelFactor = ComputeFresnelEffect(M.fresnelEff, halfVec, lightVec);
     
     float3 specAlbedo = fresnelFactor * roughnessFactor;
     
@@ -148,7 +155,7 @@ float3 ComputePointLighting(LightData pL, TextureData M, float3 pos, float3 N, f
     
     //Out of range test
     if(d > pL.lightFalloffEnd)
-        return 0.f;
+        return float3(0.f, 0.f, 0.f);
     
     lightVec /= d;
     
@@ -163,13 +170,42 @@ float3 ComputePointLighting(LightData pL, TextureData M, float3 pos, float3 N, f
     return BlinnPhong(M, lightStrength, lightVec, N, toEye);
 }
 
+float3 ComputeSpotLighting(LightData sL, TextureData M, float3 pos, float3 N, float3 toEye)
+{
+    //Vector from the surface to the light
+    float3 lightVec = sL.lightPosition - pos;
+    
+    //Distance from surface to light
+    float d = length(lightVec);
+    
+    //Out of range test
+    if (d > sL.lightFalloffEnd)
+        return 0.f;
+    
+    lightVec /= d;
+    
+    //Scale down light by Lambert cosine law
+    float NdotL = max(dot(lightVec, N), 0.f);
+    float3 lightStrength = sL.lightColour * NdotL; //Might be light colour or strength 
+    
+    //Attenuate light by distance
+    float att = saturate((sL.lightFalloffEnd - d) / (sL.lightFalloffEnd - sL.lightFalloffStart));
+    lightStrength *= att;
+    
+    //Scale by spotlight
+    float spotFactor = pow(max(dot(-lightVec, sL.lightDirection), 0.f), sL.lightSpotFactor);
+    lightStrength *= spotFactor;
+    
+    return BlinnPhong(M, lightStrength, lightVec, N, toEye);
+}
+
 float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor)
 {    
     float3 result = 0.f;
     
     int i = 0;
     
-    for (; i < NUM_AMBIENT_LIGHTS; i++)
+    for (i = 0; i < NUM_AMBIENT_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
@@ -178,6 +214,13 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     
     for (i = NUM_AMBIENT_LIGHTS; i < NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS; i++)
     {
+        result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos);
+    }
+    
+    for (i = NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS; i < NUM_AMBIENT_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
+    {
+        pLight[i].lightDirection = normalize(pLight[i].lightDirection);
+        
         result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos);
     }
     
@@ -252,9 +295,9 @@ float4 main(PixelInput data) : SV_TARGET
     float3 toEye = normalize(cameraEyePos - data.worldPos.xyz);
     
     //Calculate Ambient Lighting
-    float4 ambient = float4(0.2f, 0.2f, 0.2f, 1.f) * diffuseAlbedo;
+    float4 ambient = float4(0.f, 0.f, 0.f, 1.f) * diffuseAlbedo;
     
-    const float shininess = 1.f - roughness;
+    const float shininess = 0.0001f;
     float3 shadowFactor = 1.f;
     float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, data.normals, toEye, shadowFactor);
     

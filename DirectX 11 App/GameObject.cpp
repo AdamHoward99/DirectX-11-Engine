@@ -48,9 +48,9 @@ void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 	object.SetViewProjectionMatrix(viewProjMat);
 }
 
-void GameObject::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4A& diffuse)
+void GameObject::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse)
 {
-	object.SetMaterialDiffuseAlbedo(diffuse);
+	object.SetMaterialDiffuseAlbedo(diffuse); 
 }
 
 void GameObject::SetMaterialFresnel(const DirectX::XMFLOAT3A& fresnel)
