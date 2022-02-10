@@ -79,4 +79,16 @@ private:
 	DirectX::XMFLOAT3A meshMaterialFresnel = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
 	///Value of Objects materials roughness value, can be changed in GameObject class, lower values represent shinier materials
 	float meshMaterialRoughness = 1.f; 
+
+	/*
+	Material Variable Rules:
+
+	Fresnel Values: Range is [0.001f - 1.f]
+	The higher fresnel values will produce brighter and more condensed light reflected back into the eye position.
+	The lower fresnel values will produce lower and dimmed light reflected back into the eye position.
+
+	//Roughness Value: Range is [0.01f - 1.f]
+	A higher roughness value will produce more condensed reflection lighting.
+	A lower roughness value will produce more scattered reflection lighting.
+	*/
 };

@@ -54,26 +54,29 @@ struct PixelInput
 
 float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 lightVec)
 {
-    float cosIncidentAngle = saturate(dot(normal, lightVec));
-    
-    float f0 = 1.f - cosIncidentAngle;
-    float3 reflectPerc = matFresnel + (1.f - matFresnel) * (f0 * f0 * f0 * f0 * f0);
-    return reflectPerc;
-    
     //Calculates the material reflect percentage using Schlick's Approximation: R = R0 + (1 - R0) * (1 - cos0)^5
     //R is the reflect percentage returned
-    //cos0 is normal dot vectorToLightSource (angle between normal of surface and direction of light)
-    //R0 is the materials fresnel values which is calculated using R0 = ((1 - n2) / (1 + n2))^2 where n2 is the given matFresnel values
+    //cos0 is angle between the normal of the surface and direction of the light (N微)
+    //R0 is the materials fresnel values
+    float cos0 = 1.f - saturate(dot(normal, lightVec));
+    float3 reflectPerc = matFresnel + (1.f - matFresnel) * pow(cos0, 5);
+    return reflectPerc;
 }
 
 float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N, float3 toEye, float4 albedo)
 {
-    const float m = M.roughness * 256.f;    //Shininess
+    //Calculates Shininess of material
+    const float m = M.roughness * 256.f;
     float3 halfVec = normalize(toEye + lightVec);
     
+    //Calculates material roughness using formula: (m + 8.f) * (H意)^m / 8.f
+    //m = Shininess of the material
+    //H = Halfway vector between eye position and point being lit
+    //N = Normal of surface
     float roughnessFactor = (m + 8.f) * pow(max(dot(halfVec, N), 0.f), m) / 8.f;
     float3 fresnelFactor = ComputeFresnelEffect(M.fresnelEff, halfVec, lightVec);
     
+    //Obtains specular lighting for the material
     float3 specAlbedo = fresnelFactor * roughnessFactor;
     
     //Scale down for LDR rendering
@@ -87,7 +90,10 @@ float3 ComputeDirectionalLighting(LightData dirL, TextureData M, float3 N, float
     //Light vector aims opposite the direction the light ray travels
     float3 lightVec = -dirL.lightDirection;
     
-    //Scale down light by Lambert Cosine Law
+    //Scale down light by Lambert Cosine Law: max(L意, 0) * bL
+    //L = Light vector aimed at the light source (-light direction)
+    //N = Normal of the surface
+    //bL = Amount of incoming direct light
     float NdotL = max(dot(lightVec, N), 0.f);
     float3 lightStrength = (dirL.lightColour * dirL.lightStrength) * NdotL; //Might be light colour or strength
     
@@ -109,7 +115,10 @@ float3 ComputePointLighting(LightData pL, TextureData M, float3 pos, float3 N, f
     //Normalize the light vector
     lightVec /= d;
     
-    //Scale down light by Lambert cosine law
+    //Scale down light by Lambert Cosine Law: max(L意, 0) * bL
+    //L = Light vector aimed at the light source (-light direction)
+    //N = Normal of the surface
+    //bL = Amount of incoming direct light
     float NdotL = max(dot(lightVec, N), 0.f);
     float3 lightStrength = (pL.lightColour * pL.lightStrength) * NdotL;
     
@@ -135,7 +144,10 @@ float3 ComputeSpotLighting(LightData sL, TextureData M, float3 pos, float3 N, fl
     //Normalize the light vector
     lightVec /= d;
     
-    //Scale down light by Lambert cosine law
+    //Scale down light by Lambert Cosine Law: max(L意, 0) * bL
+    //L = Light vector aimed at the light source (-light direction)
+    //N = Normal of the surface
+    //bL = Amount of incoming direct light
     float NdotL = max(dot(lightVec, N), 0.f);
     float3 lightStrength = (sL.lightColour * sL.lightStrength) * NdotL;
     
@@ -159,7 +171,6 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     for (i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
-        
         totalLighting += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
     }
     
@@ -173,7 +184,6 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     for (i = NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
-        
         totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
     }
     
@@ -194,7 +204,9 @@ float4 main(PixelInput data) : SV_TARGET
     //Vector from point being lit to eye
     float3 toEye = normalize(eyePosition - data.worldPos.xyz);
     
-    //Calculate Ambient Lighting
+    //Calculate Ambient Lighting using forumla: Ka = aL * mD
+    //aL = the amount of incoming ambient light
+    //mD = the diffuse albedo, specifies how much incoming light the surface reflects (Diffuse Reflectance)
     float4 ambient = ambientLighting * diffuseAlbedo;
     
     float3 shadowFactor = 1.f;
@@ -207,15 +219,4 @@ float4 main(PixelInput data) : SV_TARGET
     litColour.a = diffuseAlbedo.a;
     
     return litColour;
-    
-    //comment the code and remove any unneeded code
-    
-    //leave these comments somewhere in the GameObject class for future remembering:
-    /*
-    Higher fresnel values = brighter and more condensed light reflected back at the eye
-    Lower fresnel values = lower and dimmed light reflected back at the eye
-    
-    Higher roughness = condensed reflection lighting
-    Lower roughness = scattered reflective lighting
-    */
 }
