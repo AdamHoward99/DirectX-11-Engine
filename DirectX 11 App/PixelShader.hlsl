@@ -68,7 +68,7 @@ float3 ComputeFresnelEffect(float3 matFresnel, float3 normal, float3 lightVec)
 
 float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N, float3 toEye, float4 albedo)
 {
-    const float m = M.roughness * 256.f; //Shininess
+    const float m = M.roughness * 256.f;    //Shininess
     float3 halfVec = normalize(toEye + lightVec);
     
     float roughnessFactor = (m + 8.f) * pow(max(dot(halfVec, N), 0.f), m) / 8.f;
@@ -76,6 +76,7 @@ float3 BlinnPhong(TextureData M, float3 lightStrength, float3 lightVec, float3 N
     
     float3 specAlbedo = fresnelFactor * roughnessFactor;
     
+    //Scale down for LDR rendering
     specAlbedo = specAlbedo / (specAlbedo + 1.f);
     
     return (albedo.rgb + specAlbedo) * lightStrength;
@@ -105,11 +106,12 @@ float3 ComputePointLighting(LightData pL, TextureData M, float3 pos, float3 N, f
     if(d > pL.lightFalloffEnd)
         return float3(0.f, 0.f, 0.f);
     
+    //Normalize the light vector
     lightVec /= d;
     
     //Scale down light by Lambert cosine law
     float NdotL = max(dot(lightVec, N), 0.f);
-    float3 lightStrength = (pL.lightColour * pL.lightStrength) * NdotL; //Might be light colour or strength 
+    float3 lightStrength = (pL.lightColour * pL.lightStrength) * NdotL;
     
     //Attenuate light by distance
     float att = saturate((pL.lightFalloffEnd - d) / (pL.lightFalloffEnd - pL.lightFalloffStart));
@@ -130,11 +132,12 @@ float3 ComputeSpotLighting(LightData sL, TextureData M, float3 pos, float3 N, fl
     if (d > sL.lightFalloffEnd)
         return 0.f;
     
+    //Normalize the light vector
     lightVec /= d;
     
     //Scale down light by Lambert cosine law
     float NdotL = max(dot(lightVec, N), 0.f);
-    float3 lightStrength = sL.lightColour * NdotL; //Might be light colour or strength 
+    float3 lightStrength = (sL.lightColour * sL.lightStrength) * NdotL;
     
     //Attenuate light by distance
     float att = saturate((sL.lightFalloffEnd - d) / (sL.lightFalloffEnd - sL.lightFalloffStart));
@@ -149,30 +152,32 @@ float3 ComputeSpotLighting(LightData sL, TextureData M, float3 pos, float3 N, fl
 
 float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos, float3 normal, float3 eyePos, float3 shadowFactor, float4 albedo)
 {    
-    float3 result = 0.f;
-    
+    float3 totalLighting = 0.f;
     int i = 0;
     
+    //Directional Lights
     for (i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
-        result += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
+        totalLighting += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
     }
     
+    //Point Lights
     for (i = NUM_DIRECTIONAL_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i++)
     {
-        result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
     }
     
+    //Spot Lights
     for (i = NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
     {
         pLight[i].lightDirection = normalize(pLight[i].lightDirection);
         
-        result += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
     }
     
-    return float4(result, 0.f);
+    return float4(totalLighting, 0.f);
 }
 
 float4 main(PixelInput data) : SV_TARGET
@@ -192,17 +197,17 @@ float4 main(PixelInput data) : SV_TARGET
     //Calculate Ambient Lighting
     float4 ambient = ambientLighting * diffuseAlbedo;
     
-    const float shininess = 0.0001f;
     float3 shadowFactor = 1.f;
+    
+    //Returns total lighting from all Directional, Point and Spot lights enabled
     float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, data.normals, toEye, shadowFactor, materialAlbedo);
     
-    float4 litColour = lerp(diffuseAlbedo, directLight, diffuseAlbedo.a);
+    float4 litColour = lerp(diffuseAlbedo, ambient + directLight, diffuseAlbedo.a);
     
     litColour.a = diffuseAlbedo.a;
     
     return litColour;
     
-    //maybe move albedo into a struct of some kind to pass to functions better
     //comment the code and remove any unneeded code
     
     //leave these comments somewhere in the GameObject class for future remembering:
