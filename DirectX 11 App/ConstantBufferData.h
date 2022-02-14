@@ -41,7 +41,7 @@ struct MaterialData
 	float matRoughness;					//4-bit
 };
 
-struct Material
+struct Mat
 {
 	MaterialData matData;
 };

@@ -53,6 +53,8 @@ private:
 
 	FrameTimer fTimer;
 
+	std::unordered_map<std::string, std::unique_ptr<Material>> mMaterials;
+
 	///Scene Lights
 	DirectionalLight directionalLight;		//Todo: make this an unordered map
 	std::unordered_map<int, std::unique_ptr<PointLight>> pointLights;

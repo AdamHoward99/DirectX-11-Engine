@@ -1,9 +1,4 @@
-﻿C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(174,5-48): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
-C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(187,5-125): warning X3557: loop only executes for 1 iteration(s), forcing loop to unroll
-C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\PixelShader.hlsl(116,37): warning X4000: use of potentially uninitialized variable (ComputePointLighting)
-  
-  compilation object save succeeded; see C:\Users\adamh\source\repos\DirectX-11-Engine\DirectX 11 App\x86\Debug\PixelShader.cso
-  App.cpp
+﻿  App.cpp
   DXGraphics.cpp
   Engine.cpp
   RenderWindow.cpp

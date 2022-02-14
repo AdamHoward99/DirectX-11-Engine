@@ -19,7 +19,14 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	//Initialise the scene
 	if (!InitialiseScene(w, h))
 		return false;
-	
+
+	//Create Materials
+	mMaterials["Default"] = std::make_unique<Material>();
+	mMaterials["Default"]->matName = "Default Material";
+	mMaterials["Default"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
+	mMaterials["Default"]->matData.matFresnelEffect = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
+	mMaterials["Default"]->matData.matRoughness = 0.01f;
+
 	fTimer.StartTimer();
 	return true;
 }

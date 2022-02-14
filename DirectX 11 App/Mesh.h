@@ -5,7 +5,7 @@
 #include "Vertex.h"
 #include "ErrorMessaging.h"
 #include "ConstantBufferData.h"
-#include "Texture.h"
+#include "Material.h"
 
 class Mesh
 {
@@ -51,6 +51,6 @@ private:
 	///Stores amount of indices used by Mesh for DrawIndexed function, requires less than storing vector of indices
 	UINT indicesCount = 0;
 	VS_CB_DATA meshData;
-	MaterialData matData;
-	std::vector<Texture> meshTextures;
+
+	Material meshMat;
 };

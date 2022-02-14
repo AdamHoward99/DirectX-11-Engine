@@ -191,6 +191,7 @@
     <ClInclude Include="ErrorMessaging.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TextFont.h" />

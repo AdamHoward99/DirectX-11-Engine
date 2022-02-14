@@ -4,7 +4,7 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<
 	const std::vector<Vertex>& v, const std::vector<DWORD>& i, const std::vector<Texture>& textures)
 {
 	pDeviceContext = deviceCon;
-	meshTextures = textures;
+	meshMat.matTextures = textures;
 	CreateBuffers(device, v, i);
 }
 
@@ -18,8 +18,7 @@ Mesh::Mesh(const Mesh& m)
 	
 	indicesCount = m.indicesCount;
 	meshData = m.meshData;
-	meshTextures = m.meshTextures;
-	matData = m.matData;
+	meshMat = m.meshMat;
 }
 
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<ID3D11DeviceContext>& deviceContext)
@@ -42,7 +41,7 @@ void Mesh::Draw()
 	///const UINT* pOffsets			  - Pointer to an array of offset values which are the offset between elements in buffer
 	
 	///Draw Texture
-	pDeviceContext->PSSetShaderResources(0, 1, meshTextures[0].GetTextureRV().GetAddressOf());
+	pDeviceContext->PSSetShaderResources(0, 1, meshMat.matTextures[0].GetTextureRV().GetAddressOf());
 	///PSSetShaderResources(IN, IN, OPTIONAL)
 	///UINT StartSlot			 - Index of array to begin setting resources
 	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
@@ -80,7 +79,7 @@ void Mesh::Draw()
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11DeviceContext::Map()");
 
-	CopyMemory(mapResMat.pData, &matData, sizeof MaterialData);
+	CopyMemory(mapResMat.pData, &meshMat.matData, sizeof MaterialData);
 	pDeviceContext->Unmap(pMaterialBuffer.Get(), NULL);
 	pDeviceContext->PSSetConstantBuffers(1, 1, pMaterialBuffer.GetAddressOf());
 
@@ -129,8 +128,7 @@ Mesh& Mesh::operator=(const Mesh& otherMesh)
 
 		this->indicesCount = otherMesh.indicesCount;
 		this->meshData = otherMesh.meshData;
-		this->meshTextures = otherMesh.meshTextures;
-		this->matData = otherMesh.matData;
+		this->meshMat = otherMesh.meshMat;
 	}
 
 	return *this;
@@ -154,9 +152,9 @@ void Mesh::UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const Dire
 	///Diffuse Albedo is given colour of the material
 	///matFresnel and matRoughness are obtained from class variables stored in Object class
 	///Updates every frame to adjust lighting on Mesh
-	matData.matDiffuseAlbedo = matDiffuseAlbedo;
-	matData.matFresnelEffect = matFresnel;
-	matData.matRoughness = matRoughness;
+	meshMat.matData.matDiffuseAlbedo = matDiffuseAlbedo;
+	meshMat.matData.matFresnelEffect = matFresnel;
+	meshMat.matData.matRoughness = matRoughness;
 }
 
 void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)
