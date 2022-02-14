@@ -55,7 +55,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
 	pDeviceContext->OMSetDepthStencilState(pDepthState.Get(), NULL);
-	pDeviceContext->PSSetSamplers(NULL, 1, pSamplerState.GetAddressOf());
+	pDeviceContext->PSSetSamplers(NULL, 2, pSamplerStates[0].GetAddressOf());
 
 	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
 	//D3D10_PRIMITIVE_TOPOLOGY_LINELIST - Connects 2 Vertices to form a line
@@ -223,21 +223,13 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
 
-	//Create sampler desc
-	D3D11_SAMPLER_DESC samplerDesc;
-	ZeroMemory(&samplerDesc, sizeof D3D11_SAMPLER_DESC);
+	//Create Linear Wrap Sampler State (Default Used)
+	CreateSamplerState(0, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	samplerDesc.MinLOD = 0;
+	//Create Anisotropic Wrap Sampler State
+	CreateSamplerState(1, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_ANISOTROPIC, 16);
 
-	hr = pDevice->CreateSamplerState(&samplerDesc, pSamplerState.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateSamplerState()");
+	//TODO: Add more sampler states such as anisotropic, clamp, border, mirror, point etc.
 
 	return true;
 }
@@ -275,6 +267,27 @@ bool DXGraphics::InitialiseShaders()
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateInputLayout()");
 
 	return true;
+}
+
+void DXGraphics::CreateSamplerState(const int arrayOffset, const D3D11_TEXTURE_ADDRESS_MODE& textureAddress, const D3D11_COMPARISON_FUNC& comparisonFunc,
+	const D3D11_FILTER& filter, const UINT maxAnisotropy)
+{
+	//Create sampler desc
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof D3D11_SAMPLER_DESC);
+
+	samplerDesc.AddressU = textureAddress;
+	samplerDesc.AddressV = textureAddress;
+	samplerDesc.AddressW = textureAddress;
+	samplerDesc.ComparisonFunc = comparisonFunc;
+	samplerDesc.Filter = filter;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxAnisotropy = maxAnisotropy;
+
+	HRESULT hr = pDevice->CreateSamplerState(&samplerDesc, pSamplerStates[arrayOffset].GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateSamplerState()");
 }
 
 bool DXGraphics::InitialiseScene(int w, int h)

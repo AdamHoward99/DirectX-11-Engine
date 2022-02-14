@@ -41,7 +41,10 @@ cbuffer materialBuffer : register(b1)
     TextureData texData;
 }
 
-SamplerState samplerState : SAMPLER : register(s0);
+SamplerState LinearWrapSS : SAMPLER : register(s0);
+SamplerState AnisotropicWrapSS: SAMPLER : register(s1);
+
+
 Texture2D tex : register(t0);
 
 struct PixelInput
@@ -193,7 +196,7 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
 float4 main(PixelInput data) : SV_TARGET
 {
     float4 diffuseAlbedo = texData.diffuseAlbedo;
-    float4 materialAlbedo = tex.Sample(samplerState, data.coords);      //Could add more samplerstates in the future
+    float4 materialAlbedo = tex.Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
     
     //Combines the albedos together
     diffuseAlbedo *= materialAlbedo;

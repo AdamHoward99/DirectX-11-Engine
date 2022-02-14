@@ -21,11 +21,14 @@ public:
 private:
 	bool InitialiseDX(HWND, int, int);
 	bool InitialiseShaders();
+	void CreateSamplerState(const int arrayOffset, const D3D11_TEXTURE_ADDRESS_MODE& textureAddress, const D3D11_COMPARISON_FUNC& comparisonFunc,
+		const D3D11_FILTER& filter, const UINT maxAnisotropy = 1);
 	bool InitialiseScene(int w, int h);
 	void InitialiseOBJs();
 	void InitialiseLighting();
 
 	void DrawString();
+
 
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
@@ -36,7 +39,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerStates[2];
 
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;
