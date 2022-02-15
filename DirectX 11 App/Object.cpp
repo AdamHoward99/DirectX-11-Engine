@@ -169,6 +169,21 @@ const Mesh Object::ProcessMeshes(const aiScene* pScene, const aiMesh* mesh)
 		v.normalCoordinates.y = mesh->mNormals[i].y;
 		v.normalCoordinates.z = mesh->mNormals[i].z;
 
+		if (mesh->HasTangentsAndBitangents())
+		{
+			///Get Tangent coordinates
+			v.tangentCoordinates.x = mesh->mTangents[i].x;
+			v.tangentCoordinates.y = mesh->mTangents[i].y;
+			v.tangentCoordinates.z = mesh->mTangents[i].z;
+		}
+		else
+		{
+			///Assign Empty Tangent coordinates
+			v.tangentCoordinates.x = 0.0f;
+			v.tangentCoordinates.y = 0.0f;
+			v.tangentCoordinates.z = 0.0f;
+		}
+
 		///If this Mesh has a texture preset, obtain the texture coordinates	NOTE: Main texture of Mesh is always the 1st texture
 		if (mesh->mTextureCoords[0])
 		{

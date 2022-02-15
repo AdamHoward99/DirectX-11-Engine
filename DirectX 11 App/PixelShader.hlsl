@@ -51,7 +51,8 @@ struct PixelInput
 {
     float4 pos : SV_POSITION;
     float2 coords : TEXCOORD;
-	float3 normals : NORMAL;
+    float3 normals : NORMAL;
+    float3 tangents : TANGENT;
     float4 worldPos : WORLD_POSITION;
 };
 

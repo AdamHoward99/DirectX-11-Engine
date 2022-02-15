@@ -10,4 +10,5 @@ public:
 	DirectX::XMFLOAT3 vertexPosition;
 	DirectX::XMFLOAT2 textureCoordinates;
 	DirectX::XMFLOAT3 normalCoordinates;
+	DirectX::XMFLOAT3 tangentCoordinates;
 };
