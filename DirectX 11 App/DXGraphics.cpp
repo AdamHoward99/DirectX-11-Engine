@@ -306,9 +306,7 @@ void DXGraphics::InitialiseMaterials()
 	mMaterials["Default"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
 	mMaterials["Default"]->matData.matFresnelEffect = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
 	mMaterials["Default"]->matData.matRoughness = 0.01f;
-	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-albedo.tif", aiTextureType_DIFFUSE));
-	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-normal.tif", aiTextureType_NORMALS));
-	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-roughness.tif", aiTextureType_SHININESS));
+	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "OBJ/TexturedOBJExample/defaultTexture.png", aiTextureType_DIFFUSE));
 }
 
 void DXGraphics::InitialiseOBJs()
