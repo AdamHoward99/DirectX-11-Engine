@@ -42,8 +42,8 @@ cbuffer materialBuffer : register(b1)
 }
 
 SamplerState LinearWrapSS : SAMPLER : register(s0);
-SamplerState AnisotropicWrapSS: SAMPLER : register(s1);
-
+SamplerState PointWrapSS : SAMPLER : register(s1);
+SamplerState AnisotropicWrapSS: SAMPLER : register(s2);
 
 Texture2D tex : register(t0);
 

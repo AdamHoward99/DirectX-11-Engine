@@ -40,7 +40,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerStates[2];
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerStates[3];
 
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;

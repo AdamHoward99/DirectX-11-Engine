@@ -226,11 +226,11 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Create Linear Wrap Sampler State (Default Used)
 	CreateSamplerState(0, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 
+	//Create Point Wrap Sampler State
+	CreateSamplerState(1, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_MIN_MAG_MIP_POINT);
+
 	//Create Anisotropic Wrap Sampler State
-	CreateSamplerState(1, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_ANISOTROPIC, 16);
-
-	//TODO: Add more sampler states such as anisotropic, clamp, border, mirror, point etc.
-
+	CreateSamplerState(2, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_ANISOTROPIC, 16);
 	return true;
 }
 
