@@ -194,6 +194,23 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     return float4(totalLighting, 0.f);
 }
 
+float3 NormalTangentToWorldSpace(float3 normalMapS, float3 unitNormal, float3 tangent)
+{
+    //Uncompress each component
+    float3 normalT = 2.f * normalMapS - 1.f;
+    
+    //Build orthonormal basis
+    float3 N = unitNormal;
+    float3 T = normalize(tangent - dot(tangent, N) * N);
+    float3 B = cross(N, T);
+    
+    float3x3 TBN = float3x3(T, B, N);
+    
+    //Transform from tangent space to world space
+    float3 bumpedNormal = mul(normalT, TBN);
+    return bumpedNormal;
+}
+
 float4 main(PixelInput data) : SV_TARGET
 {
     float4 diffuseAlbedo = texData.diffuseAlbedo;
