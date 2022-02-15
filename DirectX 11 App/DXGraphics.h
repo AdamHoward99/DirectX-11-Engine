@@ -24,6 +24,7 @@ private:
 	void CreateSamplerState(const int arrayOffset, const D3D11_TEXTURE_ADDRESS_MODE& textureAddress, const D3D11_COMPARISON_FUNC& comparisonFunc,
 		const D3D11_FILTER& filter, const UINT maxAnisotropy = 1);
 	bool InitialiseScene(int w, int h);
+	void InitialiseMaterials();
 	void InitialiseOBJs();
 	void InitialiseLighting();
 

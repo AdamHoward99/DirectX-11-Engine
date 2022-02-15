@@ -16,14 +16,6 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	if (!InitialiseShaders())
 		return false;
 
-	//Create Materials
-	mMaterials["Default"] = std::make_unique<Material>();
-	mMaterials["Default"]->matName = "Default Material";
-	mMaterials["Default"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
-	mMaterials["Default"]->matData.matFresnelEffect = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
-	mMaterials["Default"]->matData.matRoughness = 0.01f;
-	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "OBJ/TexturedOBJExample/defaultTexture.png", aiTextureType_DIFFUSE));
-
 	//Initialise the scene
 	if (!InitialiseScene(w, h))
 		return false;
@@ -300,9 +292,23 @@ void DXGraphics::CreateSamplerState(const int arrayOffset, const D3D11_TEXTURE_A
 
 bool DXGraphics::InitialiseScene(int w, int h)
 {
+	InitialiseMaterials();
 	InitialiseOBJs();
 	InitialiseLighting();
 	return true;
+}
+
+void DXGraphics::InitialiseMaterials()
+{
+	//Create Default Material
+	mMaterials["Default"] = std::make_unique<Material>();
+	mMaterials["Default"]->matName = "Default Material";
+	mMaterials["Default"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
+	mMaterials["Default"]->matData.matFresnelEffect = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
+	mMaterials["Default"]->matData.matRoughness = 0.01f;
+	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-albedo.tif", aiTextureType_DIFFUSE));
+	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-normal.tif", aiTextureType_NORMALS));
+	mMaterials["Default"]->matTextures.push_back(Texture(pDevice, "Materials/Steel/Steel-roughness.tif", aiTextureType_SHININESS));
 }
 
 void DXGraphics::InitialiseOBJs()
@@ -310,9 +316,7 @@ void DXGraphics::InitialiseOBJs()
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
 	renderObjects["ice"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/ice.fbx"));
 	renderObjects["ice"]->SetRotation(-90.f, 0.f, 0.f);
-	const Material& mat = *mMaterials["Default"];
-	renderObjects["ice"]->AssignNewMaterial(mat);
-
+	renderObjects["ice"]->AssignNewMaterial(*mMaterials["Default"]);
 
 	renderObjects["marble"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/marble.fbx"));
 	renderObjects["marble"]->SetRotation(-90.f, 0.f, 0.f);
