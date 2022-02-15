@@ -233,6 +233,12 @@ const void Object::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatr
 	viewProjectionMatrix = viewProjMatrix;
 }
 
+const void Object::AssignNewMaterial(const Material& mat)
+{
+	for (Mesh& m : objMeshes)
+		m.AssignMaterial(mat);
+}
+
 const void Object::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse)
 {
 	meshMaterialDiffuseAlbedo = diffuse;

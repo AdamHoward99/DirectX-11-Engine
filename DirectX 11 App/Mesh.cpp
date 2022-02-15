@@ -157,6 +157,11 @@ void Mesh::UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const Dire
 	meshMat.matData.matRoughness = matRoughness;
 }
 
+void Mesh::AssignMaterial(const Material& mat)
+{
+	meshMat = mat;
+}
+
 void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)
 {
 	///Manually creating Vertices and Indices for default triangle model

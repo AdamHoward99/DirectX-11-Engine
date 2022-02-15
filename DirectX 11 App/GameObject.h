@@ -49,6 +49,8 @@ public:
 	virtual void Update();
 	///Sets position of Object based on Camera View
 	void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
+	///Assigns a new material to the GameObject's mesh
+	void AssignNewMaterial(const Material& mat);
 	///Sets Diffuse albedo of material on mesh
 	void SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse);
 	///Sets fresnel effect of material on mesh

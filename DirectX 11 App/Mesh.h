@@ -28,6 +28,7 @@ public:
 
 	void UpdatePosition(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix);
 	void UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const DirectX::XMFLOAT3A& matFresnel, float matRoughness);
+	void AssignMaterial(const Material& mat);
 	void Draw();
 
 	///Overloaded function for CreateBuffer creating Index, Constant and Vertex buffers

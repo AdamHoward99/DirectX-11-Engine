@@ -50,6 +50,8 @@ public:
 	const DirectX::XMMATRIX& GetWorldPosition() const;
 	///Sets position of Object according to camera viewport (Camera View * Camera Projection)
 	const void SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMatrix);
+	///Assigns a new material to the Object
+	const void AssignNewMaterial(const Material& mat);
 	///Sets the diffuse albedo values for the material on the mesh
 	const void SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse);
 	///Sets the fresnel effect values for the material on the mesh

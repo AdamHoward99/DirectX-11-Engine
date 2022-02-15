@@ -48,6 +48,11 @@ void GameObject::SetViewProjectionMatrix(const DirectX::XMMATRIX& viewProjMat)
 	object.SetViewProjectionMatrix(viewProjMat);
 }
 
+void GameObject::AssignNewMaterial(const Material& mat)
+{
+	object.AssignNewMaterial(mat);
+}
+
 void GameObject::SetMaterialDiffuseAlbedo(const DirectX::XMFLOAT4& diffuse)
 {
 	object.SetMaterialDiffuseAlbedo(diffuse);  
