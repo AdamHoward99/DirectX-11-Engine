@@ -45,7 +45,7 @@ SamplerState LinearWrapSS : SAMPLER : register(s0);
 SamplerState PointWrapSS : SAMPLER : register(s1);
 SamplerState AnisotropicWrapSS: SAMPLER : register(s2);
 
-Texture2D tex : register(t0);
+Texture2D textures[11] : register(t0);
 
 struct PixelInput
 {
@@ -214,13 +214,16 @@ float3 NormalTangentToWorldSpace(float3 normalMapS, float3 unitNormal, float3 ta
 float4 main(PixelInput data) : SV_TARGET
 {
     float4 diffuseAlbedo = texData.diffuseAlbedo;
-    float4 materialAlbedo = tex.Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
-    
+    float4 materialAlbedo = textures[0].Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
+        
     //Combines the albedos together
     diffuseAlbedo *= materialAlbedo;
     
     //Renormalize the normal
     data.normals = normalize(data.normals);
+    
+    float4 materialNormal = textures[5].Sample(LinearWrapSS, data.coords);
+    float3 bumpedNormal = NormalTangentToWorldSpace(materialNormal.rgb, data.normals, data.tangents);
     
     //Vector from point being lit to eye
     float3 toEye = normalize(eyePosition - data.worldPos.xyz);

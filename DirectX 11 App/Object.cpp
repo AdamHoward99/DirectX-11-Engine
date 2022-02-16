@@ -295,6 +295,10 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 			}
 			textures.push_back(Texture(pObjDevice, aiColor4D(aiColour.r * 255, aiColour.g * 255, aiColour.b * 255, aiColour.a * 255), texType));
 			return;
+
+		default:
+			textures.push_back(Texture(pObjDevice, aiColor4D(0.f, 0.f, 0.f, 0.f), texType));
+			return;
 			break;
 		}
 	} 

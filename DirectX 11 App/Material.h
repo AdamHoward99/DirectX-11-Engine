@@ -8,5 +8,5 @@ struct Material
 {
 	std::string matName;
 	MaterialData matData;
-	std::vector<Texture> matTextures;
+	std::vector<Texture> matTextures = std::vector<Texture>(11, Texture());
 };

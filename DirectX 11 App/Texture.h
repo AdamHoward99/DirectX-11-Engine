@@ -9,6 +9,8 @@
 class Texture
 {
 public:
+	///Default Constructor used for Material struct when without access to a ID3D11Device
+	Texture() {};
 	///Constructor to only take in a single colour value
 	Texture(Microsoft::WRL::ComPtr<ID3D11Device> device, const aiColor4D& colour, aiTextureType texType);
 	///Constructor to use multiple colours
