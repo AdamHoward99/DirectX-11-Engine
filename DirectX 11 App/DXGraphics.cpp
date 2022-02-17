@@ -27,7 +27,7 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Directional Lighting
-	directionalLight.SetLightStrength(0.1f);
+	directionalLight.SetLightStrength(0.f);
 	directionalLight.SetEyePosition(camera->GetPosition());		//Required for reflected light from materials to be seen at eye position, any light type can call this
 
 	//Update Point Light 0

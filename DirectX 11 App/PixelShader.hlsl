@@ -222,8 +222,11 @@ float4 main(PixelInput data) : SV_TARGET
     //Renormalize the normal
     data.normals = normalize(data.normals);
     
+    //Obtain the Normal texture if there is one
     float4 materialNormal = textures[5].Sample(LinearWrapSS, data.coords);
-    float3 bumpedNormal = NormalTangentToWorldSpace(materialNormal.rgb, data.normals, data.tangents);
+    
+    //Checks if there is a normal texture, if not, resets to normal values given by vertices to prevent material altering
+    float3 bumpedNormal = materialNormal.xyz != 0.f ? NormalTangentToWorldSpace(materialNormal.rgb, data.normals, data.tangents) : data.normals;
     
     //Vector from point being lit to eye
     float3 toEye = normalize(eyePosition - data.worldPos.xyz);
@@ -236,7 +239,7 @@ float4 main(PixelInput data) : SV_TARGET
     float3 shadowFactor = 1.f;
     
     //Returns total lighting from all Directional, Point and Spot lights enabled
-    float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, data.normals, toEye, shadowFactor, materialAlbedo);
+    float4 directLight = ComputeLighting(mLights, texData, data.worldPos.xyz, bumpedNormal, toEye, shadowFactor, materialAlbedo);
     
     float4 litColour = lerp(diffuseAlbedo, ambient + directLight, diffuseAlbedo.a);
     

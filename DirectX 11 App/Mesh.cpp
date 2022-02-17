@@ -40,8 +40,9 @@ void Mesh::Draw()
 	///const UINT* pStrides			  - Pointer to an array of stride values which are the byte size of elements used by the buffer
 	///const UINT* pOffsets			  - Pointer to an array of offset values which are the offset between elements in buffer
 	
-	///Draw Texture
-	pDeviceContext->PSSetShaderResources(0, 1, meshMat.matTextures[0].GetTextureRV().GetAddressOf());
+	///Draws all textures
+	for (int i = 0; i < meshMat.matTextures.size(); i++)
+		pDeviceContext->PSSetShaderResources(i, 1, meshMat.matTextures[i].GetTextureRV().GetAddressOf());
 	///PSSetShaderResources(IN, IN, OPTIONAL)
 	///UINT StartSlot			 - Index of array to begin setting resources
 	///UINT NumViews			 - Amount of shader resources required to be set up, maximum of 128
