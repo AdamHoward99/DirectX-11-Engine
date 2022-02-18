@@ -86,7 +86,6 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["cobblestone"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
-	renderObjects["cobblestone"]->SetMaterialDiffuseAlbedo(DirectX::XMFLOAT4A(1.f, 1.f, 1.f, 0.3f));
 	renderObjects["cobblestone"]->Update();
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
@@ -218,7 +217,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
 	
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
 	if (FAILED(hr))

@@ -216,6 +216,15 @@ float4 main(PixelInput data) : SV_TARGET
     float4 diffuseAlbedo = texData.diffuseAlbedo;
     float4 materialAlbedo = textures[0].Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
     
+    //TODO: Find way to add Macros to shorten computations done for lighting and texture locating
+    
+    //Obtain the Opacity / Alpha texture if there is one
+    float4 materialAlpha = textures[7].Sample(LinearWrapSS, data.coords);
+    
+    ///Checks if there is an Alpha / Opacity texture, if not, ignores this
+    if (materialAlpha.x > 0.1f || materialAlpha.y > 0.1f || materialAlpha.z > 0.1f || materialAlpha.a > 0.1f)
+        clip(materialAlpha - 0.1f);
+    
     //Combines the albedos together
     diffuseAlbedo *= materialAlbedo;
     
