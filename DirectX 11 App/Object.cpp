@@ -297,7 +297,7 @@ const void Object::LoadMaterialTexture(const aiScene* pScene, const aiMaterial* 
 			return;
 
 		default:
-			textures.push_back(Texture(pObjDevice, aiColor4D(0.f, 0.f, 0.f, 0.f), texType));
+			textures.push_back(Texture(pObjDevice, aiColor4D(0.f, 0.f, 0.f, 0.f), aiTextureType_UNKNOWN));
 			return;
 			break;
 		}

@@ -215,7 +215,7 @@ float4 main(PixelInput data) : SV_TARGET
 {
     float4 diffuseAlbedo = texData.diffuseAlbedo;
     float4 materialAlbedo = textures[0].Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
-        
+    
     //Combines the albedos together
     diffuseAlbedo *= materialAlbedo;
     

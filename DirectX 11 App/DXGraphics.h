@@ -37,6 +37,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> pBlendState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthState;

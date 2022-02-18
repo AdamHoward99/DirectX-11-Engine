@@ -46,7 +46,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	directionalLight.RenderLighting(pDeviceContext.Get());
 
 	//Background
-	float colour[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float colour[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
 	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -54,7 +54,10 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
+	pDeviceContext->OMSetBlendState(pBlendState.Get(), NULL, 0xFFFFFFFF);
 	pDeviceContext->OMSetDepthStencilState(pDepthState.Get(), NULL);
+	///Note: Pixels closer to the camera need to be instantiated and drawn after objects which it is blending with
+	///Note: Alternative is to draw all opaque objects first followed by any non-opaque after.
 	pDeviceContext->PSSetSamplers(NULL, 2, pSamplerStates[0].GetAddressOf());
 
 	//D3D10_PRIMITIVE_TOPOLOGY_POINTLIST - Singular Vertices
@@ -83,6 +86,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["cobblestone"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["cobblestone"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
+	renderObjects["cobblestone"]->SetMaterialDiffuseAlbedo(DirectX::XMFLOAT4A(1.f, 1.f, 1.f, 0.3f));
 	renderObjects["cobblestone"]->Update();
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
@@ -220,6 +224,62 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
 
+	///Create Blend State
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof D3D11_BLEND_DESC);
+
+	D3D11_RENDER_TARGET_BLEND_DESC blendTarget;
+	ZeroMemory(&blendTarget, sizeof D3D11_RENDER_TARGET_BLEND_DESC);
+
+	///Setup Target Blend Description
+	///Alpha Equation = Sa * Sbf (+/-) Da * Dbf
+	///Sa  = Source Alpha
+	///Sbf = Source Blend Factor
+	///Da  = Destination Alpha
+	///Dbf = Destination Blend Factor
+	///(+/-) = Depends on the Blend Operation
+
+	///Pixel Equation = Sp * Sbf (+/-) Dp * Dbf
+	///Sp = Source Pixel
+	///Dp = Destination Pixel
+
+	blendTarget.BlendEnable = true;
+	blendTarget.BlendOp = D3D11_BLEND_OP_ADD;
+	blendTarget.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	///Blend Operations:
+	///D3D11_BLEND_OP_ADD - Adds together Source and Destination
+	///D3D11_BLEND_OP_SUBTRACT - Subtracts Source from the Destination
+	///D3D11_BLEND_OP_REV_SUBTRACT - Subtracts Destination from the Source
+	///D3D11_BLEND_OP_MIN - Takes the lowest value of the Source and Destination
+	///D3D11_BLEND_OP_MAX - Takes the highest value of the Source and Destination
+	blendTarget.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendTarget.DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendTarget.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendTarget.SrcBlendAlpha = D3D11_BLEND_ONE;
+	///Blend Factors:
+	///D3D11_BLEND_ZERO - Applies factor (0.f, 0.f, 0.f, 0.f)
+	///D3D11_BLEND_ONE  - Applies factor (1.f, 1.f, 1.f, 1.f)
+	///D3D11_BLEND_SRC_COLOR - Takes colour of source pixel (R, G, B, A)
+	///D3D11_BLEND_INV_SRC_COLOR - Inverts above factor (1-R, 1-G, 1-B, 1-A)
+	///D3D11_BLEND_SRC_ALPHA - Takes alpha of the source pixel (A, A, A, A)
+	///D3D11_BLEND_INV_SRC_ALPHA - Inverts above factor (1-A, 1-A, 1-A, 1-A)
+	///D3D11_BLEND_SRC_ALPHA_SAT - Clamps the source pixel alpha to 1 or less (f, f, f, 1) where f = min(A, 1-A)
+	///D3D11_BLEND_BLEND_FACTOR - Uses factor set by ID3D11DeviceContext::OMSetBlendState()
+	///D3D11_BLEND_INV_BLEND_FACTOR - Inverts above factor
+	blendTarget.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	///Specifying which components of the blending are writable:
+	///D3D11_COLOR_WRITE_ENABLE_RED - Allows red to be visible
+	///D3D11_COLOR_WRITE_ENABLE_GREEN - Allows green to be visible
+	///D3D11_COLOR_WRITE_ENABLE_BLUE - Allows blue to be visible
+	///D3D11_COLOR_WRITE_ENABLE_ALPHA - Allows the alpha to be visible
+	///D3D11_COLOR_WRITE_ENABLE_ALL - Bitwise OR allowing all data to visible
+	///These can be Bitwise OR together to create different blending results.
+	blendDesc.RenderTarget[0] = blendTarget;
+	
+	hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
+
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
 
@@ -313,9 +373,9 @@ void DXGraphics::InitialiseMaterials()
 void DXGraphics::InitialiseOBJs()
 {
 	///Notice: Create OBJ's to be rendered in Scene here, Empty file name will give default triangle
-	renderObjects["ice"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/ice.fbx"));
+	renderObjects["ice"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/wicker.fbx"));
 	renderObjects["ice"]->SetRotation(-90.f, 0.f, 0.f);
-	renderObjects["ice"]->AssignNewMaterial(*mMaterials["Default"]);
+	//renderObjects["ice"]->AssignNewMaterial(*mMaterials["Default"]);
 
 	renderObjects["marble"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/marble.fbx"));
 	renderObjects["marble"]->SetRotation(-90.f, 0.f, 0.f);
