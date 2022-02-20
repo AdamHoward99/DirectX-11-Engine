@@ -252,6 +252,22 @@ float4 main(PixelInput data) : SV_TARGET
     
     float4 litColour = lerp(diffuseAlbedo, ambient + directLight, diffuseAlbedo.a);
     
+    //TODO: Test these calculations with a cartoonish material
+    /* Toon Shading Calculations
+    float intensity = dot(normalize(float3(0.f, -1.f, 0.f)), data.normals);
+    if(intensity < 0)
+        intensity = 0;
+    
+    if(intensity > 0.95f)
+        litColour *= float4(1.f, 1.f, 1.f, 1.f);
+    else if(intensity > 0.5f)
+        litColour *= float4(0.7f, 0.7f, 0.7f, 1.f);
+    else if (intensity > 0.05f)
+        litColour *= float4(0.35f, 0.35f, 0.35f, 1.f);
+    else
+        litColour *= float4(0.1f, 0.1f, 0.1f, 1.f);
+    */
+    
     litColour.a = diffuseAlbedo.a;
     
     return litColour;
