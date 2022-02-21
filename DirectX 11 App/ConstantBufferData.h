@@ -43,6 +43,10 @@ struct MaterialData
 
 	DirectX::XMFLOAT3 matFresnelEffect;	//12-bit
 	float matRoughness;					//4-bit
+
+	float normalMapEnabled = 0.f;	//Corresponds to boolean value, used as float for easy alignment
+	float alphaMapEnabled = 0.f;
+	DirectX::XMFLOAT2 padding;
 };
 
 struct Mat

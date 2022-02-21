@@ -25,20 +25,24 @@ struct TextureData
     
     float3 fresnelEff;      //12-bit
     float roughness;        //4-bit
+    
+    float normalMapEnabled; //4-bit
+    float alphaMapEnabled;  //4-bit
+    float2 matPadding;      //8-bit
 };
 
 //Single buffer to store directional light, point lights and spot lights
 cbuffer lightsBuffer : register(b0)
 {
     LightData mLights[NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
-    float4 ambientLighting;
-    float3 eyePosition;
-    float fogStart;
+    float4 ambientLighting;     //16-bit
+    float3 eyePosition;         //12-bit
+    float fogStart;             //4-bit
     
-    float4 fogColour;
-    float fogRange;
-    float fogEnabled;
-    float2 padding;     //8 bit
+    float4 fogColour;           //16-bit
+    float fogRange;             //4-bit
+    float fogEnabled;           //4-bit
+    float2 padding;             //8 bit
 };
 
 cbuffer materialBuffer : register(b1)
@@ -176,24 +180,33 @@ float4 ComputeLighting(LightData pLight[MAX_LIGHTS], TextureData mat, float3 pos
     float3 totalLighting = 0.f;
     int i = 0;
     
-    //Directional Lights
-    for (i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
+    if (NUM_DIRECTIONAL_LIGHTS > 0)
     {
-        pLight[i].lightDirection = normalize(pLight[i].lightDirection);
-        totalLighting += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
+        //Directional Lights
+        for (i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
+        {
+            pLight[i].lightDirection = normalize(pLight[i].lightDirection);
+            totalLighting += shadowFactor[i] * ComputeDirectionalLighting(pLight[i], mat, normal, eyePos, albedo);
+        }
     }
     
-    //Point Lights
-    for (i = NUM_DIRECTIONAL_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i++)
+    if (NUM_POINT_LIGHTS > 0)
     {
-        totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        //Point Lights
+        for (i = NUM_DIRECTIONAL_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i++)
+        {
+            totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        }
     }
     
-    //Spot Lights
-    for (i = NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
+    if (NUM_SPOT_LIGHTS > 0)
     {
-        pLight[i].lightDirection = normalize(pLight[i].lightDirection);
-        totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        //Spot Lights
+        for (i = NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS; i < NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS; i++)
+        {
+            pLight[i].lightDirection = normalize(pLight[i].lightDirection);
+            totalLighting += ComputePointLighting(pLight[i], mat, pos, normal, eyePos, albedo);
+        }
     }
     
     return float4(totalLighting, 0.f);
@@ -221,14 +234,13 @@ float4 main(PixelInput data) : SV_TARGET
     float4 diffuseAlbedo = texData.diffuseAlbedo;
     float4 materialAlbedo = textures[0].Sample(LinearWrapSS, data.coords); //Could add more samplerstates in the future
     
-    //TODO: Find way to add Macros to shorten computations done for lighting and texture locating
-    
-    //Obtain the Opacity / Alpha texture if there is one
-    float4 materialAlpha = textures[7].Sample(LinearWrapSS, data.coords);
-    
-    ///Checks if there is an Alpha / Opacity texture, if not, ignores this
-    if (materialAlpha.x > 0.1f || materialAlpha.y > 0.1f || materialAlpha.z > 0.1f || materialAlpha.a > 0.1f)
+    //Alpha Map Check
+    if(texData.alphaMapEnabled == 1.f)
+    {
+        //Obtain the Opacity / Alpha texture if there is one
+        float4 materialAlpha = textures[7].Sample(LinearWrapSS, data.coords);
         clip(materialAlpha - 0.1f);
+    }
     
     //Combines the albedos together
     diffuseAlbedo *= materialAlbedo;
@@ -236,11 +248,16 @@ float4 main(PixelInput data) : SV_TARGET
     //Renormalize the normal
     data.normals = normalize(data.normals);
     
-    //Obtain the Normal texture if there is one
-    float4 materialNormal = textures[5].Sample(LinearWrapSS, data.coords);
-    
-    //Checks if there is a normal texture, if not, resets to normal values given by vertices to prevent material altering
-    float3 bumpedNormal = materialNormal.xyz != 0.f ? NormalTangentToWorldSpace(materialNormal.rgb, data.normals, data.tangents) : data.normals;
+    //Normal Map Check
+    float3 bumpedNormal = data.normals;
+    if(texData.normalMapEnabled == 1.f)
+    {
+        //Obtain the Normal texture if there is one
+        float4 materialNormal = textures[5].Sample(LinearWrapSS, data.coords);
+        
+        //Checks if there is a normal texture, if not, resets to normal values given by vertices to prevent material altering
+        bumpedNormal = NormalTangentToWorldSpace(materialNormal.rgb, data.normals, data.tangents);
+    }
     
     //Vector from point being lit to eye
     float3 toEye = normalize(eyePosition - data.worldPos.xyz);

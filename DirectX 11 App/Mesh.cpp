@@ -6,6 +6,14 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device>& device, Microsoft::WRL::ComPtr<
 	pDeviceContext = deviceCon;
 	meshMat.matTextures = textures;
 	CreateBuffers(device, v, i);
+
+	///Checks if a Normal texture is attached to material
+	if (meshMat.matTextures[5].GetTextureType() == aiTextureType_NORMALS)
+		meshMat.matData.normalMapEnabled = 1.f;
+
+	///Checks if the new material contains an Alpha map
+	if (meshMat.matTextures[7].GetTextureType() == aiTextureType_OPACITY)
+		meshMat.matData.alphaMapEnabled = 1.f;
 }
 
 Mesh::Mesh(const Mesh& m)
@@ -161,6 +169,13 @@ void Mesh::UpdateMaterials(const DirectX::XMFLOAT4& matDiffuseAlbedo, const Dire
 void Mesh::AssignMaterial(const Material& mat)
 {
 	meshMat = mat;
+	///Checks if the new material contains a Normal map
+	if (meshMat.matTextures[5].GetTextureType() == aiTextureType_NORMALS)
+		meshMat.matData.normalMapEnabled = 1.f;
+
+	///Checks if the new material contains an Alpha map
+	if (meshMat.matTextures[7].GetTextureType() == aiTextureType_OPACITY)
+		meshMat.matData.alphaMapEnabled = 1.f;
 }
 
 void Mesh::CreateTriangleGeometry(Microsoft::WRL::ComPtr<ID3D11Device>& device)
