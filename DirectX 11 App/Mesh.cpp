@@ -41,7 +41,7 @@ void Mesh::Draw()
 	///const UINT* pOffsets			  - Pointer to an array of offset values which are the offset between elements in buffer
 	
 	///Draws all textures
-	for (int i = 0; i < meshMat.matTextures.size(); i++)
+	for (size_t i = 0; i < meshMat.matTextures.size(); i++)
 		pDeviceContext->PSSetShaderResources(i, 1, meshMat.matTextures[i].GetTextureRV().GetAddressOf());
 	///PSSetShaderResources(IN, IN, OPTIONAL)
 	///UINT StartSlot			 - Index of array to begin setting resources

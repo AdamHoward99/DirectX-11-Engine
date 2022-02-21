@@ -30,7 +30,10 @@ struct Lights
 	LightData mLights[NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
 	DirectX::XMFLOAT4 ambientLighting = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
 	DirectX::XMFLOAT3 eyePosition;
-	float padding;
+	float fogStart = 10.f;
+	DirectX::XMFLOAT4 fogColour = DirectX::XMFLOAT4(0.35f, 0.35f, 0.35f, 1.f);
+	float fogRange = 10.f;
+	DirectX::XMFLOAT3 padding;
 };
 
 struct MaterialData

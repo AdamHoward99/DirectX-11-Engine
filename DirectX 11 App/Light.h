@@ -40,6 +40,16 @@ public:
 	const void SetAmbientLighting(const DirectX::XMFLOAT4A& aLighting) { mLightdata.ambientLighting = aLighting; }
 	///Function to set the eye position of which reflections from the material are viewed from, correlates to the camera's position
 	const void SetEyePosition(const DirectX::XMFLOAT3A& eyePos) { mLightdata.eyePosition = eyePos; }
+	///Function to set the colour of the fog effect using the XMFLOAT4 type
+	const void SetFogColour(const DirectX::XMFLOAT4A& fogCol) { mLightdata.fogColour = fogCol; }
+	///Function to set the colour of the fog effect using individual floats
+	const void SetFogColour(const float R, const float G, const float B, const float A) { mLightdata.fogColour = DirectX::XMFLOAT4A(R, G, B, A); }
+	///Function to set the start position of the fog effect from the eye position (Camera position)
+	const void SetFogStart(const float fogS) { mLightdata.fogStart = fogS; }
+	///Function to set the range of the fog effect from the fog start position
+	const void SetFogRange(const float fogR) { mLightdata.fogRange = fogR; }
+
+	//bool for enable fog?
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightBuffer;

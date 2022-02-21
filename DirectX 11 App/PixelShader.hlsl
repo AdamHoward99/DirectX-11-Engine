@@ -33,7 +33,11 @@ cbuffer lightsBuffer : register(b0)
     LightData mLights[NUM_DIRECTIONAL_LIGHTS + NUM_POINT_LIGHTS + NUM_SPOT_LIGHTS];
     float4 ambientLighting;
     float3 eyePosition;
-    float padding;
+    float fogStart = 10.f;
+    
+    float4 fogColour = float4(0.35f, 0.35f, 0.35f, 1.f);
+    float fogRange = 10.f;
+    float3 padding;
 };
 
 cbuffer materialBuffer : register(b1)
@@ -267,6 +271,17 @@ float4 main(PixelInput data) : SV_TARGET
     else
         litColour *= float4(0.1f, 0.1f, 0.1f, 1.f);
     */
+    
+    //Fog Calculations
+    float distanceToEye = length(eyePosition - data.worldPos.xyz);
+    float fogAmount = saturate(distanceToEye - fogStart / fogRange);
+    litColour = lerp(litColour, fogColour, fogAmount);
+    
+    //Fog Calculation = saturate( (distance(P, E) - Fs) / Fr )
+    //P = Position of surface being affected by the light
+    //E = Position of the eye / camera
+    //Fs = Start of the fog appearing
+    //Fr = Range of the fog appearing
     
     litColour.a = diffuseAlbedo.a;
     
