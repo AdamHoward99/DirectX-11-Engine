@@ -40,6 +40,8 @@ public:
 	const void SetAmbientLighting(const DirectX::XMFLOAT4A& aLighting) { mLightdata.ambientLighting = aLighting; }
 	///Function to set the eye position of which reflections from the material are viewed from, correlates to the camera's position
 	const void SetEyePosition(const DirectX::XMFLOAT3A& eyePos) { mLightdata.eyePosition = eyePos; }
+	///Function to toggle the use of a fog effect in the scene
+	const void SetFogEffectStatus(const bool cond) { mLightdata.fogEnabled = cond; }
 	///Function to set the colour of the fog effect using the XMFLOAT4 type
 	const void SetFogColour(const DirectX::XMFLOAT4A& fogCol) { mLightdata.fogColour = fogCol; }
 	///Function to set the colour of the fog effect using individual floats
