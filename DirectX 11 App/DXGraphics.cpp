@@ -46,7 +46,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	directionalLight.SetFogColour(DirectX::XMFLOAT4A(0.35f, 0.35f, 0.35f, 1.f));
 	directionalLight.SetFogRange(10.f);
 	directionalLight.SetFogStart(10.f);
-	directionalLight.SetFogEffectStatus(true);
+	directionalLight.SetFogEffectStatus(false);
 
 	//Render lights, only single light needs to be called to render since all light data is static across all lights
 	directionalLight.RenderLighting(pDeviceContext.Get());
@@ -93,6 +93,22 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["cobblestone"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["cobblestone"]->SetMaterialRoughness(0.01f);
 	renderObjects["cobblestone"]->Update();
+
+	renderObjects["floor"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["floor"]->Update();
+
+	renderObjects["wall"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["wall"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
+	renderObjects["wall"]->SetMaterialRoughness(0.01f);
+	renderObjects["wall"]->Update();
+
+	renderObjects["wall2"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["wall2"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
+	renderObjects["wall2"]->SetMaterialRoughness(0.01f);
+	renderObjects["wall2"]->Update();
+
+	renderObjects["Mirror"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["Mirror"]->Update();
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
 		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());
@@ -389,6 +405,26 @@ void DXGraphics::InitialiseOBJs()
 	renderObjects["cobblestone"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/cobblestone.fbx"));
 	renderObjects["cobblestone"]->SetRotation(-90.f, 0.f, 0.f);
 	renderObjects["cobblestone"]->SetPosition(6.f, 0.f, 0.f);
+
+	//Default Scene OBJ's
+	renderObjects["floor"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/floor.fbx"));
+	renderObjects["floor"]->SetScale(12.f, 1.f, 12.f);
+	renderObjects["floor"]->SetPosition(3.f, -1.f, 1.f);
+
+	renderObjects["wall"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/wall.fbx"));
+	renderObjects["wall"]->SetScale(12.f, 1.f, 12.f);
+	renderObjects["wall"]->SetRotation(-90.f, 0.f, 0.f);
+	renderObjects["wall"]->SetPosition(3.f, 5.f, 5.f);
+
+	renderObjects["wall2"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/wall.fbx"));
+	renderObjects["wall2"]->SetScale(12.f, 1.f, 12.f);
+	renderObjects["wall2"]->SetRotation(-90.f, 90.f, 0.f);
+	renderObjects["wall2"]->SetPosition(9.f, 5.f, 1.f);
+
+	renderObjects["Mirror"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/mirror.fbx"));
+	renderObjects["Mirror"]->SetScale(10.f, 1.f, 10.f);
+	renderObjects["Mirror"]->SetRotation(-90.f, 90.f, 0.f);
+	renderObjects["Mirror"]->SetPosition(8.9f, 1.f, 0.f);
 }
 
 void DXGraphics::InitialiseLighting()
