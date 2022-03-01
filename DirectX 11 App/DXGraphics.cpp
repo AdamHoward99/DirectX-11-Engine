@@ -227,6 +227,18 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
+	///Create Mirror Reflection Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC reflectionDDS(D3D11_DEFAULT);
+	reflectionDDS.StencilEnable = true;
+	reflectionDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+	reflectionDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+	hr = pDevice->CreateDepthStencilState(&reflectionDDS, pDepthStencilStates[2].GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
+
+	//TODO: add the default values of CD3D11_DEPTH_STENCIL_DESC as a comment
+
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
 	ZeroMemory(&deviceViewport, sizeof D3D11_VIEWPORT);
@@ -430,7 +442,7 @@ void DXGraphics::InitialiseOBJs()
 	renderObjects["Mirror"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/mirror.fbx"));
 	renderObjects["Mirror"]->SetScale(10.f, 1.f, 10.f);
 	renderObjects["Mirror"]->SetRotation(-90.f, 90.f, 0.f);
-	renderObjects["Mirror"]->SetPosition(8.9f, 1.f, 0.f);
+	renderObjects["Mirror"]->SetPosition(-2.f, 1.f, 0.f);
 }
 
 void DXGraphics::InitialiseLighting()
