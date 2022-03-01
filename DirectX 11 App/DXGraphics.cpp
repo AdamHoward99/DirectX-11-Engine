@@ -210,14 +210,20 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
 	///Create Default Depth Stencil State
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory(&depthStencilDesc, sizeof D3D11_DEPTH_STENCIL_DESC);
+	CD3D11_DEPTH_STENCIL_DESC defaultDDS(D3D11_DEFAULT);
+	defaultDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	hr = pDevice->CreateDepthStencilState(&defaultDDS, pDepthStencilStates[0].GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
-	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthStencilStates[0].GetAddressOf());
+	///Create Mirror Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC mirrorDDS(D3D11_DEFAULT);
+	mirrorDDS.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	mirrorDDS.StencilEnable = true;
+	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+
+	hr = pDevice->CreateDepthStencilState(&mirrorDDS, pDepthStencilStates[1].GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
