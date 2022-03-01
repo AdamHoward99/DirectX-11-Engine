@@ -54,14 +54,14 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//Background
 	float colour[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	pDeviceContext->ClearRenderTargetView(pRenderView.Get(), colour);
-	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	//Set input layout, topology and shaders
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->RSSetState(pRasterizerState.Get());
 	pDeviceContext->OMSetBlendState(pBlendState.Get(), NULL, 0xFFFFFFFF);
-	pDeviceContext->OMSetDepthStencilState(pDepthState.Get(), NULL);
+	pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[0].Get(), NULL);
 	///Note: Pixels closer to the camera need to be instantiated and drawn after objects which it is blending with
 	///Note: Alternative is to draw all opaque objects first followed by any non-opaque after.
 	pDeviceContext->PSSetSamplers(NULL, 2, pSamplerStates[0].GetAddressOf());
@@ -209,7 +209,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	//Create depth stencil state
+	///Create Default Depth Stencil State
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	ZeroMemory(&depthStencilDesc, sizeof D3D11_DEPTH_STENCIL_DESC);
 
@@ -217,7 +217,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthState.GetAddressOf());
+	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthStencilStates[0].GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
