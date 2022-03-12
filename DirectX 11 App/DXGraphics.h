@@ -43,6 +43,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilStates[3];
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerStates[3];
 
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasteriserCullClockwise;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> pMirrorBlendState;
+
+	//TODO: create PSO like class to store blend state, rasterizer state and depth stencil states for things like opaque, transparent, reflected, mirror, shadow
+
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;
 

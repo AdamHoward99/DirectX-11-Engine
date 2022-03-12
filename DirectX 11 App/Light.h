@@ -51,8 +51,6 @@ public:
 	///Function to set the range of the fog effect from the fog start position
 	const void SetFogRange(const float fogR) { mLightdata.fogRange = fogR; }
 
-	//bool for enable fog?
-
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pLightBuffer;
 	///Values of all lights used in scene is carried across all instances so they can be used in a single register in PixelShader.hlsl.
