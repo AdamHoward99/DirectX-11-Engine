@@ -28,6 +28,7 @@ private:
 	void InitialiseMaterials();
 	void InitialiseOBJs();
 	void InitialiseLighting();
+	void InitialisePSOs();
 	void SetPSO(const PSO* pso);
 
 	void DrawString();
@@ -47,8 +48,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11BlendState> pMirrorBlendState;
 
 	std::unordered_map<std::string, std::unique_ptr<PSO>> PSOs;
-
-	//TODO: create PSO like class to store blend state, rasterizer state and depth stencil states for things like opaque, transparent, reflected, mirror, shadow
 
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;

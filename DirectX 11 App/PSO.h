@@ -25,7 +25,6 @@ private:
 
 
 	//?
-	//Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	//Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
 	//Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	//Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
