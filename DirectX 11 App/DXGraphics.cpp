@@ -72,14 +72,10 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
 
-	SetPSO(PSOs["Opaque"].get());
-	 
 	///Notice: Update OBJ's here
-	renderObjects["ice"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
-	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
-	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
-	renderObjects["ice"]->SetMaterialRoughness(0.1f);
-	renderObjects["ice"]->Update();		///All transformations should be applied before this is called
+
+	///Opaque Objects
+	SetPSO(PSOs["Opaque"].get());
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["marble"]->SetRotation(0.f, 0.01f * dt, 0.f);
@@ -105,6 +101,16 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	renderObjects["wall2"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["wall2"]->SetMaterialRoughness(0.01f);
 	renderObjects["wall2"]->Update();
+
+	///Transparent Objects
+	SetPSO(PSOs["Transparent"].get());
+	 
+	renderObjects["ice"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
+	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
+	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
+	renderObjects["ice"]->SetMaterialRoughness(0.1f);
+	renderObjects["ice"]->Update();		///All transformations should be applied before this is called
+	
 
 	//Note: Mirror code starts here
 
@@ -243,10 +249,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	//hr = pDevice->CreateDepthStencilState(&defaultDDS, pDepthStencilStates[0].GetAddressOf());
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
-
 	///Create Mirror Blend State
 	CD3D11_BLEND_DESC mirrorBlendState(D3D11_DEFAULT);
 	mirrorBlendState.RenderTarget->RenderTargetWriteMask = 0;
@@ -305,10 +307,38 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	hr = pDevice->CreateRasterizerState(&mirrorRasterizerDesc, pRasteriserCullClockwise.GetAddressOf());
 	if(FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
+	
+	//hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
+
+	/*
+		PSO Settings for Opaque Objects
+	*/
+
+	///Create Opaque Blend State
+	CD3D11_BLEND_DESC opaqueBlendDesc(D3D11_DEFAULT);
+
+	///Create Opaque Rasterizer State
+	D3D11_RASTERIZER_DESC opaqueRasterizerDesc;
+	ZeroMemory(&opaqueRasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
+	opaqueRasterizerDesc.CullMode = D3D11_CULL_BACK;
+	opaqueRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+
+	///Create Opaque Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC opaqueDDS(D3D11_DEFAULT);
+	opaqueDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	///Create Opaque PSO Settings
+	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS));
+
+	/*
+		PSO Settings for Transparent Objects
+	*/
 
 	///Create Blend State
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof D3D11_BLEND_DESC);
+	D3D11_BLEND_DESC transparentBlendDesc;
+	ZeroMemory(&transparentBlendDesc, sizeof D3D11_BLEND_DESC);
 
 	D3D11_RENDER_TARGET_BLEND_DESC blendTarget;
 	ZeroMemory(&blendTarget, sizeof D3D11_RENDER_TARGET_BLEND_DESC);
@@ -356,31 +386,15 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	///D3D11_COLOR_WRITE_ENABLE_ALPHA - Allows the alpha to be visible
 	///D3D11_COLOR_WRITE_ENABLE_ALL - Bitwise OR allowing all data to visible
 	///These can be Bitwise OR together to create different blending results.
-	blendDesc.RenderTarget[0] = blendTarget;
-	
-	//hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
+	transparentBlendDesc.RenderTarget[0] = blendTarget;
 
-	/*
-		PSO Settings for Opaque Objects
-	*/
+	///Create Transparent Rasterizer State
+	D3D11_RASTERIZER_DESC transparentRasterizerDesc;
+	ZeroMemory(&transparentRasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
+	transparentRasterizerDesc.CullMode = D3D11_CULL_NONE;
+	transparentRasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
-	///Create Opaque Blend State
-	CD3D11_BLEND_DESC opaqueBlendDesc(D3D11_DEFAULT);
-
-	///Create Opaque Rasterizer State
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-
-	///Create Opaque Depth Stencil State
-	CD3D11_DEPTH_STENCIL_DESC opaqueDDS(D3D11_DEFAULT);
-	opaqueDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-	///Create Opaque PSO Settings
-	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, rasterizerDesc, opaqueDDS));
+	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS));
 
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
