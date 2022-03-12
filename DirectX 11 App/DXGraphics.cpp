@@ -249,24 +249,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	///Create Mirror Blend State
-	CD3D11_BLEND_DESC mirrorBlendState(D3D11_DEFAULT);
-	mirrorBlendState.RenderTarget->RenderTargetWriteMask = 0;
-
-	hr = pDevice->CreateBlendState(&mirrorBlendState, pMirrorBlendState.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
-
-	///Create Mirror Depth Stencil State
-	CD3D11_DEPTH_STENCIL_DESC mirrorDDS(D3D11_DEFAULT);
-	mirrorDDS.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	mirrorDDS.StencilEnable = true;
-	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
-
-	hr = pDevice->CreateDepthStencilState(&mirrorDDS, pDepthStencilStates[1].GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
-
 	///Create Mirror Reflection Depth Stencil State
 	CD3D11_DEPTH_STENCIL_DESC reflectionDDS(D3D11_DEFAULT);
 	reflectionDDS.StencilEnable = true;
@@ -395,6 +377,22 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	transparentRasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
 	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS));
+
+	/*
+		PSO Settings for Mirrored Objects
+	*/
+
+	///Create Mirror Blend State
+	CD3D11_BLEND_DESC mirrorBlendState(D3D11_DEFAULT);
+	mirrorBlendState.RenderTarget->RenderTargetWriteMask = 0;
+
+	///Create Mirror Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC mirrorDDS(D3D11_DEFAULT);
+	mirrorDDS.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	mirrorDDS.StencilEnable = true;
+	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+
+	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS));
 
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
