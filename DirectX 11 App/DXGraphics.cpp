@@ -249,16 +249,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	///Create Mirror Reflection Depth Stencil State
-	CD3D11_DEPTH_STENCIL_DESC reflectionDDS(D3D11_DEFAULT);
-	reflectionDDS.StencilEnable = true;
-	reflectionDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-	reflectionDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
-	hr = pDevice->CreateDepthStencilState(&reflectionDDS, pDepthStencilStates[2].GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
-
 	//TODO: add the default values of CD3D11_DEPTH_STENCIL_DESC as a comment
 
 	//Set Rasterizer
@@ -274,26 +264,7 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	ViewportCount++;
 
 	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
-
-	//hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
-
-	//Create Rasterizer State for Mirror reflection
-	D3D11_RASTERIZER_DESC mirrorRasterizerDesc;
-	ZeroMemory(&mirrorRasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
-	mirrorRasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	mirrorRasterizerDesc.CullMode = D3D11_CULL_BACK;
-	mirrorRasterizerDesc.FrontCounterClockwise = true;
-	mirrorRasterizerDesc.DepthClipEnable = true;
-	hr = pDevice->CreateRasterizerState(&mirrorRasterizerDesc, pRasteriserCullClockwise.GetAddressOf());
-	if(FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
 	
-	//hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
-	//if (FAILED(hr))
-	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
-
 	/*
 		PSO Settings for Opaque Objects
 	*/
@@ -393,6 +364,32 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 
 	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS));
+
+	/*
+		PSO Settings for Reflected Objects
+	*/
+
+	///Create Reflected Rasterizer State
+	D3D11_RASTERIZER_DESC reflectRasterizerDesc;
+	ZeroMemory(&reflectRasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
+	reflectRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	reflectRasterizerDesc.CullMode = D3D11_CULL_BACK;
+	reflectRasterizerDesc.FrontCounterClockwise = true;
+	reflectRasterizerDesc.DepthClipEnable = true;
+
+	///Create Reflected Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC reflectedDDS(D3D11_DEFAULT);
+	reflectedDDS.StencilEnable = true;
+	reflectedDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+	reflectedDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, reflectRasterizerDesc, reflectedDDS));
+
+	/*
+		PSO Settings for Shadowed Objects
+	*/
+	//TODO: add more to when working on object shadowing in the future
+	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice));
 
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
