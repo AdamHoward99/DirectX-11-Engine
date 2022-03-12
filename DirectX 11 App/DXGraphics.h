@@ -9,6 +9,7 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "PSO.h"
 #include <unordered_map>
 
 class DXGraphics
@@ -27,6 +28,7 @@ private:
 	void InitialiseMaterials();
 	void InitialiseOBJs();
 	void InitialiseLighting();
+	void SetPSO(const PSO* pso);
 
 	void DrawString();
 
@@ -36,15 +38,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizerState;
-	Microsoft::WRL::ComPtr<ID3D11BlendState> pBlendState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilStates[3];
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilStates[2];
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerStates[3];
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasteriserCullClockwise;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> pMirrorBlendState;
+
+	std::unordered_map<std::string, std::unique_ptr<PSO>> PSOs;
 
 	//TODO: create PSO like class to store blend state, rasterizer state and depth stencil states for things like opaque, transparent, reflected, mirror, shadow
 

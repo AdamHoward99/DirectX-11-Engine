@@ -59,9 +59,6 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//Set input layout, topology and shaders
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pDeviceContext->RSSetState(pRasterizerState.Get());
-	//pDeviceContext->OMSetBlendState(pBlendState.Get(), NULL, 0xFFFFFFFF);
-	pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[0].Get(), 1);
 	///Note: Pixels closer to the camera need to be instantiated and drawn after objects which it is blending with
 	///Note: Alternative is to draw all opaque objects first followed by any non-opaque after.
 	pDeviceContext->PSSetSamplers(NULL, 2, pSamplerStates[0].GetAddressOf());
@@ -74,13 +71,15 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
 	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
+
+	SetPSO(PSOs["Opaque"].get());
 	 
 	///Notice: Update OBJ's here
 	renderObjects["ice"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["ice"]->SetRotation(0.f, 0.01f * dt, 0.f);
 	renderObjects["ice"]->SetMaterialFresnel(0.01f, 0.01f, 0.01f);
 	renderObjects["ice"]->SetMaterialRoughness(0.1f);
-	//renderObjects["ice"]->Update();		///All transformations should be applied before this is called
+	renderObjects["ice"]->Update();		///All transformations should be applied before this is called
 
 	renderObjects["marble"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["marble"]->SetRotation(0.f, 0.01f * dt, 0.f);
@@ -109,28 +108,28 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	//Note: Mirror code starts here
 
-	pDeviceContext->OMSetBlendState(pMirrorBlendState.Get(), NULL, 0xFFFFFFFF);
-	pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[1].Get(), 1);
+	//pDeviceContext->OMSetBlendState(pMirrorBlendState.Get(), NULL, 0xFFFFFFFF);
+	//pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[1].Get(), 1);
 
 	renderObjects["Mirror"]->SetViewProjectionMatrix(camera->GetCameraView() * camera->GetProjection());
 	renderObjects["Mirror"]->Update();
 
-	//Get reflected position
-	DirectX::XMVECTOR mirrorPlane = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);		//xy plane
-	DirectX::XMMATRIX reflectMat = DirectX::XMMatrixReflect(mirrorPlane);
-	DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4A(&renderObjects["ice"]->GetTransformations4X4()) * reflectMat;
+	////Get reflected position
+	//DirectX::XMVECTOR mirrorPlane = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);		//xy plane
+	//DirectX::XMMATRIX reflectMat = DirectX::XMMatrixReflect(mirrorPlane);
+	//DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4A(&renderObjects["ice"]->GetTransformations4X4()) * reflectMat;
 
-	pDeviceContext->RSSetState(pRasteriserCullClockwise.Get());
-	pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[2].Get(), 1);
+	//pDeviceContext->RSSetState(pRasteriserCullClockwise.Get());
+	//pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[2].Get(), 1);
 
-	renderObjects["ice"]->Update();
+	//renderObjects["ice"]->Update();
 
-	//Reset back
-	pDeviceContext->RSSetState(pRasterizerState.Get());
-	pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[0].Get(), 0);
+	////Reset back
+	//pDeviceContext->RSSetState(pRasterizerState.Get());
+	//pDeviceContext->OMSetDepthStencilState(pDepthStencilStates[0].Get(), 0);
 
-	pDeviceContext->OMSetBlendState(pBlendState.Get(), NULL, 0xFFFFFFFF);
-	renderObjects["Mirror"]->Update();
+	//pDeviceContext->OMSetBlendState(pBlendState.Get(), NULL, 0xFFFFFFFF);
+	//renderObjects["Mirror"]->Update();
 
 
 	std::string txt = "Object X: " + std::to_string(renderObjects["ice"]->GetRotationX()) + " Object Y: " + std::to_string(renderObjects["ice"]->GetRotationY()) +
@@ -149,6 +148,18 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 
 	DrawString();
 	pSwapChain->Present(1, NULL);
+}
+
+void DXGraphics::SetPSO(const PSO* pso)
+{
+	//Set Blend State
+	pDeviceContext->OMSetBlendState(pso->GetBlendState(), NULL, 0xFFFFFFFF);
+
+	//Set Rasterizer State
+	pDeviceContext->RSSetState(pso->GetRasterizerState());
+
+	//Set Depth Stencil State
+	pDeviceContext->OMSetDepthStencilState(pso->GetDSState(), NULL);
 }
 
 bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
@@ -232,13 +243,9 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	///Create Default Depth Stencil State
-	CD3D11_DEPTH_STENCIL_DESC defaultDDS(D3D11_DEFAULT);
-	defaultDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-	hr = pDevice->CreateDepthStencilState(&defaultDDS, pDepthStencilStates[0].GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
+	//hr = pDevice->CreateDepthStencilState(&defaultDDS, pDepthStencilStates[0].GetAddressOf());
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
 	///Create Mirror Blend State
 	CD3D11_BLEND_DESC mirrorBlendState(D3D11_DEFAULT);
@@ -284,15 +291,9 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
 
-	//Create Rasterizer State
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
-	
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
+	//hr = pDevice->CreateRasterizerState(&rasterizerDesc, pRasterizerState.GetAddressOf());
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateRasterizerState()");
 
 	//Create Rasterizer State for Mirror reflection
 	D3D11_RASTERIZER_DESC mirrorRasterizerDesc;
@@ -357,9 +358,29 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	///These can be Bitwise OR together to create different blending results.
 	blendDesc.RenderTarget[0] = blendTarget;
 	
-	hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
+	//hr = pDevice->CreateBlendState(&blendDesc, pBlendState.GetAddressOf());
+	//if (FAILED(hr))
+	//	ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateBlendState()");
+
+	/*
+		PSO Settings for Opaque Objects
+	*/
+
+	///Create Opaque Blend State
+	CD3D11_BLEND_DESC opaqueBlendDesc(D3D11_DEFAULT);
+
+	///Create Opaque Rasterizer State
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof D3D11_RASTERIZER_DESC);
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+
+	///Create Opaque Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC opaqueDDS(D3D11_DEFAULT);
+	opaqueDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	///Create Opaque PSO Settings
+	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, rasterizerDesc, opaqueDDS));
 
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
