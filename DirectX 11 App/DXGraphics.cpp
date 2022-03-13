@@ -165,7 +165,7 @@ void DXGraphics::SetPSO(const PSO* pso)
 	pDeviceContext->RSSetState(pso->GetRasterizerState());
 
 	//Set Depth Stencil State
-	pDeviceContext->OMSetDepthStencilState(pso->GetDSState(), NULL);
+	pDeviceContext->OMSetDepthStencilState(pso->GetDSState(), pso->GetDepthStencilRef());
 }
 
 bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
@@ -356,6 +356,11 @@ void DXGraphics::InitialiseMaterials()
 	mMaterials["Default"]->matData.matFresnelEffect = DirectX::XMFLOAT3A(0.01f, 0.01f, 0.01f);
 	mMaterials["Default"]->matData.matRoughness = 0.01f;
 	mMaterials["Default"]->matTextures[0] = std::move(Texture(pDevice, "OBJ/TexturedOBJExample/defaultTexture.png", aiTextureType_DIFFUSE));
+
+	//Create Shadow Material
+	mMaterials["Shadow"] = std::make_unique<Material>();
+	mMaterials["Shadow"]->matName = "Shadow Material";
+	mMaterials["Shadow"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 0.5f);
 }
 
 void DXGraphics::InitialiseOBJs()
@@ -513,7 +518,8 @@ void DXGraphics::InitialisePSOs()
 	mirrorDDS.StencilEnable = true;
 	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 
-	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS));
+
+	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS, 1));
 
 	/*
 		PSO Settings for Reflected Objects
@@ -533,14 +539,33 @@ void DXGraphics::InitialisePSOs()
 	reflectedDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 	reflectedDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, reflectRasterizerDesc, reflectedDDS));
+	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, reflectRasterizerDesc, reflectedDDS, 1));
 
 	/*
 		PSO Settings for Shadowed Objects
 	*/
 
+	//Prevents Double Blending
+	D3D11_DEPTH_STENCIL_DESC shadowBlendDesc;
+	shadowBlendDesc.DepthEnable = true;
+	shadowBlendDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	shadowBlendDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	shadowBlendDesc.StencilEnable = true;
+	shadowBlendDesc.StencilReadMask = 0xff;
+	shadowBlendDesc.StencilWriteMask = 0xff;
+	shadowBlendDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	shadowBlendDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	shadowBlendDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
+	shadowBlendDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+	//Not Needed
+	shadowBlendDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	shadowBlendDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	shadowBlendDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
+	shadowBlendDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
 	//TODO: add more to when working on object shadowing in the future
-	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice));
+	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc));
 }
 
 void DXGraphics::DrawString()

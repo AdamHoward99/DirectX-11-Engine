@@ -21,9 +21,12 @@ PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice)
 	hr = pDevice->CreateDepthStencilState(&depthStencilDesc, pDepthStencilState.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
+
+	//Set Depth Stencil Reference Value
+	depthStencilRef = 0;
 }
 
-PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& blendDesc, const D3D11_RASTERIZER_DESC& rasterDesc, const D3D11_DEPTH_STENCIL_DESC& DSDesc)
+PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& blendDesc, const D3D11_RASTERIZER_DESC& rasterDesc, const D3D11_DEPTH_STENCIL_DESC& DSDesc, const UINT DSRef)
 {
 	this->pDevice = pDevice;
 
@@ -41,6 +44,9 @@ PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& b
 	hr = pDevice->CreateDepthStencilState(&DSDesc, pDepthStencilState.GetAddressOf());
 	if (FAILED(hr))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
+
+	//Set Depth Stencil Reference Value
+	depthStencilRef = DSRef;
 }
 
 PSO::PSO(const PSO& otherPSO)
@@ -49,6 +55,7 @@ PSO::PSO(const PSO& otherPSO)
 	this->pDepthStencilState = otherPSO.pDepthStencilState;
 	this->pDevice = otherPSO.pDevice;
 	this->pRasterizerState = otherPSO.pRasterizerState;
+	this->depthStencilRef = otherPSO.depthStencilRef;
 }
 
 PSO::PSO(PSO&& otherPSO)
@@ -57,12 +64,14 @@ PSO::PSO(PSO&& otherPSO)
 	this->pDepthStencilState = otherPSO.pDepthStencilState;
 	this->pDevice = otherPSO.pDevice;
 	this->pRasterizerState = otherPSO.pRasterizerState;
+	this->depthStencilRef = otherPSO.depthStencilRef;
 
 	//Deallocate otherPSO variables
 	otherPSO.pBlendState = nullptr;
 	otherPSO.pDepthStencilState = nullptr;
 	otherPSO.pDevice = nullptr;
 	otherPSO.pRasterizerState = nullptr;
+	otherPSO.depthStencilRef = NULL;
 }
 
 ID3D11BlendState* PSO::GetBlendState() const
@@ -78,4 +87,9 @@ ID3D11RasterizerState* PSO::GetRasterizerState() const
 ID3D11DepthStencilState* PSO::GetDSState() const
 {
 	return this->pDepthStencilState.Get();
+}
+
+const UINT PSO::GetDepthStencilRef() const
+{
+	return depthStencilRef;
 }
