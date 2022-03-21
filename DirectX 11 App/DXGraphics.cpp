@@ -27,10 +27,10 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Directional Lighting
-	directionalLight.SetLightStrength(0.f);
-	directionalLight.SetEyePosition(camera->GetPosition());		//Required for reflected light from materials to be seen at eye position, any light type can call this
+	directionalLights[0]->SetLightStrength(0.f);
+	directionalLights[0]->SetEyePosition(camera->GetPosition());	//Required for reflected light from materials to be seen at eye position, any light type can call this
 
-	//Update Point Light 0
+	//Update Point Lights
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
 	pointLights[0]->SetLightPosition(DirectX::XMFLOAT3A(1.f, 3.f, -3.f));
 	pointLights[0]->SetLightStrength(1.f);
@@ -43,13 +43,13 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	spotLights[0]->SetLightPosition(DirectX::XMFLOAT3A(0.f, 5.f, 0.f));
 
 	//Create Fog Effect
-	directionalLight.SetFogColour(DirectX::XMFLOAT4A(0.35f, 0.35f, 0.35f, 1.f));
-	directionalLight.SetFogRange(10.f);
-	directionalLight.SetFogStart(10.f);
-	directionalLight.SetFogEffectStatus(false);
+	directionalLights[0]->SetFogColour(DirectX::XMFLOAT4A(0.35f, 0.35f, 0.35f, 1.f));
+	directionalLights[0]->SetFogRange(10.f);
+	directionalLights[0]->SetFogStart(10.f);
+	directionalLights[0]->SetFogEffectStatus(false);
 
 	//Render lights, only single light needs to be called to render since all light data is static across all lights
-	directionalLight.RenderLighting(pDeviceContext.Get());
+	directionalLights[0]->RenderLighting(pDeviceContext.Get());
 
 	//Background
 	float colour[] = { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -249,8 +249,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	//Set Render Target
 	pDeviceContext->OMSetRenderTargets(1, pRenderView.GetAddressOf(), pDepthView.Get());
 
-	//TODO: add the default values of CD3D11_DEPTH_STENCIL_DESC as a comment
-
 	//Set Rasterizer
 	D3D11_VIEWPORT deviceViewport;
 	ZeroMemory(&deviceViewport, sizeof D3D11_VIEWPORT);
@@ -402,7 +400,11 @@ void DXGraphics::InitialiseOBJs()
 void DXGraphics::InitialiseLighting()
 {
 	///Initialise Directional Lighting linked to register b0
-	directionalLight.InitialiseLighting(pDevice.Get());
+	for (int i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
+	{
+		directionalLights[i] = std::move(std::make_unique<DirectionalLight>());
+		directionalLights[i]->InitialiseLighting(pDevice.Get());
+	}
 
 	///Initialise Point Lighting linked to register b1
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++)
@@ -437,8 +439,20 @@ void DXGraphics::InitialisePSOs()
 	CD3D11_DEPTH_STENCIL_DESC opaqueDDS(D3D11_DEFAULT);
 	opaqueDDS.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
+	/* Default values of CD3D11_DEPTH_STENCIL_DESC:
+	DepthEnable = TRUE,
+	DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
+	DepthFunc = D3D11_COMPARISON_LESS,
+	StencilEnable = FALSE,
+	StencilReadMask = 255,
+	StencilWriteMask = 255,
+	FrontFace && BackFace->StencilFunc = D3D11_COMPARISON_ALWAYS,
+	FrontFace && BackFace->Operations = D3D11_STENCIL_OP_KEEP
+	*/
+
 	///Create Opaque PSO Settings
 	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS));
+
 
 	/*
 		PSO Settings for Transparent Objects
@@ -564,7 +578,6 @@ void DXGraphics::InitialisePSOs()
 	shadowBlendDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	shadowBlendDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	//TODO: add more to when working on object shadowing in the future
 	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc));
 }
 

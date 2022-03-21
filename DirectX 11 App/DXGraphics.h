@@ -64,7 +64,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Material>> mMaterials;
 
 	///Scene Lights
-	DirectionalLight directionalLight;		//Todo: make this an unordered map
+	std::unordered_map<int, std::unique_ptr<DirectionalLight>> directionalLights;
 	std::unordered_map<int, std::unique_ptr<PointLight>> pointLights;
 	std::unordered_map<int, std::unique_ptr<SpotLight>> spotLights;
 };
