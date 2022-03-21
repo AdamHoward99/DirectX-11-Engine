@@ -9,7 +9,7 @@ bool Engine::Initialise(HINSTANCE hInstance, std::string title, std::string wind
 		return false;
 
 	//Initialize Camera / Set Camera Properties
-	camera.SetupCamera(DirectX::XMFLOAT3A(0.f, 0.f, -1.f), (float)w / float(h), 0.1f, 100.f);
+	camera.SetupCamera(DirectX::XMFLOAT3A(0.f, 0.f, -3.f), (float)w / float(h), 0.1f, 100.f);
 
 	gTimer.StartTimer();
 	return true;

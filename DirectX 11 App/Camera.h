@@ -15,16 +15,16 @@ public:
 	Camera(const DirectX::XMFLOAT3A& camPos, const DirectX::XMFLOAT3A& camRot);
 	///Constructor to set Camera position and rotation, uses XMVECTOR variables
 	Camera(const DirectX::XMVECTOR& camPos, const DirectX::XMVECTOR& camRot);
-	///Copy Constructor for Camera class
-	Camera(const Camera& otherCam);
-	///Move Constructor for Camera class
-	Camera(Camera&& otherCam);
 	///Default Destructor for Camera class
 	~Camera();
-	///Copy Assignment Operator for Camera class
-	Camera& operator=(const Camera& otherCam);
-	///Move Assignment Operator for Camera class
-	Camera& operator=(Camera&& otherCam);
+	///Sets the starting values of the Camera
+	void SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRatio, const float nearZ, const float farZ);
+	///Directs the Cameras view towards a point / object in the world, takes XMMATRIX
+	void LookAt(const DirectX::XMMATRIX& targetPos);
+	///Directs the Camera to look at a XMFLOAT3A point in the world
+	void LookAt(DirectX::XMFLOAT3A& targetPos);
+	///Directs the Camera to look at a point in the world
+	void LookAt(float x, float y, float z);
 	///XMFLOAT3A version of SetPosition function
 	void SetPosition(const DirectX::XMFLOAT3A& pos);
 	///XMVECTOR version of SetPosition function
@@ -87,48 +87,32 @@ public:
 	void LowerCamera3A_D(const float dt);
 	///Debug Camera Lower Movement for XMVECTOR
 	void LowerCameraVec_D(const float dt);
-
-	//zoom in  / out functions
-	//set camera speed
-	//set mouse camera movement
-
-	void SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRatio, const float nearZ, const float farZ);
-
-	///Engine Example Functions - Uses XMFLOAT by default
-	//const void ZoomIn();
-	//const void ZoomOut();
-
-	const DirectX::XMMATRIX& GetCameraView() const { return cameraView; }
-	const DirectX::XMMATRIX& GetProjection() const { return projection; }
-
-	const int GetCameraNumber() const { return CameraNo; }
-
-	void SetProjection(float deg, float rat, float nearZ, float farZ);
-	void LookAt(const DirectX::XMMATRIX& targetPos);
-	void LookAt(DirectX::XMFLOAT3A targetPos);
-	void LookAt(float x, float y, float z);
-
-	//Euler Angle Calculations
-	void SetPitch(const float y, const float distance);
-	void SetYaw(const float x, const float z);
-
-
-
-
-
+	///Enables Camera movement using the mouse
 	void SetMouseMovement(bool foo);
+	///Returns status of Camera mouse movement
 	bool GetMouseMovement() const;
+	///Obtains the Cameras View matrix
+	const DirectX::XMMATRIX& GetCameraView() const;
+	///Obtains the Cameras Projection matrix
+	const DirectX::XMMATRIX& GetProjection() const;
+	///Obtains the current Cameras number
+	const int GetCameraNumber() const;
 
 private:
-
+	///Sets the Cameras projection for the Left-Handed Coordinate System
+	void SetProjection(float deg, float rat, float nearZ, float farZ);
+	///Sets the Pitch of the Cameras view projection
+	void SetPitch(const float y, const float distance);
+	///Sets the Yaw of the Cameras view projection
+	void SetYaw(const float x, const float z);
 	///XMFLOAT3A version of MovePosition function, moves from Cameras current position via the Debug Movement functions
 	void AddToPosition(const DirectX::XMFLOAT3A& pos);
 	///XMVECTOR version of MovePosition function
 	void AddToPosition(const DirectX::XMVECTOR& pos);
 	///Singular float version of MovePosition function
 	void AddToPosition(const float X, const float Y, const float Z);
-
-	void UpdateView();		///Function uses XMFLOAT by default
+	///Updates the Cameras view in the world, uses XMFLOAT by default
+	void UpdateView();
 
 	DirectX::XMMATRIX cameraView;
 	DirectX::XMMATRIX projection;
@@ -159,7 +143,4 @@ private:
 	float farZ;
 
 	bool mouseMovementEnabled = false;
-
-	///Notice: Aligned variables can be more efficient in cases where bits aren't aligned.
-	///Notice: Don't overuse Operator Overloads for types like XMMATRIX and XMVECTOR, they create multiple temp objs.
 };

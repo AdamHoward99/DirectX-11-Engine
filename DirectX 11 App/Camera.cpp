@@ -39,16 +39,6 @@ Camera::Camera(const DirectX::XMVECTOR& camPos, const DirectX::XMVECTOR& camRot)
 	UpdateView();
 }
 
-Camera::Camera(const Camera& otherCam)
-{
-	//TODO fill out
-}
-
-Camera::Camera(Camera&& otherCam)
-{
-	//TODO fill out
-}
-
 Camera::~Camera()
 {}
 
@@ -113,7 +103,6 @@ void Camera::SetRotation(const DirectX::XMFLOAT3A& newRot)
 
 void Camera::AddToRotation(const DirectX::XMFLOAT3A& rot)
 {
-	//Edit the vectors 
 	cameraRotation += rot;
 	UpdateView();
 }
@@ -226,6 +215,21 @@ bool Camera::GetMouseMovement() const
 	return mouseMovementEnabled;
 }
 
+const DirectX::XMMATRIX& Camera::GetCameraView() const
+{
+	return cameraView;
+}
+
+const DirectX::XMMATRIX& Camera::GetProjection() const
+{
+	return projection;
+}
+
+const int Camera::GetCameraNumber() const
+{
+	return CameraNo;
+}
+
 void Camera::UpdateView()
 {
 	//Calculate camera rotation matrix
@@ -282,7 +286,7 @@ void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
 	SetYaw(x, z);
 }
 
-void Camera::LookAt(DirectX::XMFLOAT3A target)
+void Camera::LookAt(DirectX::XMFLOAT3A& target)
 {
 	///Calculate the Pitch Angle
 
@@ -340,10 +344,7 @@ void Camera::SetYaw(const float x, const float z)
 
 void Camera::MoveCameraForward3A_D(const float dt)
 {
-	forwardDir.x *= dt * cameraSpeed;
-	forwardDir.y *= dt * cameraSpeed;
-	forwardDir.z *= dt * cameraSpeed;
-
+	forwardDir *= (dt * cameraSpeed);
 	AddToPosition(forwardDir);
 }
 
@@ -356,10 +357,7 @@ void Camera::MoveCameraForwardVec_D(const float dt)
 void Camera::MoveCameraBackwards3A_D(const float dt)
 {
 	//Reverse / Negative of the forward direction
-	forwardDir.x *= dt * -1.f * cameraSpeed;
-	forwardDir.y *= dt * -1.f * cameraSpeed;
-	forwardDir.z *= dt * -1.f * cameraSpeed;
-
+	forwardDir *= (-dt * cameraSpeed);
 	AddToPosition(forwardDir);
 }
 
@@ -372,10 +370,7 @@ void Camera::MoveCameraBackwardsVec_D(const float dt)
 void Camera::MoveCameraLeft3A_D(const float dt)
 {
 	//Reverse / Negative of the right direction
-	rightDir.x *= dt * -1.f * cameraSpeed;
-	rightDir.y *= dt * -1.f * cameraSpeed;
-	rightDir.z *= dt * -1.f * cameraSpeed;
-
+	rightDir *= (-dt * cameraSpeed);
 	AddToPosition(rightDir);
 }
 
@@ -387,10 +382,7 @@ void Camera::MoveCameraLeftVec_D(const float dt)
 
 void Camera::MoveCameraRight3A_D(const float dt)
 {
-	rightDir.x *= dt * cameraSpeed;
-	rightDir.y *= dt * cameraSpeed;
-	rightDir.z *= dt * cameraSpeed;
-
+	rightDir *= (dt * cameraSpeed);
 	AddToPosition(rightDir);
 }
 
@@ -402,10 +394,7 @@ void Camera::MoveCameraRightVec_D(const float dt)
 
 void Camera::ElevateCamera3A_D(const float dt)
 {
-	upDir.x *= dt * cameraSpeed;
-	upDir.y *= dt * cameraSpeed;
-	upDir.z *= dt * cameraSpeed;
-
+	upDir *= (dt * cameraSpeed);
 	AddToPosition(upDir);
 }
 
@@ -418,10 +407,7 @@ void Camera::ElevateCameraVec_D(const float dt)
 void Camera::LowerCamera3A_D(const float dt)
 {
 	//Reverse / Negative of the Up direction
-	upDir.x *= dt * -1.f * cameraSpeed;
-	upDir.y *= dt * -1.f * cameraSpeed;
-	upDir.z *= dt * -1.f * cameraSpeed;
-
+	upDir *= (-dt * cameraSpeed);
 	AddToPosition(upDir);
 }
 
@@ -431,13 +417,3 @@ void Camera::LowerCameraVec_D(const float dt)
 	AddToPosition(upVec);
 }
 //End of Debug Camera Movement Functions--------------------------------------------------------//
-
-//const void Camera::ZoomIn()
-//{
-//	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, 0.01f));
-//}
-//
-//const void Camera::ZoomOut()
-//{
-//	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, -0.01f));
-//}
