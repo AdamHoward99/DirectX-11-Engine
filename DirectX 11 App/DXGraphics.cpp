@@ -28,7 +28,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 {
 	//Update Directional Lighting
 	directionalLights[0]->SetLightStrength(0.f);
-	directionalLights[0]->SetEyePosition(camera->GetPosition());	//Required for reflected light from materials to be seen at eye position, any light type can call this
+	directionalLights[0]->SetEyePosition(camera->GetPosition3A());	//Required for reflected light from materials to be seen at eye position, any light type can call this
 
 	//Update Point Lights
 	pointLights[0]->SetLightColour(DirectX::XMFLOAT3A(1.f, 1.f, 1.f));
@@ -142,6 +142,11 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 		" Object Z: " + std::to_string(renderObjects["ice"]->GetRotationZ());
 
 	fonts["default"]->DrawString(StringCon::StringToCString(txt), DirectX::XMFLOAT2A(0.f, 20.f));
+
+	std::string txt2 = "Camera X: " + std::to_string(camera->GetPositionX()) + " Camera Y: " + std::to_string(camera->GetPositionY()) +
+		" Camera Z: " + std::to_string(camera->GetPositionZ());
+
+	fonts["default"]->DrawString(StringCon::StringToCString(txt2), DirectX::XMFLOAT2A(0.f, 60.f));
 
 	//Display FPS Timer
 	fTimer.IncrementFPSCounter();
@@ -444,8 +449,8 @@ void DXGraphics::InitialisePSOs()
 	DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
 	DepthFunc = D3D11_COMPARISON_LESS,
 	StencilEnable = FALSE,
-	StencilReadMask = 255,
-	StencilWriteMask = 255,
+	StencilReadMask = 0xff,
+	StencilWriteMask = 0xff,
 	FrontFace && BackFace->StencilFunc = D3D11_COMPARISON_ALWAYS,
 	FrontFace && BackFace->Operations = D3D11_STENCIL_OP_KEEP
 	*/

@@ -17,6 +17,41 @@ Camera::Camera()
 	UpdateView();
 }
 
+Camera::Camera(const DirectX::XMFLOAT3A& camPos, const DirectX::XMFLOAT3A& camRot)
+{
+	cameraPosition = camPos;
+	cameraRotation = camRot;
+
+	CameraNo = CamerasInUse;
+	CamerasInUse++;
+
+	UpdateView();
+}
+
+Camera::Camera(const DirectX::XMVECTOR& camPos, const DirectX::XMVECTOR& camRot)
+{
+	cameraPositionVec = camPos;
+	cameraRotationVec = camRot;
+
+	CameraNo = CamerasInUse;
+	CamerasInUse++;
+
+	UpdateView();
+}
+
+Camera::Camera(const Camera& otherCam)
+{
+	//TODO fill out
+}
+
+Camera::Camera(Camera&& otherCam)
+{
+	//TODO fill out
+}
+
+Camera::~Camera()
+{}
+
 void Camera::SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRatio, const float nearZ, const float farZ)
 {
 	SetPosition(startPos);
@@ -37,6 +72,15 @@ const DirectX::XMFLOAT3A& operator+=(DirectX::XMFLOAT3A& A, const DirectX::XMFLO
 	return A;
 }
 
+//*= overload for XMFLOAT3A
+const DirectX::XMFLOAT3A& operator*=(DirectX::XMFLOAT3A& A, const float B)
+{
+	A.x = A.x * B;
+	A.y = A.y * B;
+	A.z = A.z * B;
+	return A;
+}
+
 void Camera::SetProjection(float degrees, float aspRatio, float nearZ, float farZ)
 {
 	degrees = DirectX::XMConvertToRadians(degrees);
@@ -50,10 +94,15 @@ void Camera::SetPosition(const DirectX::XMFLOAT3A& newPos)
 	UpdateView();
 }
 
-void Camera::MovePosition(const DirectX::XMFLOAT3A& newPos)
+void Camera::AddToPosition(const DirectX::XMFLOAT3A& newPos)
 {
 	cameraPosition += newPos;
 	UpdateView();
+}
+
+const DirectX::XMFLOAT3A& Camera::GetPosition3A() const
+{
+	return cameraPosition;
 }
 
 void Camera::SetRotation(const DirectX::XMFLOAT3A& newRot)
@@ -62,38 +111,110 @@ void Camera::SetRotation(const DirectX::XMFLOAT3A& newRot)
 	UpdateView();
 }
 
-void Camera::MoveRotation(const DirectX::XMFLOAT3A& newRot)
+void Camera::AddToRotation(const DirectX::XMFLOAT3A& rot)
 {
-	cameraRotation += newRot;
+	//Edit the vectors 
+	cameraRotation += rot;
 	UpdateView();
+}
+
+const DirectX::XMFLOAT3A& Camera::GetRotation3A() const
+{
+	return cameraRotation;
 }
 //End of XMFLOAT Functions--------------------------------------------------------------//
 
 //XMVECTOR Functions----------------------------------------------------------------------//
-void Camera::SetPositionVec(const DirectX::XMVECTOR& newPos)
+void Camera::SetPosition(const DirectX::XMVECTOR& newPos)
 {
 	cameraPositionVec = newPos;
 	UpdateView();
 }
 
-void Camera::MovePositionVec(const DirectX::XMVECTOR& newPos)
+void Camera::AddToPosition(const DirectX::XMVECTOR& newPos)
 {
 	cameraPositionVec = DirectX::XMVectorAdd(cameraPositionVec, newPos);
 	UpdateView();
 }
 
-void Camera::SetRotationVec(const DirectX::XMVECTOR& newRot)
+const DirectX::XMVECTOR& Camera::GetPositionVec() const
+{
+	return cameraPositionVec;
+}
+
+void Camera::SetRotation(const DirectX::XMVECTOR& newRot)
 {
 	cameraRotationVec = newRot;
 	UpdateView();
 }
 
-void Camera::MoveRotationVec(const DirectX::XMVECTOR& newRot)
+void Camera::AddToRotation(const DirectX::XMVECTOR& rot)
 {
-	cameraRotationVec = DirectX::XMVectorAdd(cameraRotationVec, newRot);
+	cameraRotationVec = DirectX::XMVectorAdd(cameraRotationVec, rot);
 	UpdateView();
 }
+
+const DirectX::XMVECTOR& Camera::GetRotationVec() const
+{
+	return cameraRotationVec;
+}
 //End of XMVECTOR Functions--------------------------------------------------------------//
+
+//Singular Float Functions---------------------------------------------------------------//
+void Camera::SetPosition(const float X, const float Y, const float Z)
+{
+	cameraPosition = DirectX::XMFLOAT3A(X, Y, Z);
+	UpdateView();
+}
+
+void Camera::AddToPosition(const float X, const float Y, const float Z)
+{
+	cameraPosition += DirectX::XMFLOAT3A(X, Y, Z);
+	UpdateView();
+}
+
+const float Camera::GetPositionX() const
+{
+	return cameraPosition.x;
+}
+
+const float Camera::GetPositionY() const
+{
+	return cameraPosition.y;
+}
+
+const float Camera::GetPositionZ() const
+{
+	return cameraPosition.z;
+}
+
+void Camera::SetRotation(const float X, const float Y, const float Z)
+{
+	cameraRotation = DirectX::XMFLOAT3A(X, Y, Z);
+	UpdateView();
+}
+
+void Camera::AddToRotation(const float X, const float Y, const float Z)
+{
+	cameraRotation += DirectX::XMFLOAT3A(X, Y, Z);
+	UpdateView();
+}
+
+const float Camera::GetRotationX() const
+{
+	return cameraRotation.x;
+}
+
+const float Camera::GetRotationY() const
+{
+	return cameraRotation.y;
+}
+
+const float Camera::GetRotationZ() const
+{
+	return cameraRotation.z;
+}
+//End of Singular Float Functions--------------------------------------------------------//
 
 void Camera::SetMouseMovement(bool foo)
 {
@@ -215,130 +336,108 @@ void Camera::SetYaw(const float x, const float z)
 	cameraRotation.y = yaw;
 }
 
-void Camera::MoveCameraForwardD(const float dt)
+//Debug Camera Movement Functions---------------------------------------------------------------//
+
+void Camera::MoveCameraForward3A_D(const float dt)
 {
 	forwardDir.x *= dt * cameraSpeed;
 	forwardDir.y *= dt * cameraSpeed;
 	forwardDir.z *= dt * cameraSpeed;
 
-	MovePosition(forwardDir);
-
-	///Note: XMVECTOR Method
-	/*
-	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
-	MovePositionVec(forwardVec);
-	*/
+	AddToPosition(forwardDir);
 }
 
-void Camera::MoveCameraBackwardsD(const float dt)
+void Camera::MoveCameraForwardVec_D(const float dt)
+{
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorReplicate(dt * cameraSpeed));
+	AddToPosition(forwardVec);
+}
+
+void Camera::MoveCameraBackwards3A_D(const float dt)
 {
 	//Reverse / Negative of the forward direction
 	forwardDir.x *= dt * -1.f * cameraSpeed;
 	forwardDir.y *= dt * -1.f * cameraSpeed;
 	forwardDir.z *= dt * -1.f * cameraSpeed;
 
-	MovePosition(forwardDir);
-
-	///Note: XMVECTOR Method
-	/*
-	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
-	MovePositionVec(forwardVec);
-	*/
+	AddToPosition(forwardDir);
 }
 
-void Camera::MoveCameraLeftD(const float dt)
+void Camera::MoveCameraBackwardsVec_D(const float dt)
+{
+	forwardVec = DirectX::XMVectorMultiply(forwardVec, DirectX::XMVectorReplicate(-dt * cameraSpeed));
+	AddToPosition(forwardVec);
+}
+
+void Camera::MoveCameraLeft3A_D(const float dt)
 {
 	//Reverse / Negative of the right direction
 	rightDir.x *= dt * -1.f * cameraSpeed;
 	rightDir.y *= dt * -1.f * cameraSpeed;
 	rightDir.z *= dt * -1.f * cameraSpeed;
 
-	MovePosition(rightDir);
-
-	///Note: XMVECTOR Method
-	/*
-	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
-	MovePositionVec(rightVec);
-	*/
+	AddToPosition(rightDir);
 }
 
-void Camera::MoveCameraRightD(const float dt)
+void Camera::MoveCameraLeftVec_D(const float dt)
+{
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorReplicate(-dt * cameraSpeed));
+	AddToPosition(rightVec);
+}
+
+void Camera::MoveCameraRight3A_D(const float dt)
 {
 	rightDir.x *= dt * cameraSpeed;
 	rightDir.y *= dt * cameraSpeed;
 	rightDir.z *= dt * cameraSpeed;
 
-	MovePosition(rightDir);
-
-	///Note: XMVECTOR Method
-	/*
-	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
-	MovePositionVec(rightVec);
-	*/
+	AddToPosition(rightDir);
 }
 
-void Camera::ElevateCameraD(const float dt)
+void Camera::MoveCameraRightVec_D(const float dt)
+{
+	rightVec = DirectX::XMVectorMultiply(rightVec, DirectX::XMVectorReplicate(dt * cameraSpeed));
+	AddToPosition(rightVec);
+}
+
+void Camera::ElevateCamera3A_D(const float dt)
 {
 	upDir.x *= dt * cameraSpeed;
 	upDir.y *= dt * cameraSpeed;
 	upDir.z *= dt * cameraSpeed;
 
-	MovePosition(upDir);
-
-	///Note: XMVECTOR Method
-	/*
-	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(cameraSpeed*dt, cameraSpeed*dt, cameraSpeed*dt, 0.f));
-	MovePositionVec(upVec);
-	*/
+	AddToPosition(upDir);
 }
 
-void Camera::LowerCameraD(const float dt)
+void Camera::ElevateCameraVec_D(const float dt)
+{
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorReplicate(dt * cameraSpeed));
+	AddToPosition(upVec);
+}
+
+void Camera::LowerCamera3A_D(const float dt)
 {
 	//Reverse / Negative of the Up direction
 	upDir.x *= dt * -1.f * cameraSpeed;
 	upDir.y *= dt * -1.f * cameraSpeed;
 	upDir.z *= dt * -1.f * cameraSpeed;
 
-	MovePosition(upDir);
-
-	///Note: XMVECTOR Method
-	/*
-	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorSet(-cameraSpeed*dt, -cameraSpeed*dt, -cameraSpeed*dt, 0.f));
-	MovePositionVec(upVec);
-	*/
+	AddToPosition(upDir);
 }
 
-const void Camera::MoveCameraUpwards()
+void Camera::LowerCameraVec_D(const float dt)
 {
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.01f, 0.f));
+	upVec = DirectX::XMVectorMultiply(upVec, DirectX::XMVectorReplicate(-dt * cameraSpeed));
+	AddToPosition(upVec);
 }
+//End of Debug Camera Movement Functions--------------------------------------------------------//
 
-const void Camera::MoveCameraDownwards()
-{
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, -0.01f, 0.f));
-}
-
-const void Camera::MoveCameraLeft()
-{
-	this->MovePosition(DirectX::XMFLOAT3A(-0.01f, 0.f, 0.f));
-}
-
-const void Camera::MoveCameraRight()
-{
-	this->MovePosition(DirectX::XMFLOAT3A(0.01f, 0.f, 0.f));
-}
-
-const void Camera::ZoomIn()
-{
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, 0.01f));
-}
-
-const void Camera::ZoomOut()
-{
-	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, -0.01f));
-}
-
-const void Camera::SpinCameraAround()
-{
-	this->MoveRotation(DirectX::XMFLOAT3A(0.f, 0.f, 0.01f));
-}
+//const void Camera::ZoomIn()
+//{
+//	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, 0.01f));
+//}
+//
+//const void Camera::ZoomOut()
+//{
+//	this->MovePosition(DirectX::XMFLOAT3A(0.f, 0.f, -0.01f));
+//}

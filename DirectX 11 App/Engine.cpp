@@ -39,7 +39,7 @@ void Engine::Update()
 	{
 		MouseEvent mouseEv = mouse.GetEvent();
 		if (mouseEv.GetEventType() == EventType::RawMove && camera.GetMouseMovement())
-			camera.MoveRotation(DirectX::XMFLOAT3A(mouseEv.GetYPos() * 0.001f, mouseEv.GetXPos() * 0.001f, 0.f));
+			camera.AddToRotation(DirectX::XMFLOAT3A(mouseEv.GetYPos() * 0.001f, mouseEv.GetXPos() * 0.001f, 0.f));
 	}
 
 	//Mouse Camera Controls
@@ -50,22 +50,22 @@ void Engine::Update()
 		camera.SetMouseMovement(false);
 
 	if (keyboard.IsKeyPressed(CAMERA_FORWARD))
-		camera.MoveCameraForwardD(gTimer.GetDeltaTime());
+		camera.MoveCameraForward3A_D(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_BACK))
-		camera.MoveCameraBackwardsD(gTimer.GetDeltaTime());
+		camera.MoveCameraBackwards3A_D(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_LEFT))
-		camera.MoveCameraLeftD(gTimer.GetDeltaTime());
+		camera.MoveCameraLeft3A_D(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_RIGHT))
-		camera.MoveCameraRightD(gTimer.GetDeltaTime());
+		camera.MoveCameraRight3A_D(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_ELEVATE))
-		camera.ElevateCameraD(gTimer.GetDeltaTime());
+		camera.ElevateCamera3A_D(gTimer.GetDeltaTime());
 
 	if (keyboard.IsKeyPressed(CAMERA_LOWER))
-		camera.LowerCameraD(gTimer.GetDeltaTime());
+		camera.LowerCamera3A_D(gTimer.GetDeltaTime());
 }
 
 void Engine::Render()
