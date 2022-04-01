@@ -1,10 +1,11 @@
 #include "Camera.h"
 
-int Camera::CamerasInUse = 0;		//Counts total cameras used across all scenes
+///Count of total cameras used in the scene
+int Camera::CamerasInUse = 0;
 
 Camera::Camera()
 {
-	//Set Default Values
+	///Set Default Values
 	cameraPosition = DirectX::XMFLOAT3A(0.0f, 0.0f, 0.0f);
 	cameraRotation = DirectX::XMFLOAT3A(0.f, 0.f, 0.f);
 
@@ -53,7 +54,7 @@ void Camera::SetupCamera(const DirectX::XMFLOAT3A& startPos, const float aspRati
 	SetProjection(90.f, aspectRatio, this->nearZ, this->farZ);
 }
 
-//+= Overload for XMFLOAT3A
+///+= Overload for XMFLOAT3A
 const DirectX::XMFLOAT3A& operator+=(DirectX::XMFLOAT3A& A, const DirectX::XMFLOAT3A& B)
 {
 	A.x = A.x + B.x;
@@ -62,7 +63,7 @@ const DirectX::XMFLOAT3A& operator+=(DirectX::XMFLOAT3A& A, const DirectX::XMFLO
 	return A;
 }
 
-//*= overload for XMFLOAT3A
+///*= overload for XMFLOAT3A
 const DirectX::XMFLOAT3A& operator*=(DirectX::XMFLOAT3A& A, const float B)
 {
 	A.x = A.x * B;
@@ -335,7 +336,7 @@ void Camera::SetYaw(const float x, const float z)
 	float yaw = atanf(x * (1.f / z));
 
 	if(z > 0.0f)	//Angle needs to be larger than radian range atanf allows
-		yaw += PI;
+		yaw += DirectX::XM_PI;
 
 	cameraRotation.y = yaw;
 }

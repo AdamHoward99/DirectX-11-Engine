@@ -1,10 +1,28 @@
 #pragma once
 #include <DirectXMath.h>
 
-#define PI DirectX::XM_PI
+/*
+The Camera class is used to create and modify the Cameras view in the world. Transformations such as position and rotation changes can be applied to the Cameras using
+either XMFLOAT3A or XMVECTOR variables; separate functions labelled appropriately are used for both of these variable types. The Camera can be freely moved around in the 
+world space and the Cameras view can also be moved using the mouse's position. The controls for the Camera are stored as macros in the Engine class header file and are 
+described underneath this class' description.
 
-//The Camera class uses the Left-Handed Coordinate System like the GameObject class does, therefore the Y and Z values are reversed.
-//If the camera is to have a physical object in the engine in the future, derive from the GameObject class.
+The Camera class uses the Left-Handed Coordinate System (LH) therefore the Y and Z values are reversed. This class allows for multiple Cameras to be present in the scene
+at a single time. Setup for the Camera class can be found in "Engine.cpp". In the future this class could be derived from the GameObject class if there is a need to have an
+attaching physical object in the world space for visibility.
+
+Camera Debug Controls:
+W - Move camera forward
+A - Move camera left
+S - Move camera backwards
+D - Move camera right
+
+Q - Elevate camera
+E - Lower camera
+
+M - Enable mouse controls for camera
+N - Disable mouse controls for camera
+*/
 
 class Camera
 {
@@ -114,33 +132,37 @@ private:
 	///Updates the Cameras view in the world, uses XMFLOAT by default
 	void UpdateView();
 
-	DirectX::XMMATRIX cameraView;
-	DirectX::XMMATRIX projection;
+	///Speed of the Camera, multipled by deltatime for movement around world space
+	const float cameraSpeed = 0.002f;
+	///Total Cameras in use
+	static int CamerasInUse;
+	///Unique number assigned to the Camera, helpful when using multiple Cameras
+	int CameraNo;
+	///Aspect ratio of the Camera, stored in case of future requirement
+	float aspectRatio;
+	///Closest distance to render objects in the Cameras view
+	float nearZ;
+	///Furthest distance to render objects in the Cameras view
+	float farZ;
+	///Toggles ability to move the Camera around the world space, use 'M' to enable, 'N' to disable
+	bool mouseMovementEnabled = false;
 
-	//XMFLOAT Variables
+	///View of the Cameras current position, used to calculate VP Matrix
+	DirectX::XMMATRIX cameraView;
+	///Projection of the Camera, used to calculate VP Matrix
+	DirectX::XMMATRIX projection;
+	
+	///XMFLOAT Variables
 	DirectX::XMFLOAT3A cameraPosition;
 	DirectX::XMFLOAT3A cameraRotation;
-
 	DirectX::XMFLOAT3A forwardDir = DirectX::XMFLOAT3A(0.f, 0.f, 1.f);
 	DirectX::XMFLOAT3A rightDir = DirectX::XMFLOAT3A(1.f, 0.f, 0.f);
 	DirectX::XMFLOAT3A upDir = DirectX::XMFLOAT3A(0.f, 1.f, 0.f);
 
-	//XMVECTOR Variables
+	///XMVECTOR Variables
 	DirectX::XMVECTOR cameraPositionVec;
 	DirectX::XMVECTOR cameraRotationVec;
-
 	DirectX::XMVECTOR forwardVec = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
 	DirectX::XMVECTOR rightVec = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
 	DirectX::XMVECTOR upVec = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
-	
-	const float cameraSpeed = 0.002f;
-	static int CamerasInUse;
-	int CameraNo;
-
-	//Projection Variables
-	float aspectRatio;
-	float nearZ;
-	float farZ;
-
-	bool mouseMovementEnabled = false;
 };
