@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+//#define TANK_CONTROLLED_CAMERA		//Uncomment to enable static tank controls for the debug camera movement
 
 /*
 The Camera class is used to create and modify the Cameras view in the world. Transformations such as position and rotation changes can be applied to the Cameras using
@@ -151,18 +152,23 @@ private:
 	DirectX::XMMATRIX cameraView;
 	///Projection of the Camera, used to calculate VP Matrix
 	DirectX::XMMATRIX projection;
+
+	///Camera Direction Variables
+	const DirectX::XMVECTOR defaultForwardDirection = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
+	const DirectX::XMVECTOR defaultRightDirection = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
+	const DirectX::XMVECTOR defaultUpDirection = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	
 	///XMFLOAT Variables
 	DirectX::XMFLOAT3A cameraPosition;
 	DirectX::XMFLOAT3A cameraRotation;
-	DirectX::XMFLOAT3A forwardDir = DirectX::XMFLOAT3A(0.f, 0.f, 1.f);
-	DirectX::XMFLOAT3A rightDir = DirectX::XMFLOAT3A(1.f, 0.f, 0.f);
-	DirectX::XMFLOAT3A upDir = DirectX::XMFLOAT3A(0.f, 1.f, 0.f);
+	DirectX::XMFLOAT3A forwardDir;
+	DirectX::XMFLOAT3A rightDir;
+	DirectX::XMFLOAT3A upDir;
 
 	///XMVECTOR Variables
 	DirectX::XMVECTOR cameraPositionVec;
 	DirectX::XMVECTOR cameraRotationVec;
-	DirectX::XMVECTOR forwardVec = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
-	DirectX::XMVECTOR rightVec = DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f);
-	DirectX::XMVECTOR upVec = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	DirectX::XMVECTOR forwardVec = defaultForwardDirection;
+	DirectX::XMVECTOR rightVec = defaultRightDirection;
+	DirectX::XMVECTOR upVec = defaultUpDirection;
 };

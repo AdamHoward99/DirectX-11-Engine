@@ -248,17 +248,20 @@ void Camera::UpdateView()
 	//Rebuild view matrix
 	cameraView = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3A(&cameraPosition), cameraTarget, upDirection);
 
-	//Get Rotation for forward & right directions
+	///Obtains new forward and right directions based on the Cameras current rotation, tank controlled or free roam movement selectable
+#ifdef TANK_CONTROLLED_CAMERA
+	forwardVec = defaultForwardDirection;
+	rightVec = defaultRightDirection;
+	upVec = defaultUpDirection;
+#else
+	forwardVec = DirectX::XMVector3TransformCoord(defaultForwardDirection, cameraRotMatrix);
+	rightVec = DirectX::XMVector3TransformCoord(defaultRightDirection, cameraRotMatrix);
+	upVec = defaultUpDirection;
+#endif
 
-	///Note: XMFLOAT3A Method
-	forwardDir = DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f);
-	rightDir = DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f);
-	upDir = DirectX::XMFLOAT3A(0.f, 1.f, 0.f);
-
-	///Note: XMVECTOR Method
-	forwardVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(0.f, cameraRotation.y, 1.f));
-	rightVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(1.f, cameraRotation.y, 0.f));
-	upVec = DirectX::XMLoadFloat3A(&DirectX::XMFLOAT3A(upDir));
+	DirectX::XMStoreFloat3A(&forwardDir, forwardVec);
+	DirectX::XMStoreFloat3A(&rightDir, rightVec);
+	DirectX::XMStoreFloat3A(&upDir, upVec);
 }
 
 void Camera::LookAt(const DirectX::XMMATRIX& targetPos)
