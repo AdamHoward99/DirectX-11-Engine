@@ -29,7 +29,7 @@ private:
 	void InitialiseOBJs();
 	void InitialiseLighting();
 	void InitialisePSOs();
-	void SetPSO(const PSO* pso);
+	void SetPSO(PSO* pso);
 
 	void DrawString();
 
@@ -53,7 +53,6 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;
 
 	VertexShader vShader;
-	PixelShader pShader;
 	AdapterReader adapterReader;
 	static UINT ViewportCount;
 

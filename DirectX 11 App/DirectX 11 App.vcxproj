@@ -206,7 +206,6 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="StringConverter.h" />

@@ -55,6 +55,7 @@ SamplerState PointWrapSS : SAMPLER : register(s1);
 SamplerState AnisotropicWrapSS: SAMPLER : register(s2);
 
 Texture2D textures[11] : register(t0);
+TextureCube skyboxTex : register(t1);
 
 struct PixelInput
 {

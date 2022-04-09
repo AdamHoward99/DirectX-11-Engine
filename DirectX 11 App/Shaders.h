@@ -13,6 +13,7 @@ protected:
 	virtual bool Initialise(Microsoft::WRL::ComPtr<ID3D11Device>&, std::wstring) { return false; }
 	virtual T GetShader() { return nullptr; }
 	virtual ID3D10Blob* GetShaderBuffer() { return nullptr; }
+	virtual ~Shader() {};
 };
 
 //Vertex Shader Class

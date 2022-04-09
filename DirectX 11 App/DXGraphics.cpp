@@ -70,7 +70,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP - Makes triangle from all Vertices in order, minimizes amount of vertices needed
 
 	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
-	pDeviceContext->PSSetShader(pShader.GetShader(), NULL, 0);
+
 
 	///Notice: Update OBJ's here
 
@@ -161,7 +161,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pSwapChain->Present(1, NULL);
 }
 
-void DXGraphics::SetPSO(const PSO* pso)
+void DXGraphics::SetPSO(PSO* pso)
 {
 	//Set Blend State
 	pDeviceContext->OMSetBlendState(pso->GetBlendState(), NULL, 0xFFFFFFFF);
@@ -171,6 +171,9 @@ void DXGraphics::SetPSO(const PSO* pso)
 
 	//Set Depth Stencil State
 	pDeviceContext->OMSetDepthStencilState(pso->GetDSState(), pso->GetDepthStencilRef());
+
+	//Set Pixel Shader
+	pDeviceContext->PSSetShader(pso->GetPixelShader(), NULL, 0);
 }
 
 bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
@@ -300,10 +303,6 @@ bool DXGraphics::InitialiseShaders()
 
 	//Create Vertex Shader
 	if (!vShader.Initialise(pDevice, vshaderFilepath))
-		return false;
-
-	//Create Pixel Shader
-	if (!pShader.Initialise(pDevice, pshaderFilepath))
 		return false;
 
 	//Create Input Layouts
@@ -455,8 +454,17 @@ void DXGraphics::InitialisePSOs()
 	FrontFace && BackFace->Operations = D3D11_STENCIL_OP_KEEP
 	*/
 
+	///Create Pixel Shader Path
+	std::wstring pshaderFilepath;
+
+#ifdef _DEBUG
+	pshaderFilepath = L"x86\\Debug\\PixelShader.cso";
+#else
+	pshaderFilepath = L"x86\\Release\\PixelShader.cso";
+#endif
+
 	///Create Opaque PSO Settings
-	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS));
+	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS, pshaderFilepath));
 
 
 	/*
@@ -521,7 +529,7 @@ void DXGraphics::InitialisePSOs()
 	transparentRasterizerDesc.CullMode = D3D11_CULL_NONE;
 	transparentRasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
-	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS));
+	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS, pshaderFilepath));
 
 	/*
 		PSO Settings for Mirrored Objects
@@ -538,7 +546,7 @@ void DXGraphics::InitialisePSOs()
 	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 
 
-	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS, 1));
+	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS, pshaderFilepath, 1));
 
 	/*
 		PSO Settings for Reflected Objects
@@ -558,7 +566,7 @@ void DXGraphics::InitialisePSOs()
 	reflectedDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 	reflectedDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, reflectRasterizerDesc, reflectedDDS, 1));
+	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, reflectRasterizerDesc, reflectedDDS, pshaderFilepath, 1));
 
 	/*
 		PSO Settings for Shadowed Objects
@@ -583,7 +591,7 @@ void DXGraphics::InitialisePSOs()
 	shadowBlendDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	shadowBlendDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc));
+	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc, pshaderFilepath));
 }
 
 void DXGraphics::DrawString()
