@@ -12,9 +12,8 @@ bool DXGraphics::InitialiseClass(HWND hwnd, int w, int h)
 	if (!InitialiseDX(hwnd, w, h))
 		return false;
 
-	//Initialise shaders and scenes here
-	if (!InitialiseShaders())
-		return false;
+	///Initialise all engine PSO's
+	InitialisePSOs();
 
 	//Initialise the scene
 	if (!InitialiseScene(w, h))
@@ -57,7 +56,7 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	pDeviceContext->ClearDepthStencilView(pDepthView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	//Set input layout, topology and shaders
-	pDeviceContext->IASetInputLayout(pInputLayout.Get());
+
 	pDeviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///Note: Pixels closer to the camera need to be instantiated and drawn after objects which it is blending with
 	///Note: Alternative is to draw all opaque objects first followed by any non-opaque after.
@@ -68,9 +67,6 @@ void DXGraphics::RenderFrame(Camera* const camera, const float dt)
 	//D3D10_PRIMITIVE_TOPOLOGY_LINESTRIP - Connects all Vertices into lines in order
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST - Makes triangle from 3 Vertices, needs to be in clockwise order
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP - Makes triangle from all Vertices in order, minimizes amount of vertices needed
-
-	pDeviceContext->VSSetShader(vShader.GetShader(), NULL, 0);
-
 
 	///Notice: Update OBJ's here
 
@@ -172,8 +168,14 @@ void DXGraphics::SetPSO(PSO* pso)
 	//Set Depth Stencil State
 	pDeviceContext->OMSetDepthStencilState(pso->GetDSState(), pso->GetDepthStencilRef());
 
+	//Set Input Layout
+	pDeviceContext->IASetInputLayout(pso->GetInputLayout());
+	
 	//Set Pixel Shader
 	pDeviceContext->PSSetShader(pso->GetPixelShader(), NULL, 0);
+
+	//Set Vertex Shader
+	pDeviceContext->VSSetShader(pso->GetVertexShader(), NULL, 0);
 }
 
 bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
@@ -270,9 +272,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 	ViewportCount++;
 
 	pDeviceContext->RSSetViewports(ViewportCount, &deviceViewport);
-	
-	///Initialise all engine PSO's
-	InitialisePSOs();
 
 	///Note: Add fonts here
 	fonts.insert({ "default", std::move(std::make_unique<TextFont>(pDevice.Get(), pDeviceContext.Get())) });
@@ -285,38 +284,6 @@ bool DXGraphics::InitialiseDX(HWND hwnd, int w, int h)
 
 	//Create Anisotropic Wrap Sampler State
 	CreateSamplerState(2, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_NEVER, D3D11_FILTER_ANISOTROPIC, 16);
-	return true;
-}
-
-bool DXGraphics::InitialiseShaders()
-{
-	std::wstring vshaderFilepath;
-	std::wstring pshaderFilepath;
-
-#ifdef _DEBUG
-	vshaderFilepath = L"x86\\Debug\\VertexShader.cso";
-	pshaderFilepath = L"x86\\Debug\\PixelShader.cso";
-#else
-	vshaderFilepath = L"x86\\Release\\VertexShader.cso";
-	pshaderFilepath = L"x86\\Release\\PixelShader.cso";
-#endif
-
-	//Create Vertex Shader
-	if (!vShader.Initialise(pDevice, vshaderFilepath))
-		return false;
-
-	//Create Input Layouts
-	D3D11_INPUT_ELEMENT_DESC layouts[] = {
-		{"POSITION", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", NULL, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",   NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TANGENT",  NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	HRESULT hr = pDevice->CreateInputLayout(layouts, ARRAYSIZE(layouts), vShader.GetShaderBuffer()->GetBufferPointer(), vShader.GetShaderBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
-	if (FAILED(hr))
-		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateInputLayout()");
-
 	return true;
 }
 
@@ -454,18 +421,28 @@ void DXGraphics::InitialisePSOs()
 	FrontFace && BackFace->Operations = D3D11_STENCIL_OP_KEEP
 	*/
 
-	///Create Pixel Shader Path
+	///Create Pixel & Vertex Shader Paths
+	std::wstring vshaderFilepath;
 	std::wstring pshaderFilepath;
 
 #ifdef _DEBUG
+	vshaderFilepath = L"x86\\Debug\\VertexShader.cso";
 	pshaderFilepath = L"x86\\Debug\\PixelShader.cso";
 #else
+	vshaderFilepath = L"x86\\Release\\VertexShader.cso";
 	pshaderFilepath = L"x86\\Release\\PixelShader.cso";
 #endif
 
-	///Create Opaque PSO Settings
-	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS, pshaderFilepath));
+	//Create Input Layouts
+	D3D11_INPUT_ELEMENT_DESC layouts[] = {
+		{"POSITION", NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", NULL, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",  NULL, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
 
+	///Create Opaque PSO Settings
+	PSOs["Opaque"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, opaqueRasterizerDesc, opaqueDDS, layouts, 4, vshaderFilepath, pshaderFilepath));
 
 	/*
 		PSO Settings for Transparent Objects
@@ -529,7 +506,7 @@ void DXGraphics::InitialisePSOs()
 	transparentRasterizerDesc.CullMode = D3D11_CULL_NONE;
 	transparentRasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
-	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS, pshaderFilepath));
+	PSOs["Transparent"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, opaqueDDS, layouts, 4, vshaderFilepath, pshaderFilepath));
 
 	/*
 		PSO Settings for Mirrored Objects
@@ -546,7 +523,7 @@ void DXGraphics::InitialisePSOs()
 	mirrorDDS.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 
 
-	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS, pshaderFilepath, 1));
+	PSOs["Mirrored"] = std::move(std::make_unique<PSO>(pDevice, mirrorBlendState, transparentRasterizerDesc, mirrorDDS, layouts, 4, vshaderFilepath, pshaderFilepath, 1));
 
 	/*
 		PSO Settings for Reflected Objects
@@ -566,7 +543,7 @@ void DXGraphics::InitialisePSOs()
 	reflectedDDS.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 	reflectedDDS.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, reflectRasterizerDesc, reflectedDDS, pshaderFilepath, 1));
+	PSOs["Reflected"] = std::move(std::make_unique<PSO>(pDevice, opaqueBlendDesc, reflectRasterizerDesc, reflectedDDS, layouts, 4, vshaderFilepath, pshaderFilepath, 1));
 
 	/*
 		PSO Settings for Shadowed Objects
@@ -591,7 +568,7 @@ void DXGraphics::InitialisePSOs()
 	shadowBlendDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	shadowBlendDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc, pshaderFilepath));
+	PSOs["Shadow"] = std::move(std::make_unique<PSO>(pDevice, transparentBlendDesc, transparentRasterizerDesc, shadowBlendDesc, layouts, 4, vshaderFilepath, pshaderFilepath));
 }
 
 void DXGraphics::DrawString()

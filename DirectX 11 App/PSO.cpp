@@ -23,17 +23,18 @@ PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice)
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateDepthStencilState()");
 
 	//Create Default Pixel Shader
-	std::wstring vshaderFilepath;
-	std::wstring pshaderFilepath;
-
 	if (!pShader.Initialise(pDevice, L"x86\\Debug\\PixelShader.cso"))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "PixelShader::Initialise()");
+
+	//Create Default Vertex Shader
+	if (!vShader.Initialise(pDevice, L"x86\\Debug\\VertexShader.cso"))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "VertexShader::Initialise()");
 
 	//Set Depth Stencil Reference Value
 	depthStencilRef = 0;
 }
 
-PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& blendDesc, const D3D11_RASTERIZER_DESC& rasterDesc, const D3D11_DEPTH_STENCIL_DESC& DSDesc, const std::wstring& pShaderPath, const UINT DSRef)
+PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& blendDesc, const D3D11_RASTERIZER_DESC& rasterDesc, const D3D11_DEPTH_STENCIL_DESC& DSDesc, const D3D11_INPUT_ELEMENT_DESC inputL[], const UINT layoutSize, const std::wstring& vShaderPath, const std::wstring& pShaderPath, const UINT DSRef)
 {
 	this->pDevice = pDevice;
 
@@ -56,6 +57,15 @@ PSO::PSO(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, const D3D11_BLEND_DESC& b
 	if (!pShader.Initialise(pDevice, pShaderPath))
 		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "PixelShader::Initialise()");
 
+	//Create Vertex Shader
+	if (!vShader.Initialise(pDevice, vShaderPath))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "VertexShader::Initialise()");
+
+	//Create Vertex Shader Input Layout
+	hr = pDevice->CreateInputLayout(inputL, layoutSize, vShader.GetShaderBuffer()->GetBufferPointer(), vShader.GetShaderBuffer()->GetBufferSize(), pInputLayout.GetAddressOf());
+	if (FAILED(hr))
+		ErrorMes::DisplayHRErrorMessage(hr, __LINE__, __FILE__, "ID3D11Device::CreateInputLayout()");
+
 	//Set Depth Stencil Reference Value
 	depthStencilRef = DSRef;
 }
@@ -66,7 +76,9 @@ PSO::PSO(const PSO& otherPSO)
 	this->pDepthStencilState = otherPSO.pDepthStencilState;
 	this->pDevice = otherPSO.pDevice;
 	this->pRasterizerState = otherPSO.pRasterizerState;
+	this->pInputLayout = otherPSO.pInputLayout;
 	this->pShader = otherPSO.pShader;
+	this->vShader = otherPSO.vShader;
 	this->depthStencilRef = otherPSO.depthStencilRef;
 }
 
@@ -77,12 +89,15 @@ PSO::PSO(PSO&& otherPSO)
 	this->pDevice = otherPSO.pDevice;
 	this->pRasterizerState = otherPSO.pRasterizerState;
 	this->pShader = otherPSO.pShader;
+	this->vShader = otherPSO.vShader;
+	this->pInputLayout = otherPSO.pInputLayout;
 	this->depthStencilRef = otherPSO.depthStencilRef;
 
 	//Deallocate otherPSO variables
 	otherPSO.pBlendState = nullptr;
 	otherPSO.pDepthStencilState = nullptr;
 	otherPSO.pDevice = nullptr;
+	otherPSO.pInputLayout = nullptr;
 	otherPSO.pRasterizerState = nullptr;
 	otherPSO.depthStencilRef = NULL;
 	//Empty pixel shader class TODO
@@ -103,6 +118,11 @@ ID3D11DepthStencilState* PSO::GetDSState() const
 	return this->pDepthStencilState.Get();
 }
 
+ID3D11InputLayout* PSO::GetInputLayout() const
+{
+	return this->pInputLayout.Get();
+}
+
 const UINT PSO::GetDepthStencilRef() const
 {
 	return depthStencilRef;
@@ -111,4 +131,9 @@ const UINT PSO::GetDepthStencilRef() const
 ID3D11PixelShader* PSO::GetPixelShader()
 {
 	return this->pShader.GetShader();
+}
+
+ID3D11VertexShader* PSO::GetVertexShader()
+{
+	return this->vShader.GetShader();
 }

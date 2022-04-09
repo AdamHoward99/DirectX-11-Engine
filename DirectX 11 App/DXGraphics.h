@@ -21,7 +21,6 @@ public:
 	void RenderFrame(Camera* const cam, const float deltaTime);
 private:
 	bool InitialiseDX(HWND, int, int);
-	bool InitialiseShaders();
 	void CreateSamplerState(const int arrayOffset, const D3D11_TEXTURE_ADDRESS_MODE& textureAddress, const D3D11_COMPARISON_FUNC& comparisonFunc,
 		const D3D11_FILTER& filter, const UINT maxAnisotropy = 1);
 	bool InitialiseScene(int w, int h);
@@ -38,7 +37,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderView;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDepthStencilStates[2];
@@ -52,7 +50,6 @@ private:
 	//unordered map of objects which stores texture, buffers, indices, and vertices for each object
 	std::unordered_map<std::string, std::unique_ptr<GameObject>> renderObjects;
 
-	VertexShader vShader;
 	AdapterReader adapterReader;
 	static UINT ViewportCount;
 
