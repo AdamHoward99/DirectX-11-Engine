@@ -330,7 +330,14 @@ void DXGraphics::InitialiseMaterials()
 	mMaterials["Shadow"] = std::make_unique<Material>();
 	mMaterials["Shadow"]->matName = "Shadow Material";
 	mMaterials["Shadow"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 0.5f);
+
+	//Create Skybox Material
+	mMaterials["Skybox"] = std::make_unique<Material>();
+	mMaterials["Skybox"]->matName = "Skybox";
+	mMaterials["Skybox"]->matData.matDiffuseAlbedo = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+	mMaterials["Skybox"]->matTextures[0] = std::move(Texture(pDevice, "Materials/cubemap.png", aiTextureType_DIFFUSE));
 }
+
 
 void DXGraphics::InitialiseOBJs()
 {
@@ -356,6 +363,7 @@ void DXGraphics::InitialiseOBJs()
 	renderObjects["wall"]->SetScale(12.f, 1.f, 12.f);
 	renderObjects["wall"]->SetRotation(-90.f, 0.f, 0.f);
 	renderObjects["wall"]->SetPosition(3.f, 5.f, 5.f);
+	renderObjects["wall"]->AssignNewMaterial(*mMaterials["Skybox"]);
 
 	renderObjects["wall2"] = std::move(std::make_unique<GameObject>(pDevice, pDeviceContext, "OBJ/wall.fbx"));
 	renderObjects["wall2"]->SetScale(12.f, 1.f, 12.f);
